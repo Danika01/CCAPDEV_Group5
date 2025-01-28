@@ -1,88 +1,91 @@
-h1 {
-    text-align: center;
-}
-
-button {
-    text-align: center;
-    width: 200px;
-    height: 30px;
-    margin: 5px;
-    background-color: white;
-    font-weight: bold;
-    color: rgb(18, 26, 26);
-    opacity: .98;
-    border-width: 0;
-    cursor: pointer;
-    margin-left: 10%;
-  
-}
-
-button:hover {
-    background-color: #f0f0f0; 
-}
-
-body{
+.navigation{
     background-color: #355f2e;
-    display: flexbox;
-    opacity: 90%;
+    color: #a7ca87;
 }
 
-img{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.container.navigation .navbar-nav .nav-link{
+    color: #a7ca87;
+} 
+
+.navbar-nav .nav-item .nav-link.active {
+    color: #efeae1; 
 }
 
-.page {
-    display: flexbox;
-    justify-content: center;
-    align-items: center;
-    margin-top: 30vh ;
-    margin-left: 90vh;
+.container.navigation .navbar-nav .nav-link:hover{
+    color: #fbf6f3;
+    text-shadow: 1px 2px black;
+} 
+
+.navbar-nav {
+    display: flex; 
+    justify-content: space-between; 
+    width: 100%; 
+    font-size: 20px;
+    font-weight: light;
 }
 
-/* For box of buttons -- > */
-.box > span {
-    color: #050202;
+.active{
+    color: #fbf6f3;
+}
+
+.nav-item-right {
+    margin-left: auto; 
+}
+
+.main-area{
+    background-color: #efeae1;
+}
+
+h2{
     text-align: center;
     font-weight: bold;
-    font-family: Arial;
-    font-size: 18pt;
-    margin-bottom: 1vh;
+    font-family: 'Segoe UI';
+    margin: 0;
 }
 
-.box{
-    display: grid;
-    background-color: #a8cd89;
-    opacity: 85%;
-    height: 150px;
-    width: 250px;
-    border-radius: 10px;
+.container.main-area{
+    background-color: #efeae1;
+    padding: 3%;
+    height: 100vh;
 }
 
-.userOption{
-    display: flexbox;
-    padding: 5%;
-    align-items: center;
+.current-reservations{
+    border: 5px solid #355f2e;
+    padding: 10px;
+    margin: 2px;
+    margin-top: 130px;
+    background-color:#cdcfc0;
 }
 
-.box > span {
-    font-size: 10pt;
-    text-align: start;
-}
-
-.box > input{
-    margin: 1%;
-}
-
-
-
-
-#register{
-    margin-top: 1vh;
+.up-res-home{
     text-align: center;
-    font-weight: lighter;
-    font-family: verdana;
-    font-style: italic;
-    color: #355f2e;
+    line-height: 1;
 }
+
+.stacked-rows{
+    display: flex;
+    flex-direction: column; 
+}
+
+
+tr{
+    text-align: center;
+}
+
+.search-lab-seat{
+    border: 5px solid #355f2e;
+    padding: 10px;
+    margin: 2px;
+    margin-top: 9vh;
+    background-color: #cdcfc0;
+}
+
+.warning{
+    text-align: center;
+    color: red;
+    margin-top: 15px;
+    margin-bottom: 50px;
+    line-height: 1;
+}
+
+
