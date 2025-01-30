@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home Page</title>
-    <link rel="stylesheet" href="Page Styles.css">
+    <link rel="stylesheet" href="\css\Page Styles.css">
 
     <!-- BOOTSTRAP 5 source -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -19,8 +19,8 @@
             <nav class="navbar navbar-expand">
                 <div class="container-fluid">
                 <ul class="navbar-nav">
-                    <a class="navbar-brand" href="#">
-                        <img src="\Images\dlsu.jpg" alt="Profile Image" style="width:40px;" class="rounded-pill"> 
+                    <a class="navbar-brand" href="account.html">
+                        <img src="\Images\test.jpg" alt="Profile Image" style="width:40px; height: 45px;" class="rounded-circle"> 
                     </a>
                     <li class="nav-item">
                         <a class="nav-link active" href="home.html">Home</a> 
@@ -50,7 +50,7 @@
                         <h2>Hello, Tony!</h2>
                         <h2 style="color: green; font-weight: bolder;">Upcoming Reservations </h2>
                         <div class="table-responsive table-striped">
-                            <table class="table up-res-home">
+                            <table class="table up-res-home table-hover">
                                 <thead style="font-size: 11px;">
                                     <th>RESERVATION ID</th>
                                     <th>REQUEST DATE</th>
@@ -187,76 +187,12 @@
 
 
 
-
     <!-- JAVASCRIPT -->
-    <script>
-        // Function to generate time options with 30-minute intervals
-        function generateTimeOptions() {
-            let startTimeSelect = document.getElementById("startTime");
-            let endTimeSelect = document.getElementById("endTime");
-
-            // Function to format time as HH:mm
-            function formatTime(hour, minute) {
-                return (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
-            }
-
-            // Generate options for start and end time from 8 AM to 6 PM
-            let timeOptions = [];
-            for (let hour = 8; hour <= 18; hour++) {
-                for (let minute = 0; minute < 60; minute += 30) {
-                    let timeOption = formatTime(hour, minute);
-                    timeOptions.push(timeOption);
-
-                    // Add option to start time dropdown
-                    let startOption = document.createElement("option");
-                    startOption.value = timeOption;
-                    startOption.textContent = timeOption;
-                    startTimeSelect.appendChild(startOption);
-                }
-            }
-
-            // Populate end time dropdown with the same options initially
-            timeOptions.forEach(time => {
-                let endOption = document.createElement("option");
-                endOption.value = time;
-                endOption.textContent = time;
-                endTimeSelect.appendChild(endOption);
-            });
-        }
-
-        // Update end time options based on selected start time
-        function updateEndTimeOptions() {
-            let startTime = document.getElementById("startTime").value;
-            let endTimeSelect = document.getElementById("endTime");
-            let allOptions = endTimeSelect.querySelectorAll("option");
-
-            // Clear current options
-            endTimeSelect.innerHTML = "";
-
-            // Function to compare time strings
-            function compareTime(a, b) {
-                let timeA = a.split(':').map(num => parseInt(num, 10));
-                let timeB = b.split(':').map(num => parseInt(num, 10));
-                
-                return timeA[0] > timeB[0] || (timeA[0] === timeB[0] && timeA[1] > timeB[1]);
-            }
-
-            // Add new options that are after the selected start time
-            let validOptions = [...allOptions].filter(option => compareTime(option.value, startTime));
-            validOptions.forEach(option => {
-                endTimeSelect.appendChild(option.cloneNode(true));
-            });
-        }
-
-        // Call the function to generate time options on page load
-        generateTimeOptions();
-
-        // Attach event listener to update end time options when start time changes
-        document.getElementById("startTime").addEventListener("change", updateEndTimeOptions);
-
-
-    </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src = "/js/javascript.js"></script>
+    <script>
+        generateTimeOptions();
+        document.getElementById("startTime").addEventListener("change", updateEndTimeOptions);
+    </script>
 </body>
 </html>

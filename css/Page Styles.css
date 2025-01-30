@@ -43,6 +43,18 @@ h2{
     margin: 0;
 }
 
+.about-area {
+    padding-top: 5em;
+    text-align: left;
+    font-weight: light;
+
+    h2{
+        text-align: left;
+        padding-left: 16pt;
+    }
+}
+
+
 .container.main-area{
     background-color: #efeae1;
     padding: 3%;
@@ -55,18 +67,23 @@ h2{
     margin: 2px;
     margin-top: 130px;
     background-color:#cdcfc0;
+    
 }
 
 .up-res-home{
     text-align: center;
     line-height: 1;
+    
+    thead{
+        position: sticky;
+        z-index: 1;
+    }
 }
 
 .stacked-rows{
     display: flex;
     flex-direction: column; 
 }
-
 
 tr{
     text-align: center;
@@ -86,6 +103,36 @@ tr{
     margin-top: 15px;
     margin-bottom: 50px;
     line-height: 1;
+}
+
+.col-5.profile-area{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #a7ca87;
+    justify-content: center;
+    padding-top: 5em;
+    
+}
+
+.col-5.profile-area img {
+    width: 170px; 
+    height: 170px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    
+}
+
+.container.about-reservation{
+    background-color: #cdcfc0;
+    overflow-y: auto;
+    max-height: 200px;
+    border: #355f2e solid 5px;
+    padding: 2%;
+} 
+
+.table thead{
+    background-color: #b9b4a2;
 }
 
 
