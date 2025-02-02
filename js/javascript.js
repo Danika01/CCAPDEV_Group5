@@ -86,3 +86,21 @@ function deleteAccount() {
     modal.hide();
     window.location.href = "home.html" // change to login page 
 }
+
+// redirect table rows
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".clickable-row").forEach(row => {
+        row.addEventListener("click", function () {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+
+// confirm deletion of reservation 
+function deleteReservation() {
+    // delete from database
+    alert("Your reservation has been deleted.");
+    var modal = bootstrap.Modal.getInstance(document.getElementById('deleteReservationModal'));
+    modal.hide();
+    window.location.href = "reservations.html" // change to reservations page 
+}

@@ -34,6 +34,7 @@
 
 .main-area{
     background-color: #efeae1;
+    height: 100vh;
 }
 
 h2{
@@ -41,6 +42,10 @@ h2{
     font-weight: bold;
     font-family: 'Segoe UI';
     margin: 0;
+}
+
+tr{
+    cursor: pointer;
 }
 
 .about-area {
@@ -189,8 +194,104 @@ tr{
     overflow: auto;
 }
 
+/* EDIT RESERVATION */
+.edit-reservation{
+    background-color: #355f2e;
+    margin: 5em;
+    height: 64vh;
+    width: 150vh !important;
+    border-radius: 20px;
+    
+}
 
 
+#edit-res-title {
+    color: #cdcfc0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 3%;
+    padding-right: 4rem;
+}
+
+.back-arrow{
+    font-size: 48px;
+    font-weight: bolder;  
+    color: #cdcfc0;  
+    text-decoration: none;               
+    padding-left: 20px ;
+    padding-top: 35px ; 
+}
+
+.back-arrow:hover {
+    color: #b9b4a2;
+}
+
+.edit-placeholder{
+    background-color: #cdcfc0;
+    height: 40vh;
+    width: 100vh !important;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 20px;
+}
+
+.content-box{
+    height: 15%;
+    width: 80%;
+    background-color: #b9b4a2;
+    border-radius: 20px;
+    display: flex;
+    vertical-align: middle;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 2%;
+    margin: .5%;
+}
+
+.content-box > br{
+    text-align: center;
+}
+
+.value-name{
+    font-weight: bold;
+}
+
+.value{
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center; 
+    padding-right: 2px;
+    line-height: 1rem;
+}
+
+.edit-placeholder.buttons{
+    background-color: #355f2e;
+    height: auto;
+    margin: 1.5%;
+    padding-left: 30%;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 20%;
+}
+
+#delete-reservation{
+    background-color: #d63f3f;
+    color: #d9d9d9;
+    font-weight: bold;
+}
+
+#confirm-reservation{
+    background-color: white;
+    color: #355f2e;
+    font-weight: bold;
+}
 
 
 
