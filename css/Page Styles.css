@@ -85,16 +85,6 @@ h2{
     
 }
 
-.up-res-home{
-    text-align: center;
-    line-height: 1;
-    
-    thead{
-        position: sticky;
-        z-index: 1;
-    }
-}
-
 .stacked-rows{
     display: flex;
     flex-direction: column; 
@@ -159,16 +149,54 @@ tr{
     
 }
 
-.container.about-reservation{
-    background-color: #cdcfc0;
-    overflow-y: auto;
-    max-height: 200px;
-    border: #355f2e solid 5px;
-    padding: 2%;
-} 
 
-.table thead{
-    background-color: #b9b4a2;
+/* about page reservations*/
+#about-table-header th {
+    text-align: center; /* Center the text */
+    font-size: 12px; /* Your specified font size */
 }
+
+
+.up-res-home thead {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #b9b4a2;
+    border: #b9b4a2 1px solid;
+}
+
+.container.about-reservation {
+    background-color: #cdcfc0;
+    max-height: 200px; 
+    border: #355f2e solid 3px;
+    padding: 2%;
+}
+
+.up-res-home {
+    text-align: center;
+    line-height: 1;
+
+}
+
+#home-reservations{
+    min-height: 145px;
+    max-height: 300px;
+}
+
+#about-reservations{
+    max-height: 175px;
+    overflow: auto;
+}
+
+
+
+
+
+
+
+
+
+
 
 
