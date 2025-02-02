@@ -2,17 +2,14 @@
 function generateTimeOptions() {
     let startTimeSelect = document.getElementById("startTime");
     let endTimeSelect = document.getElementById("endTime");
-
     // Function to format time as HH:mm
     function formatTime(hour, minute) {
         return (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
     }
-
     // Generate options for start and end time from 8 AM to 6 PM
     for (let hour = 8; hour <= 17; hour++) {
         for (let minute = 0; minute < 60; minute += 30) {
             let timeOption = formatTime(hour, minute);
-
             // Add option to start time dropdown
             let startOption = document.createElement("option");
             startOption.value = timeOption;
@@ -20,7 +17,6 @@ function generateTimeOptions() {
             startTimeSelect.appendChild(startOption);
         }
     }
-
     // Populate end time dropdown initially with all options
     updateEndTimeOptions();
 }
@@ -40,9 +36,7 @@ function updateEndTimeOptions() {
 
     // If no start time is selected, reset end time
     if (!startTime) return;
-
     let [startHour, startMinute] = startTime.split(':').map(Number);
-
     for (let hour = startHour; hour <= 18; hour++) {
         for (let minute = (hour === startHour ? startMinute + 30 : 0); minute < 60; minute += 30) {
             let timeOption = formatTime(hour, minute);
@@ -59,13 +53,10 @@ function updateEndTimeOptions() {
 document.addEventListener("DOMContentLoaded", function () {
     const textarea = document.getElementById("editableText");
     const charCount = document.getElementById("charCount");
-
-    function updateCharacterCount() {
-        charCount.textContent = textarea.value.length + " / 330";
+    function updateCharacterCount() { // count character in text area
+        charCount.textContent = textarea.value.length + " / 300";
     }
-
     textarea.addEventListener("input", updateCharacterCount);
-
     updateCharacterCount();
 });
 
