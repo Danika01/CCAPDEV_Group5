@@ -9,7 +9,7 @@ function generateTimeOptions() {
     }
 
     // Generate options for start and end time from 8 AM to 6 PM
-    for (let hour = 8; hour <= 18; hour++) {
+    for (let hour = 8; hour <= 17; hour++) {
         for (let minute = 0; minute < 60; minute += 30) {
             let timeOption = formatTime(hour, minute);
 
@@ -55,5 +55,43 @@ function updateEndTimeOptions() {
     }
 }
 
+// Update character count when editing about page
+document.addEventListener("DOMContentLoaded", function () {
+    const textarea = document.getElementById("editableText");
+    const charCount = document.getElementById("charCount");
+
+    function updateCharacterCount() {
+        charCount.textContent = textarea.value.length + " / 330";
+    }
+
+    textarea.addEventListener("input", updateCharacterCount);
+
+    updateCharacterCount();
+});
 
 
+// update profile photo
+function previewImage(event) {
+    const file = event.target.files[0];
+    // Check if the file is an image
+    if (file && file.type.startsWith("image/")) {
+        // Create a URL for the selected file
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            // Set the new image as the source of the profile image
+            document.getElementById('profileImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        alert("Please select a valid image file.");
+    }
+}
+
+// confirm deletion of account 
+function deleteAccount() {
+    // delete from database
+    alert("Your account has been deleted.");
+    var modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+    modal.hide();
+    window.location.href = "home.html" // change to login page 
+}

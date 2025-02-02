@@ -29,7 +29,7 @@
                         <a class="nav-link" href="account.html">Account</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="reservations.html">All Reservations</a>
+                        <a class="nav-link" href="reservations.html">Reservations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="laboratories.html">Laboratories</a>
@@ -167,6 +167,8 @@
                             <div class="container mt-4 md-4" id="search-seat">
                                 <input type="submit" class="btn btn-success w-100" value="Search">
                             </div>
+
+                            <!-- Remove when proper backend has been done -->
                             <div class="container warning">
                                 No Available Slots! </br>
                                 Please select another time
@@ -179,9 +181,7 @@
 
         </div>
         
-    
-    
-    
+
     </div>
     
 
@@ -190,6 +190,7 @@
     <!-- JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src = "../js/javascript.js"></script>
+    
     <script>
         generateTimeOptions();
         document.getElementById("startTime").addEventListener("change", updateEndTimeOptions);

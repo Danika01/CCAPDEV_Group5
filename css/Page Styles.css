@@ -54,6 +54,21 @@ h2{
     }
 }
 
+.editable-textarea {
+    border: 1px solid #d0d0d0; 
+    padding: 10px;
+    height: 130px;
+    width: 700px; 
+    cursor: text;
+    background-color: #cccbc7;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    resize: none;
+}
+
+.editable-textarea:focus {
+    outline: 2px solid #355f2e;
+}
+
 
 .container.main-area{
     background-color: #efeae1;
@@ -103,6 +118,27 @@ tr{
     margin-top: 15px;
     margin-bottom: 50px;
     line-height: 1;
+}
+
+.btn-danger {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+#deleteModal{
+    color: #0f421d;
+}
+
+.update-profile-bt {
+    background-color: #355f2e !important; 
+    color: white !important; 
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.update-profile-bt:hover {
+    background-color: #0f421d; 
 }
 
 .col-5.profile-area{

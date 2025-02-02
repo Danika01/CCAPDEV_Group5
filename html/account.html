@@ -29,7 +29,7 @@
                         <a class="nav-link active" href="account.html">Account</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="reservations.html">All Reservations</a>
+                        <a class="nav-link" href="reservations.html">Reservations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="laboratories.html">Laboratories</a>
@@ -49,13 +49,33 @@
                 <div class="col-5 profile-area"> 
                     <img src="../Images/test.jpg" class="rounded-circle"  width="200" height="200" alt="Profile Photo">
                     
+                    <!-- EDIT ACCOUNT PROFILE -->
                     <div class="mt-4" id="edit-profile">
-                        <input type="submit" class="btn btn-success w-80" value="Edit Profile">
+                        <input type="submit" class="btn btn-success w-80" value="Edit Profile" onclick="window.location.href='edit-profile.html';">
                     </div>
                     
-                    <div class="mt-2" id="delete-account">
-                        <input type="submit" class="btn btn-danger w-80" value="Delete Account">
+                    <!-- DELETE ACCOUNT -->
+                    <div class="container text-center" style="margin-top: 5px;">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Delete Account</button>
                     </div>
+                    <div class="modal fade" id="deleteModal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="deleteModalLabel">Confirm Account Deletion</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                              Are you sure you want to delete your account? This action cannot be undone.
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                              <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
                 </div>
                 <div class="col-7 about-area">
                     <h2>Anthony Mark Divinagracia </h2>
