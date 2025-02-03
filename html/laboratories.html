@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home Page</title>
+    <title>Laboratories</title>
     <link rel="stylesheet" href="..\css\Page Styles.css">
 
     <!-- BOOTSTRAP 5 source -->
@@ -23,7 +23,7 @@
                         <img src="..\Images\test.jpg" alt="Profile Image" style="width:40px; height: 45px;" class="rounded-circle"> 
                     </a>
                     <li class="nav-item">
-                        <a class="nav-link" href="home.html" >Home</a> 
+                        <a class="nav-link" href="home.html">Home</a> 
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="account.html">Account</a>
@@ -42,21 +42,231 @@
             </nav>
         </div>
 
-        
         <!-- BODY -->
-         <h1> LABORATORIES </h1>
+        <div class="container main-area">
+            <div class="row ">
+                <div class="col-8">
+                    <div style="background-color: #efeae1; padding: 2em;">
+                        <div style="background-color: #b9cba3; padding: 1em; text-align: center; font-weight: bold; margin-bottom: 2em;">
+                            WHITEBOARD
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1em;">
+                            <!-- Row 1 -->
+                            <div class="seat">
+                                <div>1</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>2</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>19</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>20</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
     
+                            <!-- Row 2 -->
+                            <div class="seat">
+                                <div>3</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>4</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>17</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>18</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
     
+                            <!-- Row 3 -->
+                            <div class="seat reserved">
+                                <div>5</div>
+                                <div>
+                                    <a class="username normal">Anonymous</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat reserved">
+                                <div>6</div>
+                                <div>
+                                    <a href="/user-profile/louis-lu" class="username">Lu, Louis</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>15</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>16</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
     
+                            <!-- Row 4 -->
+                            <div class="seat">
+                                <div>7</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>8</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat reserved">
+                                <div>13</div>
+                                <div>
+                                    <a href="/user-profile/angeline-naguit" class="username">Naguit, Angeline</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>14</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+    
+                            <!-- Row 5 -->
+                            <div class="seat">
+                                <div>9</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>10</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>11</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                            <div class="seat">
+                                <div>12</div>
+                                <div>
+                                    <a class="username normal">Free</a>
+                                </div>
+                                <div>G-302A</div>
+                            </div>
+                        </div>
+    
+                        <div id="clock"></div>
+                    </div>
+
+                </div>
+
+                <!-- BOOKING A SEAT -->
+                <div class="col">
+                    <div class="container search-lab-seat" >
+                        <div> 
+                            <h2 style="color: black; text-align: center; margin-top: 1em;">
+                                Gokongwei Building
+                                <div style="font-size: 0.8em;">G-302A</div>
+                            </h2>
+                            <div class="container mt-3">
+                                <div class="form-floating">
+                                    <input type="date" class="form-control" id="date" name="date" min="2025-01-01" required>
+                                    <label for="date">Select a Date</label>
+                                </div>
+                            </div>
+
+                            <div class="container mt-1">
+                                <div class="form-floating">
+                                    <select class="form-select" id="startTime" required></select>
+                                    <label for="startTime">Select Start Time</label>
+                                </div>
+                            </div>
+                    
+                            <div class="container mt-1">
+                                <div class="form-floating">
+                                    <select class="form-select" id="endTime" required> </select>
+                                    <label for="endTime">Select End Time</label>
+                                </div>
+                            </div>
+
+                            <div class="container mt-4 md-4" id="search-seat">
+                                <input type="submit" class="btn btn-success w-100" value="Search">
+                            </div>
+
+                            <!-- Remove when proper backend has been done -->
+                            <div class="container warning">
+                                No Available Slots! </br>
+                                Please select another time
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+              </div>
+
+        </div>
+        
+
     </div>
     
-
 
 
 
     <!-- JAVASCRIPT -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src = "../js/javascript.js"></script>
-
+    
+    <script>
+        generateTimeOptions();
+        document.getElementById("startTime").addEventListener("change", updateEndTimeOptions);
+    </script>
 </body>
 </html>
