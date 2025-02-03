@@ -50,7 +50,25 @@
                     <img src="../Images/test.jpg" class="rounded-circle"  width="200" height="200" alt="Profile Photo">
                     
                     <div class="mt-4" id="save-profile">
-                        <input type="submit" class="btn update-profile-bt w-80" value="Save Profile" onclick="window.location.href='account.html';">
+                        <input type="submit" class="btn update-profile-bt w-80" value="Save Profile" data-bs-toggle="modal" data-bs-target="#saveProfileUpdate">
+                        <div>
+                            <div class="modal fade" id="saveProfileUpdate" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="saveProfileModalLable">Successfully Saved Profile</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                      Edited profile has been saved.
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.location.href='account.html';">Continue</button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
                     </div>
                     
                     <div class="mt-2" id="update-photo">
