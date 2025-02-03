@@ -177,6 +177,10 @@ tr{
     }
 }
 
+#about-info{
+    margin-bottom: 2%;
+}
+
 .view-acc-back{
     position: absolute;
     top: 15vh;
@@ -391,6 +395,7 @@ thead th {
 
 #clock {
     text-align: center; 
+    font-weight: bold;
     margin-top: 2em; 
     font-size: 0.9em;
 }
