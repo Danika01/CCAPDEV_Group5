@@ -52,22 +52,11 @@ tr{
     cursor: pointer;
 }
 
-.about-area {
-    padding-top: 5em;
-    text-align: left;
-    font-weight: light;
-
-    h2{
-        text-align: left;
-        padding-left: 16pt;
-    }
-}
-
 .editable-textarea {
     border: 1px solid #d0d0d0; 
     padding: 10px;
     height: 130px;
-    width: 700px; 
+    width: 650px; 
     cursor: text;
     background-color: #cccbc7;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
@@ -153,19 +142,19 @@ tr{
     background-color: #0f421d; 
 }
 
-.col-5.profile-area{
+.profile-area{
     display: flex;
     flex-direction: column;
     align-items: center;
     color: #a7ca87;
-    justify-content: center;
-    padding-top: 5em;
+    padding-top: 3.5em;
+    padding-left: 9% !important;
     
 }
 
-.col-5.profile-area img {
-    width: 170px; 
-    height: 170px;
+.profile-area img {
+    width: 270px; 
+    height: 270px;
     border-radius: 50%; 
     object-fit: cover; 
     
@@ -175,6 +164,25 @@ tr{
     color: black;
 }
 
+.about-area {
+    padding-top: 5em;
+    padding-right: 4% !important;
+    text-align: left;
+    font-weight: light;
+    
+
+    h2{
+        text-align: left;
+        padding-left: 16pt;
+    }
+}
+
+.view-acc-back{
+    position: absolute;
+    top: 15vh;
+    left: 25vh;
+    color: #355f2e !important;
+}
 
 /* about page reservations*/
 #about-table-header th {
