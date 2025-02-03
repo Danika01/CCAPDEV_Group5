@@ -104,3 +104,23 @@ function deleteReservation() {
     modal.hide();
     window.location.href = "reservations.html" // change to reservations page 
 }
+
+// real-time clock
+function updateClock() {
+    const now = new Date();
+    const clock = document.getElementById('clock');
+    clock.textContent = now.toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    }).replace(' at ', ' - ');
+}
+
+// Update immediately
+updateClock();
+
+// Update every second
+setInterval(updateClock, 1000);
