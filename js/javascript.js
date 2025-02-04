@@ -49,6 +49,11 @@ function updateEndTimeOptions() {
     }
 }
 
+// update selected item in dropdown
+function selectItem(element) {
+    document.getElementById('building-dropdown').textContent = element.textContent;
+}
+
 // Update character count when editing about page
 document.addEventListener("DOMContentLoaded", function () {
     const textarea = document.getElementById("editableText");

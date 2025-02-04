@@ -81,7 +81,7 @@ tr{
     margin-top: 130px;
     background-color:#cdcfc0;
     position: relative;
-    top: -1.3vh;
+    top: -5vh;
 }
 
 .home-reservations{
@@ -425,6 +425,41 @@ a[href].username:hover {
     font-weight: bold; 
     margin-bottom: 1.5em;
 }
+
+.form-floating .dropdown-toggle {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    background-color: white;
+    color: black;
+}
+
+.form-floating .dropdown-toggle::after {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.form-floating label {
+    left: 12px;
+    top: 8px;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 .fade-in {
 	opacity: 1;
