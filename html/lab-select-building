@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>building3</title>
+    <title>Choose Building</title>
     <link rel="stylesheet" href="..\css\Page Styles.css">
 
     <!-- BOOTSTRAP 5 source -->
