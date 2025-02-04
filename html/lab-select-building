@@ -84,14 +84,14 @@
                             </tr>
 
                             <!-- DATA 2-->
-                            <tr class="clickable-row table-row-all-res" data-href="laboratories" style="font-size: 10px;">
+                            <tr class="clickable-row table-row-all-res" data-href="laboratories" style="font-size: 12px;">
                                 <td>Gokongwei Building</td>
                                 <td>G-302B</td>
                                 <td>20</td>
                             </tr>
 
                             <!-- DATA 3 -->
-                            <tr class="clickable-row table-row-all-res" data-href="laboratories" style="font-size: 10px;">
+                            <tr class="clickable-row table-row-all-res" data-href="laboratories" style="font-size: 12px;">
                                 <td>Gokongwei Building</td>
                                 <td>G-304A</td>
                                 <td>20</td>
