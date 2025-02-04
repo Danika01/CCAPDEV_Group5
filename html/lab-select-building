@@ -102,6 +102,7 @@
                     </div>
                 </div>
                 </div>  
+                <button class="add-button-build">ADD ROOM</button>
             </div>
         </div>
     </div>
