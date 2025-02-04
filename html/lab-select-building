@@ -47,7 +47,7 @@
         <div class="container main-area">
             <div class="container">
                 <div class="form-floating">
-                    <div class="dropdown">
+                    <div class="dropdown" style="z-index: 1001;">
                         <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
                             Choose building
                             
