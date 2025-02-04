@@ -196,7 +196,25 @@
                     <div class="container search-lab-seat fade-in" >
                         <div> 
                             <h2> Book a Seat </h2>
+                            
                             <div class="container mt-3">
+                                <div class="form-floating">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
+                                        Choose building
+                                    </button>
+                                    <ul class="dropdown-menu w-100">
+                                        <li><a class="dropdown-item" onclick="selectItem(this)">Gokongwei Building</a></li>
+                                        <li><a class="dropdown-item" onclick="selectItem(this)">Andrew Building</a></li>
+                                        <li><a class="dropdown-item" onclick="selectItem(this)">Velasco Hall</a></li>
+                                        <li><a class="dropdown-item" onclick="selectItem(this)">St. Joseph Hall</a></li>
+                                        <li><a class="dropdown-item" onclick="selectItem(this)">St. La Salle Hall</a></li>
+                                    </ul>
+                                </div>
+                                </div>
+                            </div>
+
+                            <div class="container mt-1">
                                 <div class="form-floating">
                                     <input type="date" class="form-control" id="date" name="date" min="2025-01-01" required>
                                     <label for="date">Select a Date</label>
@@ -218,14 +236,11 @@
                             </div>
 
                             <div class="container mt-4 md-4" id="search-seat">
-                                <input type="submit" class="btn btn-success w-100" value="Search">
+                                <a href="laboratories.html">
+                                <input type="submit" class="btn btn-success w-100" value="Search" >
+                                </a>
                             </div>
 
-                            <!-- Remove when proper backend has been done -->
-                            <div class="container warning">
-                                No Available Slots! </br>
-                                Please select another time
-                            </div>
                         </div>
                     </div>
 
