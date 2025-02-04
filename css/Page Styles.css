@@ -81,7 +81,7 @@ tr{
     margin-top: 130px;
     background-color:#cdcfc0;
     position: relative;
-    top: -5vh;
+    top: -6.5vh;
 }
 
 .home-reservations{
@@ -409,6 +409,8 @@ a[href].username:hover {
     font-weight: bold;
     margin-top: 2em; 
     font-size: 0.9em;
+    top: -2vh;
+    position: relative;
 }
 
 
