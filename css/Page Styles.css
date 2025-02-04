@@ -374,8 +374,22 @@ thead th {
     padding: 1em;
 }
 
+.seat:hover {
+    background-color: #189465; /* grey on hover */
+    cursor: pointer; /* changes cursor to indicate clickability */
+}
+
 .seat.reserved {
     background-color: #423f32; /* dark color for reserved seats */
+}
+
+.seat.reserved:hover {
+    background-color: #635e4d; /* lighter brown for reserved seats hover */
+ }
+
+
+.seat:active {
+    background-color: #2a4a2a; /* slightly darker when clicked */
 }
 
 .username {
@@ -384,15 +398,11 @@ thead th {
     font-weight: normal;
 }
 
-.username:hover {
+/* Only apply hover effects to usernames with href attribute */
+a[href].username:hover {
     color: #b9cba3; /* light green on hover */
     cursor: pointer;
 }
-
-.username.normal {
-    font-weight: normal;
-}
-
 
 #clock {
     text-align: center; 
@@ -415,8 +425,6 @@ thead th {
     font-weight: bold; 
     margin-bottom: 1.5em;
 }
-
-
 
 .fade-in {
 	opacity: 1;
