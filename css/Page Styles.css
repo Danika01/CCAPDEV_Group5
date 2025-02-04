@@ -478,7 +478,132 @@ a[href].username:hover {
 	}
 }
 
+/*LOGIN*/
 
+.maintenance {
+    background-color: #e9e061;
+    color: black;
+    padding: 2px;
+    border-radius: 5px;
+    position: absolute;
+    right: 10px;
+}
+
+.full {
+    background-color: #d76868;
+    color: black;
+    padding: 2px;
+    border-radius: 5px;
+    position: absolute;
+    right: 10px;
+}
+
+.logInButton, .signInButton {
+    width: 50px;
+    height: 20px;
+    background-color: #b9b4a2; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; 
+    font-size: 12px;
+    text-decoration: none;
+    color: white;
+}
+
+.logIn-textbox {
+    width: 200px;
+    height: 40px;
+    background-color: #355f2e;
+    border: 1px solid #d0d0d0;
+    border-radius: 5px; 
+    padding: 10px; 
+    font-size: 12px; 
+    color: black; 
+    resize: none;
+    outline: none;
+}
+
+.logIn-textbox::placeholder {
+    color: #a7ca87 !important; 
+    font-weight: bold !important; 
+    opacity: 1; 
+    text-decoration: none;
+}
+
+.square {
+    width: 15px;
+    height: 76px;
+    background-color: #a7ca87;
+    position: absolute;
+    right: 620px;
+}
+
+.hollow-circle{
+    width: 12px; 
+    height: 12px;
+    border: 2px solid #a6a6a6; 
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.circle-text-container {
+    display: flex;
+    align-items: center; 
+    gap: 3px;
+}
+
+.navContainer {
+    display: flex; 
+    gap: 1px;  
+}
+
+.body-container{
+    display: flex;  
+    flex-direction: row;
+}
+
+.halfbody-container{
+    display:flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+}
+
+.boxOuter{
+    width: 400px;
+    height: 230px;
+}
+
+.boxInner{
+    width: 370px;
+    height: 180px;
+}
+
+.boxUpdates{
+    width: 350px;
+    height: 30px;
+    background-color: #b9b4a2;
+    top: 9px;
+    gap: 5px;
+    position: absolute;
+}
+
+.info-container{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding-top:6px;
+}
+
+.logIn-container{
+    display: flex;
+    align-items: left;
+    flex-direction: column;
+    gap: 1px;
+    padding-top:6px;
+}
 
 
 
