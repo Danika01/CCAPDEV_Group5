@@ -40,16 +40,7 @@
                         </div>
                         <div class="logIn-container">
                             <a href="home.html" class="logInButton">Login</a>
-                            <button onclick="document.getElementById('signupModal').showModal();" style="width: 57px;
-                            height: 20px;
-                            background-color: #b9b4a2; 
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border-radius: 5px; 
-                            font-size: 12px;
-                            text-decoration: none;
-                            color: #423f32;">Sign In</button>
+                            <button onclick="document.getElementById('signupModal').showModal();" class="sign-up-btn">Sign Up</button>
                             <dialog style="height:600px; width: 500px; border-color: #b9b4a2; border-style: solid; border-width:10px;" id="signupModal">
                                 <form method="dialog">
                                     <div class="signUp-container">
@@ -58,13 +49,13 @@
                                         <p>Create an account to make your reservations.</p>
                                         <div class="line"></div>
                                         <div class="nameSignup-container">
-                                            <input style="width: 200px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="First Name">
-                                            <input style="width: 200px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="Last Name">
+                                            <input class="name-field" type="text" placeholder="First Name">
+                                            <input class="name-field" type="text" placeholder="Last Name">
                                         </div>             
-                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="Username">
-                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="email" placeholder="DLSU Email">
-                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="password" placeholder="Password">
-                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="password" placeholder="Confirm Password">
+                                        <input class="reg-field" type="text" placeholder="Username">
+                                        <input class="reg-field" type="email" placeholder="DLSU Email">
+                                        <input class="reg-field" type="password" placeholder="Password">
+                                        <input class="reg-field" type="password" placeholder="Confirm Password">
                                         <button style="width: 100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;" onclick="document.getElementById('successModal').showModal();">SIGN UP</button>
                                         <div class="line"></div>
                                         <a style="font-size: 10px; color:#423f32" href="login.html">Sign up as a lab technician</a>
@@ -77,7 +68,9 @@
                                     <div class="line"></div>
                                     <p style="padding: 20px;">Account Successfully Created!</p>
                                     <div class="line" style="height:2.5px;"></div>
+                                    <a href="home.html">
                                     <button style="gap:20px; width:100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;">CLOSE</button>
+                                    </a>
                                 </form>
                             </dialog>                                                        
                         </div>

@@ -50,6 +50,7 @@ h2{
 
 tr{
     cursor: pointer;
+    text-align: center;
 }
 
 .editable-textarea {
@@ -71,7 +72,7 @@ tr{
 .container.main-area{
     background-color: #efeae1;
     padding: 3%;
-    height: 100vh;
+    height: 115vh;
 }
 
 .current-reservations{
@@ -101,10 +102,6 @@ tr{
     flex-direction: column; 
 }
 
-tr{
-    text-align: center;
-}
-
 .search-lab-seat{
     border: 5px solid #355f2e;
     padding: 10px;
@@ -123,7 +120,7 @@ tr{
 }
 
 .btn-danger {
-    padding: 10px 20px;
+    padding: 10px 10px;
     cursor: pointer;
 }
 
@@ -226,7 +223,9 @@ thead th {
 #about-reservations{
     max-height: 175px;
     overflow: auto;
+    
 }
+
 
 /* EDIT RESERVATION */
 .edit-reservation{
@@ -455,14 +454,6 @@ a[href].username:hover {
 
 
 
-
-
-
-
-
-
-
-
 .fade-in {
 	opacity: 1;
 	animation-name: fadeInOpacity;
@@ -479,6 +470,8 @@ a[href].username:hover {
 		opacity: 1;
 	}
 }
+
+
 
 /*LOGIN*/
 
@@ -635,6 +628,7 @@ input {
     border: 1px solid #ccc;
 }
 
+/*
 button {
     background-color: #1f6d3a;
     color: white;
@@ -644,7 +638,7 @@ button {
     border-radius: 5px;
     width: 85%;
     margin: 10px 0;
-}
+} */
 
 button:hover {
     background-color: #144d2b;
@@ -696,6 +690,45 @@ button:hover {
 .add-button-build:hover {
     background-color: #234226;
 }
+
+
+.edit-prof-btn{
+    text-align: center !important;
+    width: 150px;
+}
+
+.edit-res-btn{
+    width: 170px;
+}
+
+/* LOGIN/SIGN UP PAGE */
+.sign-up-btn{
+    width: 57px;
+    height: 20px;
+    background-color: #b9b4a2; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; 
+    font-size: 12px;
+    text-decoration: none;
+    color: #423f32;
+}
+
+.name-field{
+    width: 200px; 
+    background-color: #E1E1E1; 
+    border-color: #727272;
+}
+
+.reg-field{
+    width: 420px; 
+    background-color: #E1E1E1; 
+    border-color: #727272;
+}
+
+
+
 
 
 

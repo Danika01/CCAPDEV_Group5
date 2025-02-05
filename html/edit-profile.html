@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home Page</title>
+    <title>Edit Profile</title>
     <link rel="stylesheet" href="..\css\Page Styles.css">
 
     <!-- BOOTSTRAP 5 source -->
@@ -32,10 +32,10 @@
                         <a class="nav-link" href="reservations.html">Reservations</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="laboratories.html">Laboratories</a>
+                        <a class="nav-link" href="lab-select-building.html">Laboratories</a>
                     </li>
                     <li class="nav-item nav-item-right">
-                        <a class="nav-link" href="#">Logout</a>
+                        <a class="nav-link" href="login.html">Logout</a>
                     </li>
                 </ul>
                 </div>
@@ -50,7 +50,7 @@
                     <img src="../Images/test.jpg" class="rounded-circle"  width="500" height="500" alt="Profile Photo">
                     
                     <div class="mt-4" id="save-profile">
-                        <input type="submit" class="btn update-profile-bt w-80" value="Save Profile" data-bs-toggle="modal" data-bs-target="#saveProfileUpdate">
+                        <input type="submit" class="btn update-profile-bt w-80 edit-res-btn" value="Save Profile" data-bs-toggle="modal" data-bs-target="#saveProfileUpdate">
                         <div>
                             <div class="modal fade" id="saveProfileUpdate" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -72,7 +72,7 @@
                     </div>
                     
                     <div class="mt-2" id="update-photo">
-                        <input type="submit" class="btn update-profile-bt w-80" value="Update Photo" onclick="document.getElementById('fileInput').click()" style="background-color: #a7ca87 !important">
+                        <input type="submit" class="btn update-profile-bt w-80 edit-res-btn" value="Update Photo" onclick="document.getElementById('fileInput').click()" style="background-color: #a7ca87 !important">
                         <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage(event)">
                     </div>
                 </div>

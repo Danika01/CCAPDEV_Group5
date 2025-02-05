@@ -89,7 +89,7 @@ function deleteAccount() {
     alert("Your account has been deleted.");
     var modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
     modal.hide();
-    window.location.href = "home.html" // change to login page 
+    window.location.href = "login.html" // change to login page 
 }
 
 // redirect table rows
