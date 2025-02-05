@@ -40,7 +40,42 @@
                         </div>
                         <div class="logIn-container">
                             <a href="home.html" class="logInButton">Login</a>
-                            <a href="signup.html" class="signInButton">Sign Up</a>
+                            <button onclick="document.getElementById('signupModal').showModal();" style="width: 57px;
+                            height: 20px;
+                            background-color: #b9b4a2; 
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 5px; 
+                            font-size: 12px;
+                            text-decoration: none;
+                            color: white;">Sign In</button>
+                            <dialog style="height:600px; width: 500px;" id="signupModal">
+                                <form method="dialog">
+                                    <div class="signUp-container">
+                                        <img src="..\Images\ANIMO.png" style="width: 200px; height:auto;">
+                                        <p>Create an account to make your reservations.</p>
+                                        <p>----------------------------------</p>  
+                                        <div class="nameSignup-container">
+                                            <input style="width: 200px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="First Name">
+                                            <input style="width: 200px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="Last Name">
+                                        </div>             
+                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="Username">
+                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="email" placeholder="DLSU Email">
+                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="password" placeholder="Password">
+                                        <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="password" placeholder="Confirm Password">
+                                        <button style="width: 100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;" onclick="document.getElementById('successModal').showModal();">SIGN UP</button>
+                                        <button style="width:100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;" onclick="document.getElementById('signupModal').close();">CANCEL</button>
+                                    </div>
+                                    </form>
+                            </dialog>
+                            <dialog id="successModal">
+                                <form method="dialog">
+                                    <img src="..\Images\ANIMO.png" style="width: 200px; height:auto;">
+                                    <p>Account Successfully Created!</p>
+                                    <button style="border-radius: 5px; width:200px; height 70px;">CONTINUE</button>
+                                </form>
+                            </dialog>                                                        
                         </div>
                     </div>
                 </ul>
