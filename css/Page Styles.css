@@ -508,7 +508,7 @@ a[href].username:hover {
     border-radius: 5px; 
     font-size: 12px;
     text-decoration: none;
-    color: white;
+    color: #423f32;
 }
 
 .logIn-textbox {
@@ -545,6 +545,7 @@ a[href].username:hover {
     border: 2px solid #a6a6a6; 
     border-radius: 50%;
     background-color: transparent;
+    cursor: pointer;
 }
 
 .circle-text-container {
@@ -561,6 +562,7 @@ a[href].username:hover {
 .body-container{
     display: flex;  
     flex-direction: row;
+    background-color: #fbf6f3;
 }
 
 .halfbody-container{
@@ -611,11 +613,12 @@ dialog {
     padding: 20px;
     border-radius: 30px;
     border-color: #b9b4a2;
+    border-style: solid;
     width: 350px;
     text-align: center;
     border: none;
     gap:30px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
 }
 
 dialog::backdrop {
@@ -656,6 +659,12 @@ button:hover {
     display:flex;
     flex-direction: row;
     gap:20px;
+}
+
+.line{
+    width:300px;
+    height: 2px;
+    background-color: #423f32;
 }
 
 /* SELECT BUILDING */
