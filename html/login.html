@@ -27,7 +27,7 @@
                         <div class="logIn-container" style="right:20px; position:relative;">
                             <textarea class="logIn-textbox" placeholder="USERNAME"></textarea>
                             <div class="circle-text-container">
-                                <div class="hollow-circle"></div>
+                                <div class="hollow-circle" style=""></div>
                                 <span class="circle-text" style="font-size: 10px; color: #efeae1;">Remember me</span>
                             
                             </div>
@@ -49,13 +49,14 @@
                             border-radius: 5px; 
                             font-size: 12px;
                             text-decoration: none;
-                            color: white;">Sign In</button>
-                            <dialog style="height:600px; width: 500px;" id="signupModal">
+                            color: #423f32;">Sign In</button>
+                            <dialog style="height:600px; width: 500px; border-color: #b9b4a2; border-style: solid; border-width:10px;" id="signupModal">
                                 <form method="dialog">
                                     <div class="signUp-container">
+                                        <img src="..\Images\x.png" style="position: absolute; width:40px; height:auto; left: 30px; cursor: pointer;" onclick="document.getElementById('signupModal').close();">                                        
                                         <img src="..\Images\ANIMO.png" style="width: 200px; height:auto;">
                                         <p>Create an account to make your reservations.</p>
-                                        <p>----------------------------------</p>  
+                                        <div class="line"></div>
                                         <div class="nameSignup-container">
                                             <input style="width: 200px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="First Name">
                                             <input style="width: 200px; background-color: #E1E1E1; border-color: #727272;" type="text" placeholder="Last Name">
@@ -65,15 +66,18 @@
                                         <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="password" placeholder="Password">
                                         <input style="width: 420px; background-color: #E1E1E1; border-color: #727272;" type="password" placeholder="Confirm Password">
                                         <button style="width: 100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;" onclick="document.getElementById('successModal').showModal();">SIGN UP</button>
-                                        <button style="width:100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;" onclick="document.getElementById('signupModal').close();">CANCEL</button>
+                                        <div class="line"></div>
+                                        <a style="font-size: 10px; color:#423f32" href="login.html">Sign up as a lab technician</a>
                                     </div>
                                     </form>
                             </dialog>
-                            <dialog id="successModal">
+                            <dialog style="border-color: #b9b4a2; border-style: solid; border-width:10px;" id="successModal">
                                 <form method="dialog">
                                     <img src="..\Images\ANIMO.png" style="width: 200px; height:auto;">
-                                    <p>Account Successfully Created!</p>
-                                    <button style="border-radius: 5px; width:200px; height 70px;">CONTINUE</button>
+                                    <div class="line"></div>
+                                    <p style="padding: 20px;">Account Successfully Created!</p>
+                                    <div class="line" style="height:2.5px;"></div>
+                                    <button style="gap:20px; width:100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;">CLOSE</button>
                                 </form>
                             </dialog>                                                        
                         </div>
@@ -90,7 +94,7 @@
             </div>         
             <div class ="halfbody-container">
                 <h1 style="color:#355f2e; padding-left: 175px; padding-top: 20px; font-style:bold; font-size: 50px;">Lab Reservation</h1>
-                <div class="boxOuter" style="position: absolute; top: 100px; left: 155px; background-color: #cdcfc0;">
+                <div class="boxOuter" style="position: absolute; top: 100px; left: 155px; background-color: #cdcfc0; border-radius: 20px;">
                     <p style="font-weight: bold; font-size: 20px; top:2px; text-align: center;">NEWS</p>
                 </div>
                 <div class="boxInner" style="position: absolute; top: 135px; left: 170px; background-color: #b9b4a2">
@@ -104,8 +108,8 @@
                     </ul>
                 </div>
                 
-                <div class="boxOuter" style="position: absolute; top: 350px; left: 155px; background-color: #b9b4a2">
-                    <p style="font-weight: bold; font-size: 20px; top:2px; text-align: center;">INFORMATION</p>
+                <div class="boxOuter" style="position: absolute; top: 350px; left: 155px; background-color: #b9b4a2; border-radius: 20px;">
+                    <p style="font-weight: bold; font-size: 20px; top:2px; text-align: center;">UNAVAILABLE ROOMS</p>
                 </div>
                 <div class="boxInner" style="position: absolute; top: 385px; left: 170px; background-color: #cdcfc0;">
                     <div class="boxUpdates", style="left: 10px;">
