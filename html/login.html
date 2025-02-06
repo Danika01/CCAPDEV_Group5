@@ -25,12 +25,12 @@
                     <div class="square" style="top: 0px;"></div>
                     <div class="navContainer" style="flex-direction: row; position: absolute; right:120px;">
                         <div class="logIn-container" style="right:20px; position:relative;">
-                            <textarea class="logIn-textbox" placeholder="USERNAME"></textarea>
+                            <textarea class="logIn-textbox" placeholder="EMAIL"></textarea>
                             <div class="circle-text-container">
                             
                                 <div class="form-check d-flex align-items-center">
                                     <input class="form-check-input" type="checkbox" value="" id="rememberMe" style="scale: 0.5; margin-top: -5px;">
-                                    <label class="form-check-label" for="checkbox2" style="font-size: 10px; color: #efeae1; margin-top: -5px;">
+                                    <label class="form-check-label loginLabel" for="checkbox2" style="margin-top: -5px;">
                                         Remember me
                                     </label>
                                 </div>
@@ -38,15 +38,15 @@
                             </div>
                         </div>
                         <div class="logIn-container" style="right:10px; position:relative;">
-                            <textarea class="logIn-textbox" placeholder="PASSWORD"></textarea>
+                            <input class="logIn-textbox" type="password" id="password" placeholder="PASSWORD">
                             <div class="circle-text-container">
-                                <a href="login.html" style="font-size: 10px; color: #efeae1; text-decoration: none;">Forgot password?</span>
+                                <a class="loginLabel" href="login.html" style="text-decoration: none;" >Forgot password?</span>
                             </div>
                         </div>
                         <div class="logIn-container">
                             <a href="home.html" class="logInButton">Login</a>
-                            <button onclick="document.getElementById('signupModal').showModal();" class="sign-up-btn">Sign Up</button>
-                            <dialog style="height:600px; width: 500px; border-color: #b9b4a2; border-style: solid; border-width:10px;" id="signupModal">
+                            <button onclick="document.getElementById('signupModal').showModal();" class="logInButton">Sign Up</button>
+                            <dialog style="height:550px; width: 500px; border-color: #b9b4a2; border-style: solid; border-width:10px;" id="signupModal">
                                 <form method="dialog">
                                     <div class="signUp-container">
                                         <img src="..\Images\x.png" style="position: absolute; width:40px; height:auto; left: 30px; cursor: pointer;" onclick="document.getElementById('signupModal').close();">                                        
@@ -57,7 +57,6 @@
                                             <input class="name-field" type="text" placeholder="First Name">
                                             <input class="name-field" type="text" placeholder="Last Name">
                                         </div>             
-                                        <input class="reg-field" type="text" placeholder="Username">
                                         <input class="reg-field" type="email" placeholder="DLSU Email">
                                         <input class="reg-field" type="password" placeholder="Password">
                                         <input class="reg-field" type="password" placeholder="Confirm Password">
