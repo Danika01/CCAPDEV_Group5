@@ -38,7 +38,8 @@
 
 .main-area{
     background-color: #efeae1;
-    height: 100vh;
+    min-height: max-content;
+    
 }
 
 h2{
