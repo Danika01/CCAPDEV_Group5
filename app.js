@@ -4,6 +4,18 @@
     npm install express-session
 */
 
+
+const uri = "mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/?retryWrites=true&w=majority&appName=G5Cluster";
+const mongoose = require('mongoose');
+main().catch(err => console.log(err));
+async function main() {
+    try {
+        await mongoose.connect(uri);
+    } catch (err) {
+        console.error(err);
+    }
+}
+
 const express = require('express');
 const server = express();
 const dataModule = require('./data.js');
@@ -15,6 +27,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
 const handlebars = require('express-handlebars');
+const {mongo} = require("mongoose");
 server.set('view engine', 'hbs');
 server.engine('hbs', handlebars.engine({
     extname: 'hbs',
@@ -246,7 +259,11 @@ server.get('/logout', function(req, resp) {
     resp.redirect('/login');
 });
 
-const port = process.env.PORT || 9090;
-server.listen(port, function(){
-    console.log('Listening at port '+port);
+
+const port = process.env.PORT || 3000;
+
+mongoose.connection.once('open', () => {
+    console.log('Connected to MongoDB');
+    server.listen(port, () => console.log('Listening at port '+port));
 });
+
