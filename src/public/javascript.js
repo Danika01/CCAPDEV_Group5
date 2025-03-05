@@ -1,7 +1,7 @@
 console.log("js loaded");
 
 
-// SET DEFAULT DATE TO CURRENT DATE
+// SET DEFAULT DATE TO CURRENT DATE and hide ADD BUTTON
 document.addEventListener("DOMContentLoaded", function () {
     let dateInput = document.getElementById("date");
     let today = new Date();
@@ -13,7 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
         dateInput.value = dateInput.min;
     }
 });
-
 
 
 // generate time option in 30 mins interval
@@ -156,7 +155,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
-
 
 // update profile photo
 function previewImage(event) {
