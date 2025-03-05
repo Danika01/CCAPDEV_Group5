@@ -1,0 +1,61 @@
+{
+    "announcements": [
+        "Gokongwei Room G-402 has finished its renovation and is open for students.",
+        "Students can now choose walk-in reservations at the Admin Office."
+    ],
+    "unavailableRooms": [
+        { "room": "G-205A", "date": "January 8 - 15, 2025", "status": "Under Maintenance" },
+        { "room": "A-1101", "date": "March 8, 2025", "status": "Full Capacity" }
+    ],
+    "user": [
+        {
+            "name": "John Doe",
+            "email": "john_doe@dlsu.edu.ph",
+            "password": "password",
+            "aboutInfo": "This is a sample bio for John Doe.",
+            "pfp": "../Images/test.jpg",
+            "type": "User"
+        },
+        {
+            "name": "Louis Lu",
+            "email": "louis_lu@dlsu.edu.ph",
+            "password": "PASS",
+            "aboutInfo": "This is a sample bio for Louis Lu.",
+            "pfp": "../Images/aristotle.jpg",
+            "type": "Admin"
+        }
+    ],
+    "reservations": [
+        {
+            "reservationId": "20250128-0001",
+            "requestDate": "January 28, 2025",
+            "requestTime": "19:05H",
+            "reservationDate": "January 29, 2025",
+            "reservationTime": "09:00H to 14:30H",
+            "building": "Gokongwei Building",
+            "room": "G-302A",
+            "seatNumber": 18
+        },
+        {
+            "reservationId": "20250128-0002",
+            "requestDate": "January 28, 2025",
+            "requestTime": "20:05H",
+            "reservationDate": "January 29, 2025",
+            "reservationTime": "09:00H to 14:30H",
+            "building": "Gokongwei Building",
+            "room": "G-302B",
+            "seatNumber": 15
+        },
+        {
+            "reservationId": "20250130-0001",
+            "requestDate": "January 30, 2025",
+            "requestTime": "15:01H",
+            "reservationDate": "January 31, 2025",
+            "reservationTime": "09:00H to 14:30H",
+            "building": "Gokongwei Building",
+            "room": "G-304A",
+            "seatNumber": 5
+        }
+    ]
+    
+}

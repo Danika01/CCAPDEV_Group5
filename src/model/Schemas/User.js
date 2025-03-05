@@ -23,9 +23,7 @@ const userSchema = new Schema({
         required: true
     },
     roles: {
-        User: {
-            type: Number
-        },
+        User: Number,
         Technician: Number
     },
     refreshToken: Number
