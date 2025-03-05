@@ -1,0 +1,45 @@
+<div class="container">
+    {{> navbar pfp=pfp}}
+
+    <!-- BODY -->
+    <div class="container main-area">
+    <div class="row">
+        <div class="col-5 profile-area"> 
+            <img src="{{pfp}}" class="rounded-circle"  width="500" height="500" alt="Profile Photo">
+            
+            <div class="mt-4" id="save-profile">
+                <input type="submit" class="btn update-profile-bt w-80 edit-res-btn" value="Save Profile" data-bs-toggle="modal" data-bs-target="#saveProfileUpdate">
+                <div>
+                    <div class="modal fade" id="saveProfileUpdate" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="saveProfileModalLable">Successfully Saved Profile</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                Edited profile has been saved.
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.location.href='/account';">Continue</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                </div>
+            </div>
+            
+            <div class="mt-2" id="update-photo">
+                <input type="submit" class="btn update-profile-bt w-80 edit-res-btn" value="Update Photo" onclick="document.getElementById('fileInput').click()" style="background-color: #a7ca87 !important">
+                <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="previewImage(event)">
+            </div>
+        </div>
+        <div class="col-7 about-area">
+            <h2>{{name}}</h2>
+            <textarea id="editableText" class="editable-textarea" maxlength="300">{{aboutInfo}}</textarea>
+            <p id="charCount"> 0 / 300</p>
+        </div>
+    </div>
+    </div>
+</div>
+
