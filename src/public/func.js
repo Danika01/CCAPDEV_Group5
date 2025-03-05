@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-   // lab-select-building seat clicks
+   /*// lab-select-building seat clicks
    document.querySelectorAll('.seat').forEach(seat => {
        seat.addEventListener('click', () => {
            // Get the seat number from the clicked seat's data attribute
@@ -15,38 +15,30 @@ document.addEventListener('DOMContentLoaded', () => {
            document.getElementById('modalDate').innerText = date;
            document.getElementById('modalTime').innerText = `${startTime} to ${endTime}`;
        });
-   });
+   }); */
+  
+   // count text box characters
+   window.onload = function () {
+        const textarea = document.getElementById("editableText");
+        const charCount = document.getElementById("charCount");
 
-   // room and home "Search" button
-   document.getElementById('search-seat').addEventListener('click', () => {
-       const date = document.getElementById('date').value;
-       const startTime = document.getElementById('startTime').value;
-       const endTime = document.getElementById('endTime').value;
+        if (!textarea || !charCount) {
+            console.error("Textarea or charCount element NOT FOUND.");
+            return;
+        }
 
-       if (!date || !startTime || !endTime) {
-           alert('Please fill out all fields (date, start time, and end time).');
-           return;
-       }
+        function updateCharacterCount() { 
+            charCount.textContent = textarea.value.length + " / 300";
+        }
 
-       // Optional
-       console.log('Searching for seats with:', { date, startTime, endTime });
-
-       // Display a message if no seats are available
-       const availableSeats = document.querySelectorAll('.seat:not(.reserved)');
-       if (availableSeats.length === 0) {
-           alert('No available seats for the selected date and time.');
-       } else {
-           alert(`Found ${availableSeats.length} available seats.`);
-       }
-   });
-
-   // lab-select-building - filter table rows based on selected building
-    window.selectItem = function(item) {
-        const selectedBuilding = item.innerText.trim();
-        document.getElementById('selected-building-text').innerText = selectedBuilding;
-        console.log("Selected Building:", selectedBuilding);
-        console.log("HEEEEEEEEEELPPPP");    
+        textarea.addEventListener("input", updateCharacterCount);
+        updateCharacterCount();
     };
+
+
+
+
+   
 
                    
     // "Confirm" button event in the modals

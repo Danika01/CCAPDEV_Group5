@@ -75,10 +75,15 @@ server.post('/login', function(req, resp) {
     }
 });
 
+// used for lab-select-building, room
+let buildings =  dataModule.getLaboratories();
+const defaultSeats = 20; // Default number of seats for all rooms
+let uniqueBuildings = [...new Set(buildings.map(lab => lab.building))];
+
 // render home.hbs
 server.get('/home', function(req, resp) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email);
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
     const reservations = dataModule.getReservationData(); 
 
     resp.render('home', {
@@ -86,61 +91,68 @@ server.get('/home', function(req, resp) {
         title: 'Animo LabLink',
         reservations: reservations,
         currentRoute: 'home',
-        pfp: userData.pfp
+        uniqueBuildings: uniqueBuildings,
+        pfp: userData.pfp || '/Images/default.jpg'
     });
 });
 
 // render account.hbs
 server.get('/account', function(req, resp) {
     const reservations = dataModule.getReservationData();
-    const email = req.session.email; 
-    const userData = dataModule.getUserData(email); 
+    let email = req.session.email; 
+
+    // USE EMAIL VARIABLE WHEN DONE CODING SESSION 
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");  
+
+    console.log("User Data:", userData); // Debugging log
 
     resp.render('account', {
         layout: 'index',
         title: 'Account Page',
         name: userData.name, 
         aboutInfo: userData.aboutInfo,
-        pfp: userData.pfp,
+        pfp: userData.pfp, // Should contain the image path
         reservations: reservations,
         currentRoute: 'account'
     });
 });
 
+
 // render edit-profile.hbs
 server.get('/edit-profile', function(req, resp) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email); 
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
 
     resp.render('edit-profile', {
         layout: 'index',
         title: 'Edit Profile',
         name: userData.name,
         aboutInfo: userData.aboutInfo,
-        pfp: userData.pfp,
+        pfp: userData.pfp || '/Images/default.jpg'
     });
 });
-
-// used for lab-select-building, room
-let buildings =  dataModule.getLaboratories();
-const defaultSeats = 20; // Default number of seats for all rooms
-const uniqueBuildings = [...new Set(buildings.map(lab => lab.building))];
 
 // render lab-select-building.hbs
 server.get('/lab-select-building', function(req, resp) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email); 
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
+    let selectedBuilding = req.query.building || uniqueBuildings[0];
+    let filteredRooms = buildings.filter(b => b.building === selectedBuilding);
 
     resp.render('lab-select-building', {
         layout: 'index',
         title: 'Select Building and Room',
-        buildings: buildings, 
-        uniqueBuildings: uniqueBuildings,
+        uniqueBuildings, 
+        buildings: filteredRooms, 
         defaultSeats: defaultSeats,
         currentRoute: 'lab-select-building',
-        pfp: userData.pfp
+        pfp: userData.pfp || '/Images/default.jpg',
+        selectedBuilding
     });
 });
+
+
+
 
 // update table to only show rooms on selected building
 server.get('/get-rooms', (req, res) => {
@@ -151,42 +163,43 @@ server.get('/get-rooms', (req, res) => {
 });
 
 
-
-
-
 // render reservation.hbs
 server.get('/reservations', function(req, resp) {
     const reservations = dataModule.getReservationData(); 
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email); 
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
 
     resp.render('reservations', {
         layout: 'index',
         title: 'Reservations',
         reservations: reservations,
         currentRoute: 'reservations',
-        pfp: userData.pfp
+        pfp: userData.pfp || '/Images/default.jpg'
     });
 });
 
 // render room.hbs
 server.get('/room/:building/:room', function(req, resp) {
-    const seatData = dataModule.getSeatData(); // Get seat data from data.js
-    const building = req.params.building; // Get building that the user is currently viewing from URL
-    const room = req.params.room; // Get room from URL
+    const { building, room } = req.params; 
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email); 
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
+    
+    const allSeats = dataModule.getSeatData(); 
+    const seatData = allSeats.filter(seat => seat.building === building && seat.room === room);
+    console.log(seatData);
 
+    // Render the room.hbs view with the filtered data
     resp.render('room', {
         layout: 'index',
-        title: 'Room Page',
+        title: `Room ${room}`,
         seats: seatData, 
-        building: building, // Building the user is currently viewing
-        room: room, // Room the user is currently viewing
-        buildings: buildings, // Array used to dynamically generate links or options for a dropdown or list of buildings
-        pfp: userData.pfp
+        building: building,
+        room: room,
+        buildings: buildings,
+        pfp: userData.pfp || '/Images/default.jpg'
     });
 });
+
 
 // render admin-lab-reserve.hbs
 server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
@@ -194,7 +207,7 @@ server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
     const building = req.params.building; 
     const room = req.params.room; 
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email); 
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
 
     resp.render('admin-lab-reserve', {
         layout: 'index',
@@ -203,7 +216,7 @@ server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
         building: building, 
         room: room, 
         buildings: buildings, 
-        pfp: userData.pfp
+        pfp: userData.pfp || '/Images/default.jpg'
     });
 });
 
@@ -214,7 +227,7 @@ server.get('/edit-reservation/:reservationId', function(req, resp) {
     const reservation = reservations.find(res => res.reservationId === reservationId); // Find the specific reservation by ID
 
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email); 
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
     
     if (!reservation) {
         // Handle case where reservation is not found
@@ -226,7 +239,7 @@ server.get('/edit-reservation/:reservationId', function(req, resp) {
         layout: 'index',
         title: 'Edit Reservation',
         reservations: [reservation], // Pass the reservation as an array (for {{#each}})
-        pfp: userData.pfp
+        pfp: userData.pfp || '/Images/default.jpg'
     });
 });
 
@@ -235,7 +248,7 @@ server.get('/logout', function(req, resp) {
     resp.redirect('/login');
 });
 
-const port = process.env.PORT || 9090;
+const port = process.env.PORT || 3000;
 server.listen(port, function(){
     console.log('Listening at port '+port);
 });

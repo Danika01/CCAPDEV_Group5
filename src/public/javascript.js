@@ -1,23 +1,40 @@
-// Function to generate time options with 30-minute intervals
+console.log("js loaded");
+
+
+// SET DEFAULT DATE TO CURRENT DATE
+document.addEventListener("DOMContentLoaded", function () {
+    let dateInput = document.getElementById("date");
+    let today = new Date();
+    let formattedDate = today.toISOString().split("T")[0];
+
+    dateInput.value = formattedDate;
+
+    if (dateInput.min && dateInput.value < dateInput.min) {
+        dateInput.value = dateInput.min;
+    }
+});
+
+
+
+// generate time option in 30 mins interval
 function generateTimeOptions() {
     let startTimeSelect = document.getElementById("startTime");
-    let endTimeSelect = document.getElementById("endTime");
-    // Function to format time as HH:mm
+
     function formatTime(hour, minute) {
         return (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
     }
-    // Generate options for start and end time from 8 AM to 6 PM
-    for (let hour = 8; hour <= 17; hour++) {
+
+    for (let hour = 8; hour <= 17; hour++) { 
         for (let minute = 0; minute < 60; minute += 30) {
             let timeOption = formatTime(hour, minute);
-            // Add option to start time dropdown
             let startOption = document.createElement("option");
             startOption.value = timeOption;
             startOption.textContent = timeOption;
             startTimeSelect.appendChild(startOption);
         }
     }
-    // Populate end time dropdown initially with all options
+
+    startTimeSelect.addEventListener("change", updateEndTimeOptions);
     updateEndTimeOptions();
 }
 
@@ -26,21 +43,16 @@ function updateEndTimeOptions() {
     let startTime = document.getElementById("startTime").value;
     let endTimeSelect = document.getElementById("endTime");
 
-    // Clear current options
     endTimeSelect.innerHTML = "";
-
-    // Function to format time as HH:mm
-    function formatTime(hour, minute) {
-        return (hour < 10 ? '0' : '') + hour + ':' + (minute < 10 ? '0' : '') + minute;
-    }
-
-    // If no start time is selected, reset end time
     if (!startTime) return;
+
     let [startHour, startMinute] = startTime.split(':').map(Number);
+
     for (let hour = startHour; hour <= 18; hour++) {
         for (let minute = (hour === startHour ? startMinute + 30 : 0); minute < 60; minute += 30) {
-            let timeOption = formatTime(hour, minute);
+            if (hour === 18 && minute > 0) break; // Stop at 18:00 (6:00 PM)
             
+            let timeOption = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
             let endOption = document.createElement("option");
             endOption.value = timeOption;
             endOption.textContent = timeOption;
@@ -49,9 +61,15 @@ function updateEndTimeOptions() {
     }
 }
 
+// Populate dropdowns when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+    generateTimeOptions(); 
+});
+
+
 // update selected item in dropdown
 function selectItem(element) {
-    const building = element.textContent.trim(); // Get selected building name
+    let building = element.textContent.trim(); // Get selected building name
     document.getElementById('selected-building-text').textContent = building;
 
     // AJAX request to fetch rooms
@@ -62,6 +80,54 @@ function selectItem(element) {
         })
         .catch(error => console.error('Error fetching rooms:', error));
 }
+
+function selectBuilding(building) {
+    document.getElementById('selected-building-text').innerText = building;
+    window.location.href = `/lab-select-building?building=${encodeURIComponent(building)}`;
+}
+
+
+let selectedBuilding = "Choose a Building";
+let selectedDate = null;
+let startTime = null;
+let endTime = null;
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Function to update selected building
+    window.selectItem = function (item) {
+        selectedBuilding = item.innerText.trim();
+        document.getElementById('selected-building-text').innerText = selectedBuilding;
+        getSelectedValues(); 
+    };
+
+    function getSelectedValues() {
+        selectedDate = document.getElementById("date").value;
+        startTime = document.getElementById("startTime").value;
+        endTime = document.getElementById("endTime").value;
+
+        console.log("Building:", selectedBuilding);
+        console.log("Selected Date:", selectedDate);
+        console.log("Start Time:", startTime);
+        console.log("End Time:", endTime);
+    }
+
+    document.getElementById("date").addEventListener("change", getSelectedValues);
+    document.getElementById("startTime").addEventListener("change", getSelectedValues);
+    document.getElementById("endTime").addEventListener("change", getSelectedValues);
+});
+
+// room and home "Search" button
+// LINK THIS TO DATABASE
+document.getElementById('search-seat').addEventListener('click', () => {
+    if (!selectedBuilding || selectedBuilding === "Choose a Building") {
+        alert('Please select a building.');
+        return;
+    } 
+
+    console.log('Redirecting with:', { selectedBuilding });
+    window.location.href = `/lab-select-building?building=${encodeURIComponent(selectedBuilding)}`;
+});
+
 
 // update the room table dynamically
 function updateRoomTable(rooms) {
@@ -81,17 +147,14 @@ function updateRoomTable(rooms) {
     });
 }
 
-
-
-// Update character count when editing about page
+// redirect to room page
 document.addEventListener("DOMContentLoaded", function () {
-    const textarea = document.getElementById("editableText");
-    const charCount = document.getElementById("charCount");
-    function updateCharacterCount() { // count character in text area
-        charCount.textContent = textarea.value.length + " / 300";
-    }
-    textarea.addEventListener("input", updateCharacterCount);
-    updateCharacterCount();
+    document.getElementById("room-list").addEventListener("click", function (event) {
+        let row = event.target.closest(".clickable-row"); // Get the clicked row
+        if (row && row.dataset.href) {
+            window.location.href = row.dataset.href;
+        }
+    });
 });
 
 
@@ -149,6 +212,7 @@ function updateClock() {
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
+        second: '2-digit',
         hour12: true
     }).replace(' at ', ' | ');
 }

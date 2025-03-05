@@ -59,21 +59,22 @@
                 <div class="container search-lab-seat fade-in" >
                     <div> 
                         <h2> Book a Seat </h2>
+                        <div id="clock" style="font-weight: lighter;"></div>
                         
                         <div class="container mt-1">
                             <div class="form-floating">
                             <div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
-                                    Choose building
+                                    <span id="selected-building-text">Choose building</span>
                                 </button>
-                                <ul class="dropdown-menu w-100">
-                                    <li><a class="dropdown-item" onclick="selectItem(this)">Gokongwei Building</a></li>
-                                    <li><a class="dropdown-item" onclick="selectItem(this)">Andrew Building</a></li>
-                                    <li><a class="dropdown-item" onclick="selectItem(this)">Velasco Hall</a></li>
-                                    <li><a class="dropdown-item" onclick="selectItem(this)">St. Joseph Hall</a></li>
-                                    <li><a class="dropdown-item" onclick="selectItem(this)">St. La Salle Hall</a></li>
-                                    <li><a class="dropdown-item" onclick="selectItem(this)">Yuchengco Building</a></li>
+                                <ul class="dropdown-menu w-100" aria-labelledby="building-dropdown">
+                                    {{#each uniqueBuildings}}
+                                        <li>
+                                            <a class="dropdown-item" onclick="selectItem(this)">{{this}}</a>
+                                        </li>
+                                    {{/each}}
                                 </ul>
+
                             </div>
                             </div>
                         </div>
@@ -100,9 +101,7 @@
                         </div>
 
                         <div class="container mt-2 md-4" id="search-seat">
-                            <a href="/lab-select-building">
                             <input type="submit" class="btn btn-success w-100" value="Search" >
-                            </a>
                         </div>
 
                     </div>

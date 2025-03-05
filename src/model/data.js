@@ -1,106 +1,89 @@
 const fs = require('fs');
 const path = require('path');
 
+const dataPath = path.join(__dirname, 'data.json'); 
+
 // used in login
 function getAllUsers() {
     try {
-        const rawdata = fs.readFileSync('./data.json');
+        const rawdata = fs.readFileSync(dataPath);
         const data = JSON.parse(rawdata);
-        return data.user || []; // Return the array of users or an empty array if not found
+        return data.user || [];
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
-        return []; // Return an empty array if there's an error
+        return [];
     }
-} module.exports.getAllUsers = getAllUsers;
+} 
+module.exports.getAllUsers = getAllUsers;
 
 function getUserData(email) {
     try {
-        const rawdata = fs.readFileSync('./data.json');
+        const rawdata = fs.readFileSync(dataPath);
         const data = JSON.parse(rawdata);
-        const user = data.user.find(user => user.email === email); // Find user by email
-        return user || {}; 
+        return data.user.find(user => user.email === email) || {};
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
-        return {}; 
+        return {};
     }
-} module.exports.getUserData = getUserData;
-
-/*
-	getAnnouncements - used in login.hbs
-            - sample data found in data.json
-*/
+} 
+module.exports.getUserData = getUserData;
 
 function getAnnouncements() {
     try {
-        let rawdata = fs.readFileSync('./data.json');
+        const rawdata = fs.readFileSync(dataPath);
         const data = JSON.parse(rawdata);
-        return data.announcements || []; // Return announcements or an empty array if not found
+        return data.announcements || [];
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
-        return []; // Return an empty object if there's an error
+        return [];
     }
-} module.exports.getAnnouncements = getAnnouncements;
+} 
+module.exports.getAnnouncements = getAnnouncements;
 
-// used in login.hbs
 function getUnavailableRooms() {
     try {
-        let rawdata = fs.readFileSync('./data.json');
+        const rawdata = fs.readFileSync(dataPath);
         const data = JSON.parse(rawdata);
         return data.unavailableRooms || [];
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
         return [];
     }
-} module.exports.getUnavailableRooms = getUnavailableRooms;
+} 
+module.exports.getUnavailableRooms = getUnavailableRooms;
 
 function getReservationData() {
     try {
-        const rawdata = fs.readFileSync('./data.json');
+        const rawdata = fs.readFileSync(dataPath);
         const data = JSON.parse(rawdata);
-        return data.reservations || []; // Return reservations array or an empty array if not found
+        return data.reservations || [];
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
-        return [];  // Return an empty array if there's an error
+        return [];
     }
-} module.exports.getReservationData = getReservationData;
+} 
+module.exports.getReservationData = getReservationData;
 
-/*
-	getSeatData - used in room.hbs
-        - no sample data yet in json file
 
-	potential fields:
-	- what building
-	- what room
-	-> status of each seat in room
-		- seatNumber
-			- free or reserved?
-				- if reserved, anon or not?
-					- if not anon:
-					- profile link
-					- username ng nagreserve
-
-*/
 function getSeatData() {
     try {
-        let rawdata = fs.readFileSync('./data.json');
+        const rawdata = fs.readFileSync(dataPath);
         return JSON.parse(rawdata);
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
         return [];
     }
-} module.exports.getSeatData = getSeatData;
+} 
+module.exports.getSeatData = getSeatData;
 
-
-// GET ONLY THE LABORATORIES
 function getLaboratories() {
     try {
-        const filePath = path.join(__dirname, '..', 'model', 'data.json');
-        let rawdata = fs.readFileSync(filePath); 
-        let data = JSON.parse(rawdata);
+        const rawdata = fs.readFileSync(dataPath);
+        const data = JSON.parse(rawdata);
         return data.laboratories || [];
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
-        return []; 
+        return [];
     }
-} module.exports.getLaboratories = getLaboratories;
-
+} 
+module.exports.getLaboratories = getLaboratories;
