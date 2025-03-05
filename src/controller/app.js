@@ -147,7 +147,8 @@ server.get('/lab-select-building', function(req, resp) {
         defaultSeats: defaultSeats,
         currentRoute: 'lab-select-building',
         pfp: userData.pfp || '/Images/default.jpg',
-        selectedBuilding
+        selectedBuilding,
+        isTechnician: false // ADD A VARIABLE FOR THIS 
     });
 });
 
