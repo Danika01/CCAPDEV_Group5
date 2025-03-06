@@ -99,24 +99,31 @@
                         </h2>
                         <div class="container mt-3">
                             <div class="form-floating">
-                                <input type="date" class="form-control" id="date" name="date" min="2025-01-01" required>
+                                <input type="date" class="form-control" id="date" name="date" min="2025-01-01" value="{{date}}" required>
                                 <label for="date">Select a Date</label>
                             </div>
                         </div>
 
                         <div class="container mt-1">
                             <div class="form-floating">
-                                <select class="form-select" id="startTime" required></select>
+                                <select class="form-select" id="startTime" required>
+                                    <option value="{{startTime}}" selected>{{startTime}}</option>
+                                    <!-- Add more options here if needed -->
+                                </select>
                                 <label for="startTime">Select Start Time</label>
                             </div>
                         </div>
-                
+
                         <div class="container mt-1">
                             <div class="form-floating">
-                                <select class="form-select" id="endTime" required> </select>
+                                <select class="form-select" id="endTime" required>
+                                    <option value="{{endTime}}" selected>{{endTime}}</option>
+                                    <!-- Add more options here if needed -->
+                                </select>
                                 <label for="endTime">Select End Time</label>
                             </div>
                         </div>
+
 
                         <div class="container mt-4 md-4" id="search-seat">
                             <input type="submit" class="btn btn-success w-100" value="Search">

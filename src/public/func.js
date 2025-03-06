@@ -1,21 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-   /*// lab-select-building seat clicks
-   document.querySelectorAll('.seat').forEach(seat => {
-       seat.addEventListener('click', () => {
-           // Get the seat number from the clicked seat's data attribute
-           const seatNumber = seat.getAttribute('data-seat-number');
-
-           // Get the selected date, start time, and end time from the form
-           const date = document.getElementById('date').value;
-           const startTime = document.getElementById('startTime').value;
-           const endTime = document.getElementById('endTime').value;
-
-           // Update the modal content with the selected values
-           document.getElementById('modalSeatNumber').innerText = seatNumber;
-           document.getElementById('modalDate').innerText = date;
-           document.getElementById('modalTime').innerText = `${startTime} to ${endTime}`;
-       });
-   }); */
   
    // count text box characters
    window.onload = function () {
@@ -34,13 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         textarea.addEventListener("input", updateCharacterCount);
         updateCharacterCount();
     };
-
-
-
-
-   
-
-                   
+            
     // "Confirm" button event in the modals
     document.querySelector('#reserveSeat .btn-success').addEventListener('click', () => {
         const firstName = document.getElementById('firstName').value;
