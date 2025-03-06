@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const buildingSchema = new Schema({
@@ -12,9 +12,9 @@ const buildingSchema = new Schema({
         required: true,
         room: {
             type: String,
-            required: true
+            required: true,
+            seat: Number
         }
     }
 });
-
 module.exports = mongoose.models('Building', buildingSchema);

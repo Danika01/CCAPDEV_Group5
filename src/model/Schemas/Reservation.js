@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const reservationSchema = new Schema ({
@@ -13,7 +13,7 @@ const reservationSchema = new Schema ({
     timeOut: {
         type: Date,
         required: true
-    }
+    },
+    availability: Boolean
 });
-
 module.exports = mongoose.models('Reservation', reservationSchema);
