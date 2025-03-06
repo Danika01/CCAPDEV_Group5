@@ -1,21 +1,27 @@
 console.log("js loaded");
 
-
-// SET DEFAULT DATE TO CURRENT DATE and hide ADD BUTTON
+// SET DEFAULT DATE TO CURRENT DATE
 document.addEventListener("DOMContentLoaded", function () {
     let dateInput = document.getElementById("date");
-    let today = new Date();
-    let formattedDate = today.toISOString().split("T")[0];
+    let today = new Date().toISOString().split("T")[0];
 
-    dateInput.value = formattedDate;
-
-    if (dateInput.min && dateInput.value < dateInput.min) {
-        dateInput.value = dateInput.min;
-    }
+    // Fetch session data and use it if available
+    fetch('/get-session-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.date) {
+                dateInput.value = data.date; // Use session date if available
+            } else {
+                dateInput.value = today; // Default to today if no session value
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching session data:", error);
+            dateInput.value = today; // Fallback to today
+        });
 });
 
-
-// generate time option in 30 mins interval
+// Generate time options in 30-minute intervals
 function generateTimeOptions() {
     let startTimeSelect = document.getElementById("startTime");
 
@@ -38,7 +44,7 @@ function generateTimeOptions() {
 }
 
 // Update end time options based on selected start time
-function updateEndTimeOptions() {
+function updateEndTimeOptions(sessionEndTime = null) {
     let startTime = document.getElementById("startTime").value;
     let endTimeSelect = document.getElementById("endTime");
 
@@ -49,94 +55,117 @@ function updateEndTimeOptions() {
 
     for (let hour = startHour; hour <= 18; hour++) {
         for (let minute = (hour === startHour ? startMinute + 30 : 0); minute < 60; minute += 30) {
-            if (hour === 18 && minute > 0) break; // Stop at 18:00 (6:00 PM)
-            
+            if (hour === 18 && minute > 0) break;
+
             let timeOption = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
             let endOption = document.createElement("option");
             endOption.value = timeOption;
             endOption.textContent = timeOption;
+
+            // Preselect the session-stored end time
+            if (sessionEndTime && sessionEndTime === timeOption) {
+                endOption.selected = true;
+            }
+
             endTimeSelect.appendChild(endOption);
         }
     }
 }
+
+// Fetch session values on page load
+document.addEventListener("DOMContentLoaded", function () {
+    fetch('/get-session-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.timeOut) {
+                updateEndTimeOptions(data.timeOut); // Use session-stored end time
+            } else {
+                updateEndTimeOptions(); // Default behavior
+            }
+        })
+        .catch(error => console.error("Error fetching session data:", error));
+});
+
+
+// update building selection in home.hbs dynamically
+function selectItem(element) {
+    let selectedBuilding = element.textContent.trim();
+    document.getElementById("selected-building-text").textContent = selectedBuilding;
+
+    // Save selected building to session
+    fetch('/set-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ building: selectedBuilding })
+    }).then(response => response.json())
+      .then(data => console.log("Building updated in session:", data.message)) // Debugging log
+      .catch(error => console.error("Error updating session:", error));
+}
+
+
 
 // Populate dropdowns when the page loads
 document.addEventListener("DOMContentLoaded", function () {
     generateTimeOptions(); 
 });
 
-
-// update selected item in dropdown
-function selectItem(element) {
-    let building = element.textContent.trim(); // Get selected building name
-    document.getElementById('selected-building-text').textContent = building;
-
-    // AJAX request to fetch rooms
-    fetch(`/get-rooms?building=${encodeURIComponent(building)}`)
-        .then(response => response.json())
-        .then(data => {
-            updateRoomTable(data);
-        })
-        .catch(error => console.error('Error fetching rooms:', error));
-}
-
+// Function to handle building selection and update session
 function selectBuilding(building) {
-    document.getElementById('selected-building-text').innerText = building;
-    window.location.href = `/lab-select-building?building=${encodeURIComponent(building)}`;
+    document.getElementById("selected-building-text").innerText = building;
+
+    // Save selected building to session and redirect
+    fetch('/set-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ building })
+    }).then(response => response.json())
+      .then(() => {
+          window.location.href = `/lab-select-building/${encodeURIComponent(building)}`;
+      })
+      .catch(error => console.error("Error updating session:", error));
 }
 
+// Room and home "Search" button
+document.addEventListener('DOMContentLoaded', function () {
+    const searchButton = document.getElementById("search-seat");
 
-let selectedBuilding = "Choose a Building";
-let selectedDate = null;
-let startTime = null;
-let endTime = null;
+    if (searchButton) {
+        searchButton.addEventListener("click", function () {
+            let building = document.getElementById("selected-building-text").textContent.trim();
+            let date = document.getElementById("date").value;
+            let timeIn = document.getElementById("startTime").value;
+            let timeOut = document.getElementById("endTime").value;
 
-document.addEventListener("DOMContentLoaded", function () {
-    // Function to update selected building
-    window.selectItem = function (item) {
-        selectedBuilding = item.innerText.trim();
-        document.getElementById('selected-building-text').innerText = selectedBuilding;
-        getSelectedValues(); 
-    };
+            if (building === "Choose building") {
+                alert("Please select a building.");
+                return;
+            }
 
-    function getSelectedValues() {
-        selectedDate = document.getElementById("date").value;
-        startTime = document.getElementById("startTime").value;
-        endTime = document.getElementById("endTime").value;
-
-        console.log("Building:", selectedBuilding);
-        console.log("Selected Date:", selectedDate);
-        console.log("Start Time:", startTime);
-        console.log("End Time:", endTime);
+            fetch('/set-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ building, date, timeIn, timeOut })
+            }).then(response => response.json())
+              .then(() => {
+                  window.location.href = `/lab-select-building/${encodeURIComponent(building)}`;
+              })
+              .catch(error => console.error("Error saving session:", error));
+        });
+    } else {
+        console.log("Search seat button not found");
     }
-
-    document.getElementById("date").addEventListener("change", getSelectedValues);
-    document.getElementById("startTime").addEventListener("change", getSelectedValues);
-    document.getElementById("endTime").addEventListener("change", getSelectedValues);
-});
-
-// room and home "Search" button
-// LINK THIS TO DATABASE
-document.getElementById('search-seat').addEventListener('click', () => {
-    if (!selectedBuilding || selectedBuilding === "Choose a Building") {
-        alert('Please select a building.');
-        return;
-    } 
-
-    console.log('Redirecting with:', { selectedBuilding });
-    window.location.href = `/lab-select-building?building=${encodeURIComponent(selectedBuilding)}`;
 });
 
 
-// update the room table dynamically
+// Update the room table dynamically
 function updateRoomTable(rooms) {
-    const roomList = document.getElementById('room-list');
-    roomList.innerHTML = ''; // Clear existing table rows
+    const roomList = document.getElementById("room-list");
+    roomList.innerHTML = ""; // Clear existing table rows
 
     rooms.forEach(room => {
-        const row = document.createElement('tr');
-        row.classList.add('clickable-row');
-        row.setAttribute('data-href', `/room/${room.building}/${room.room}`);
+        const row = document.createElement("tr");
+        row.classList.add("clickable-row");
+        row.setAttribute("data-href", `/room/${room.building}/${room.room}`);
         row.innerHTML = `
             <td>${room.building}</td>
             <td>${room.room}</td>
@@ -146,26 +175,26 @@ function updateRoomTable(rooms) {
     });
 }
 
-// redirect to room page
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("room-list").addEventListener("click", function (event) {
-        let row = event.target.closest(".clickable-row"); // Get the clicked row
-        if (row && row.dataset.href) {
-            window.location.href = row.dataset.href;
-        }
+// Redirect to room page
+document.addEventListener('DOMContentLoaded', function () {
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(function(row) {
+        row.addEventListener('click', function() {
+            const url = row.getAttribute('data-href');
+            window.location.href = url;  // Redirect to the room URL
+        });
     });
 });
 
-// update profile photo
+
+
+// Update profile photo
 function previewImage(event) {
     const file = event.target.files[0];
-    // Check if the file is an image
     if (file && file.type.startsWith("image/")) {
-        // Create a URL for the selected file
         const reader = new FileReader();
         reader.onload = function(e) {
-            // Set the new image as the source of the profile image
-            document.getElementById('profileImage').src = e.target.result;
+            document.getElementById("profileImage").src = e.target.result;
         };
         reader.readAsDataURL(file);
     } else {
@@ -173,16 +202,15 @@ function previewImage(event) {
     }
 }
 
-// confirm deletion of account 
+// Confirm deletion of account
 function deleteAccount() {
-    // delete from database
     alert("Your account has been deleted.");
-    var modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+    var modal = bootstrap.Modal.getInstance(document.getElementById("deleteModal"));
     modal.hide();
-    window.location.href = "login.html" // change to login page 
+    window.location.href = "login.html"; // Redirect to login page
 }
 
-// redirect table rows
+// Redirect table rows
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".clickable-row").forEach(row => {
         row.addEventListener("click", function () {
@@ -191,28 +219,27 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// confirm deletion of reservation 
+// Confirm deletion of reservation
 function deleteReservation() {
-    // delete from database
     alert("Your reservation has been deleted.");
-    var modal = bootstrap.Modal.getInstance(document.getElementById('deleteReservationModal'));
+    var modal = bootstrap.Modal.getInstance(document.getElementById("deleteReservationModal"));
     modal.hide();
-    window.location.href = "reservations.html" // change to reservations page 
+    window.location.href = "reservations.html"; // Redirect to reservations page
 }
 
-// real-time clock
+// Real-time clock
 function updateClock() {
     const now = new Date();
-    const clock = document.getElementById('clock');
-    clock.textContent = now.toLocaleString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
+    const clock = document.getElementById("clock");
+    clock.textContent = now.toLocaleString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
         hour12: true
-    }).replace(' at ', ' | ');
+    }).replace(" at ", " | ");
 }
 
 // Update immediately

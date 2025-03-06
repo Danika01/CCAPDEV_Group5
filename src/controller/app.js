@@ -92,9 +92,32 @@ server.get('/home', function(req, resp) {
         reservations: reservations,
         currentRoute: 'home',
         uniqueBuildings: uniqueBuildings,
+        selectedBuilding: req.session.building || "Choose building",
+        selectedDate: req.session.date || "",
+        selectedTimeIn: req.session.timeIn || "08:00",
+        selectedTimeOut: req.session.timeOut || "08:30",
         pfp: userData.pfp || '/Images/default.jpg'
     });
 });
+
+
+server.post('/set-session', (req, res) => {
+    req.session.building = req.body.building;
+    req.session.date = req.body.date;
+    req.session.timeIn = req.body.timeIn;
+    req.session.timeOut = req.body.timeOut;
+    res.json({ message: "Session saved!" });
+});
+
+server.get('/get-session-data', (req, res) => {
+    res.json({
+        building: req.session.building || "Choose building",
+        date: req.session.date || "",
+        timeIn: req.session.timeIn || "08:00",
+        timeOut: req.session.timeOut || "08:30"
+    });
+});
+
 
 // render account.hbs
 server.get('/account', function(req, resp) {
@@ -133,13 +156,16 @@ server.get('/edit-profile', function(req, resp) {
 });
 
 // render lab-select-building.hbs
-server.get('/lab-select-building', function(req, resp) {
+server.get('/lab-select-building/:building?', function(req, res) {
     const email = req.session.email; 
     const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
-    let selectedBuilding = req.query.building || uniqueBuildings[0];
+
+    // Get selected building from route param, session, or default
+    let selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
+
     let filteredRooms = buildings.filter(b => b.building === selectedBuilding);
 
-    resp.render('lab-select-building', {
+    res.render('lab-select-building', {
         layout: 'index',
         title: 'Select Building and Room',
         uniqueBuildings, 
@@ -148,11 +174,9 @@ server.get('/lab-select-building', function(req, resp) {
         currentRoute: 'lab-select-building',
         pfp: userData.pfp || '/Images/default.jpg',
         selectedBuilding,
-        isTechnician: false // ADD A VARIABLE FOR THIS 
+        isTechnician: false
     });
 });
-
-
 
 
 // update table to only show rooms on selected building
@@ -181,25 +205,33 @@ server.get('/reservations', function(req, resp) {
 
 // render room.hbs
 server.get('/room/:building/:room', function(req, resp) {
-    const { building, room } = req.params; 
-    const email = req.session.email; 
+    const { building, room } = req.params;
+    const email = req.session.email;
     const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
-    
-    const allSeats = dataModule.getSeatData(); 
-    const seatData = allSeats.filter(seat => seat.building === building && seat.room === room);
-    console.log(seatData);
 
-    // Render the room.hbs view with the filtered data
+    // Get all seat data without filtering for now
+    const allSeats = dataModule.getSeatData();
+
+    // Log the seat data for debugging purposes
+    console.log(allSeats);
+
+    // Render the room.hbs view with all seat data
     resp.render('room', {
         layout: 'index',
         title: `Room ${room}`,
-        seats: seatData, 
+        seats: allSeats, // Passing allSeats directly without filtering
         building: building,
         room: room,
         buildings: buildings,
-        pfp: userData.pfp || '/Images/default.jpg'
+        pfp: userData.pfp || '/Images/default.jpg',
+    
+        date: req.session.date || "",
+        startTime: req.session.timeIn || "08:00",
+        endTime: req.session.timeOut || "08:30"
     });
 });
+
+
 
 
 // render admin-lab-reserve.hbs
@@ -248,6 +280,9 @@ server.get('/logout', function(req, resp) {
     req.session.destroy(); 
     resp.redirect('/login');
 });
+
+
+
 
 const port = process.env.PORT || 3000;
 server.listen(port, function(){

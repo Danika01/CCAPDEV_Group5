@@ -63,46 +63,51 @@
                         
                         <div class="container mt-1">
                             <div class="form-floating">
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
-                                    <span id="selected-building-text">Choose building</span>
-                                </button>
-                                <ul class="dropdown-menu w-100" aria-labelledby="building-dropdown">
-                                    {{#each uniqueBuildings}}
-                                        <li>
-                                            <a class="dropdown-item" onclick="selectItem(this)">{{this}}</a>
-                                        </li>
-                                    {{/each}}
-                                </ul>
-
-                            </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
+                                        <span id="selected-building-text">{{selectedBuilding}}</span>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="building-dropdown">
+                                        {{#each uniqueBuildings}}
+                                            <li>
+                                                <a class="dropdown-item" onclick="selectItem(this)">{{this}}</a>
+                                            </li>
+                                        {{/each}}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
 
+
                         <div class="container mt-1">
                             <div class="form-floating">
-                                <input type="date" class="form-control" id="date" name="date" min="2025-01-01" required>
+                                <input type="date" class="form-control" id="date" name="date" value="{{selectedDate}}" min="2025-01-01" required>
                                 <label for="date">Select a Date</label>
                             </div>
                         </div>
 
                         <div class="container mt-1">
                             <div class="form-floating">
-                                <select class="form-select" id="startTime" required></select>
+                                <select class="form-select" id="startTime" required>
+                                    <option selected>{{selectedTimeIn}}</option>
+                                </select>
                                 <label for="startTime">Select Start Time</label>
                             </div>
                         </div>
-                
+
                         <div class="container mt-1">
                             <div class="form-floating">
-                                <select class="form-select" id="endTime" required> </select>
+                                <select class="form-select" id="endTime" required>
+                                    <option selected>{{selectedTimeOut}}</option>
+                                </select>
                                 <label for="endTime">Select End Time</label>
                             </div>
                         </div>
 
-                        <div class="container mt-2 md-4" id="search-seat">
-                            <input type="submit" class="btn btn-success w-100" value="Search" >
+                        <div class="container mt-2 md-4">
+                            <button id="search-seat" class="btn btn-success w-100">Search</button>
                         </div>
+
 
                     </div>
                 </div>
