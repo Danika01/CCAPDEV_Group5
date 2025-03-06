@@ -52,14 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     window.deleteReservation = deleteReservation; // Make the function globally accessible
 
-    // row clicks and redirect to another page
-    document.querySelectorAll('.clickable-row').forEach(row => {
-        row.addEventListener('click', () => {
-            const href = row.getAttribute('data-href');
-            if (href) {
-                window.location.href = href; // Redirect to different page
-            }
-        });
-    });
+    
 
 });

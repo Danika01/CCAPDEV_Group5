@@ -34,7 +34,7 @@
                                         <td>
                                             <div class="container stacked-rows">
                                                 <span>{{this.reservationDate}}</span>
-                                                <span>{{this.reservationTime}}</span>
+                                                <span>{{this.startTime}} to {{this.endTime}}</span>
                                             </div>
                                         </td>
                                         <td>
@@ -53,13 +53,15 @@
                     </div>
                 </div>
             </div>
+            
 
             <!-- BOOKING A SEAT -->
             <div class="col">
                 <div class="container search-lab-seat fade-in" >
                     <div> 
                         <h2> Book a Seat </h2>
-                        <div id="clock" style="font-weight: lighter;"></div>
+                       
+                
                         
                         <div class="container mt-1">
                             <div class="form-floating">
@@ -107,6 +109,8 @@
                         <div class="container mt-2 md-4">
                             <button id="search-seat" class="btn btn-success w-100">Search</button>
                         </div>
+
+                        <div id="clock"></div>
 
 
                     </div>

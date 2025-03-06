@@ -92,7 +92,7 @@ server.get('/home', function(req, resp) {
         reservations: reservations,
         currentRoute: 'home',
         uniqueBuildings: uniqueBuildings,
-        selectedBuilding: req.session.building || "Choose building",
+        selectedBuilding: req.session.building || "Choose a building",
         selectedDate: req.session.date || "",
         selectedTimeIn: req.session.timeIn || "08:00",
         selectedTimeOut: req.session.timeOut || "08:30",
@@ -102,12 +102,13 @@ server.get('/home', function(req, resp) {
 
 
 server.post('/set-session', (req, res) => {
-    req.session.building = req.body.building;
+   // req.session.building = req.body.building || "Choose building",
     req.session.date = req.body.date;
     req.session.timeIn = req.body.timeIn;
     req.session.timeOut = req.body.timeOut;
-    res.json({ message: "Session saved!" });
+    res.json({ message: "Session updated successfully!" });
 });
+
 
 server.get('/get-session-data', (req, res) => {
     res.json({
@@ -209,27 +210,92 @@ server.get('/room/:building/:room', function(req, resp) {
     const email = req.session.email;
     const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
 
-    // Get all seat data without filtering for now
+    // Get all seat data for this room
     const allSeats = dataModule.getSeatData();
+    
+    // Default date & time if not set in session
+    if (!req.session.date) req.session.date = new Date().toISOString().split("T")[0];
+    if (!req.session.timeIn) req.session.timeIn = "08:00";
+    if (!req.session.timeOut) req.session.timeOut = "08:30";
 
-    // Log the seat data for debugging purposes
-    console.log(allSeats);
+    const selectedDate = req.session.date;
+    const selectedStartTime = req.session.timeIn;
+    const selectedEndTime = req.session.timeOut;
 
-    // Render the room.hbs view with all seat data
+    console.log("Selected Date:", selectedDate);
+    console.log("Start Time:", selectedStartTime);
+    console.log("End Time:", selectedEndTime);
+
+    const roomSeats = allSeats
+        .filter(seat => seat.roomNum === room)
+        .map(seat => {
+            console.log(`Checking Seat ${seat.seatNum} in Room ${room}`);
+
+            if (!Array.isArray(seat.reservations)) {
+                console.log(`Seat ${seat.seatNum} has no reservations array.`);
+                return { ...seat, reserved: false, reservationName: null, profileLink: null };
+            }
+
+            // Find reservation that matches the selected date & overlaps with the selected time
+            const reservation = seat.reservations.find(r => 
+                r.reservationDate === selectedDate &&
+                !(r.endTime <= selectedStartTime || r.startTime >= selectedEndTime)
+            );
+
+            return {
+                ...seat,
+                reserved: !!reservation,
+                reservationName: reservation ? reservation.name : null,
+                isAnonymous: reservation ? reservation.isAnonymous : false,
+                profileLink: reservation ? `/profile/${reservation.email}` : null
+            };
+        });
+
     resp.render('room', {
         layout: 'index',
         title: `Room ${room}`,
-        seats: allSeats, // Passing allSeats directly without filtering
+        seats: roomSeats,
         building: building,
         room: room,
         buildings: buildings,
         pfp: userData.pfp || '/Images/default.jpg',
-    
-        date: req.session.date || "",
-        startTime: req.session.timeIn || "08:00",
-        endTime: req.session.timeOut || "08:30"
+        date: selectedDate,
+        startTime: selectedStartTime,
+        endTime: selectedEndTime,
+        hasAvailableSeats: roomSeats.some(seat => !seat.reserved)
     });
 });
+
+
+
+// check if seats are available
+server.get('/check-seat-availability', (req, res) => {
+    const { room, date, timeIn, timeOut } = req.query;
+
+    if (!room || !date || !timeIn || !timeOut) {
+        return res.status(400).json({ error: "Missing required parameters" });
+    }
+
+    // Get seat data for the selected room
+    const seats = dataModule.getSeatData().filter(seat => seat.roomNum === room);
+
+    // Check if ANY seat is occupied during the requested time
+    const isSeatUnavailable = seats.some(seat => {
+        return seat.reservations.some(reservation => {
+            // Convert reservationDate to YYYY-MM-DD before comparing
+            const formattedReservationDate = new Date(reservation.reservationDate).toISOString().split('T')[0];
+    
+            return formattedReservationDate === date &&
+                   !(timeOut <= reservation.startTime || timeIn >= reservation.endTime);
+        });
+    });
+    
+
+    res.json({ hasAvailableSeats: !isSeatUnavailable });
+});
+
+
+
 
 
 
@@ -275,6 +341,26 @@ server.get('/edit-reservation/:reservationId', function(req, resp) {
         pfp: userData.pfp || '/Images/default.jpg'
     });
 });
+
+server.post('/edit-reservation', (req, res) => {
+    const { building, room, reservationId, reservationDate, startTime, endTime } = req.body;
+
+    req.session.date = reservationDate;
+    req.session.timeIn = startTime;
+    req.session.timeOut = endTime;
+
+    console.log(`Editing reservation for Room: ${room} in ${building}`);
+    console.log(`Reservation ID: ${reservationId}`);
+    console.log(`Date: ${reservationDate}`);
+    console.log(`Start Time: ${startTime}`);
+    console.log(`End Time: ${endTime}`);
+
+    // TODO: Update reservation logic in your data module
+
+    // Redirect back to the room page after editing
+    res.redirect(`/room/${building}/${room}`);
+});
+
 
 server.get('/logout', function(req, resp) {
     req.session.destroy(); 

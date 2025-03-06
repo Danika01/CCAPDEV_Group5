@@ -30,36 +30,205 @@
             "email": "john_doe@dlsu.edu.ph",
             "reservationId": "20250128-0001",
             "requestDate": "January 28, 2025",
-            "requestTime": "19:05H",
-            "reservationDate": "January 29, 2025",
-            "reservationTime": "09:00H to 14:30H",
-            "building": "Gokongwei Building",
-            "room": "G302A",
-            "seatNumber": 12
+            "requestTime": "19:05",
+            "reservationDate": "2025-03-21",
+            "startTime": "09:00",
+            "endTime": "14:30",
+            "building": "Yuchengco Hall",
+            "room": "Y602",
+            "seatNumber": 1,
+            "anonymousReservation": false
         },
         {
             "email": "john_doe@dlsu.edu.ph",
             "reservationId": "20250128-0002",
             "requestDate": "January 28, 2025",
-            "requestTime": "20:05H",
-            "reservationDate": "January 29, 2025",
-            "reservationTime": "09:00H to 14:30H",
-            "building": "Gokongwei Building",
-            "room": "G302B",
-            "seatNumber": 15
+            "requestTime": "20:05",
+            "reservationDate": "2025-03-22",
+            "startTime": "09:00",
+            "endTime": "09:30",
+            "building": "Yuchengco Hall",
+            "room": "Y602",
+            "seatNumber": 12,
+            "anonymousReservation": false
         },
         {
             "email": "john_doe@dlsu.edu.ph",
             "reservationId": "20250130-0001",
             "requestDate": "January 30, 2025",
-            "requestTime": "15:01H",
-            "reservationDate": "January 31, 2025",
-            "reservationTime": "09:00H to 14:30H",
-            "building": "Gokongwei Building",
-            "room": "G304A",
-            "seatNumber": 5
+            "requestTime": "15:01",
+            "reservationDate": "2025-03-23",
+            "startTime": "10:00",
+            "endTime": "14:30",
+            "building": "Yuchengco Hall",
+            "room": "Y602",
+            "seatNumber": 18,
+            "anonymousReservation": true
         }
     ],
+
+    
+    "seats": [
+        {
+            "seatNum": "1",
+            "roomNum": "Y602",
+            "reservations": [
+                {
+                    "name": "John Doe",
+                    "email": "john_doe@dlsu.edu.ph",
+                    "reservationId": "20250128-0001",
+                    "reservationDate": "2025-03-21",
+                    "startTime": "09:00",
+                    "endTime": "14:30",
+                    "isAnonymous": false
+                }
+            ]
+        }, 
+
+        {
+            "seatNum": "2",
+            "roomNum": "Y602",
+            "reservations": [
+                {
+                    "name": "Mica Do",
+                    "email": "micamica@dlsu.edu.ph",
+                    "reservationId": "20250128-0001",
+                    "reservationDate": "2025-03-21",
+                    "startTime": "10:00",
+                    "endTime": "14:30",
+                    "isAnonymous": true
+                }
+            ]
+        }, 
+
+        {
+            "seatNum": "3",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "4",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "5",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "6",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "7",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "8",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "9",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "10",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "11",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "12",
+            "roomNum": "Y602",
+            "reservations": [
+                {
+                    "name": "John Doe",
+                    "email": "john_doe@dlsu.edu.ph",
+                    "reservationId": "20250128-0001",
+                    "reservationDate": "2025-03-22",
+                    "startTime": "09:00",
+                    "endTime": "09:30",
+                    "isAnonymous": false
+                }
+            ]
+        }, 
+
+        {
+            "seatNum": "13",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "14",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "15",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "16",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "17",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "18",
+            "roomNum": "Y602",
+            "reservations": [
+                {
+                    "name": "John Doe",
+                    "email": "john_doe@dlsu.edu.ph",
+                    "reservationId": "20250128-0001",
+                    "reservationDate": "2025-03-23",
+                    "startTime": "10:00",
+                    "endTime": "14:30"
+                }
+            ]
+        }, 
+
+        {
+            "seatNum": "19",
+            "roomNum": "Y602",
+            "reservations": []
+        }, 
+
+        {
+            "seatNum": "20",
+            "roomNum": "Y602",
+            "reservations": []
+        }
+    ],
+    
 
 
     "laboratories": [
