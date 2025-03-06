@@ -57,12 +57,13 @@ module.exports.getReservationData = getReservationData;
 function getSeatData() {
     try {
         const rawdata = fs.readFileSync(dataPath);
-        return JSON.parse(rawdata);
+        const jsonData = JSON.parse(rawdata);
+        return jsonData.seats; // return only the seats array
     } catch (error) {
         console.error('Error reading or parsing data.json:', error);
         return [];
     }
-} 
+}
 module.exports.getSeatData = getSeatData;
 
 function getLaboratories() {

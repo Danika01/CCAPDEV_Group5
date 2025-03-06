@@ -219,6 +219,50 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// UPDATE SEAT NUMBER IN MODAL WHEN RESERVING
+document.addEventListener("DOMContentLoaded", function () {
+    // Select all seat elements
+    const seats = document.querySelectorAll(".seat");
+
+    seats.forEach(seat => {
+        seat.addEventListener("click", function () {
+            // Get the seat number from the clicked seat
+            const seatNumber = this.getAttribute("data-seat-number");
+
+            // Find the modal seat number element and update its text
+            document.getElementById("modalSeatNumber").textContent = seatNumber;
+        });
+    });
+});
+
+
+// update session values in room.hbs when search button is clicked
+document.getElementById("search-form-room").addEventListener("submit", function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Get form values
+    
+    const date = document.getElementById("date").value;
+    const startTime = document.getElementById("startTime").value;
+    const endTime = document.getElementById("endTime").value;
+
+    // Send data to the server to update session
+    fetch("/set-session", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ date, timeIn: startTime, timeOut: endTime })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.message); // Debugging
+        location.reload(); // Reload page to reflect new session values
+    })
+    .catch(error => console.error("Error updating session:", error));
+});
+
+
 // Confirm deletion of reservation
 function deleteReservation() {
     alert("Your reservation has been deleted.");
@@ -228,22 +272,31 @@ function deleteReservation() {
 }
 
 // Real-time clock
-function updateClock() {
-    const now = new Date();
-    const clock = document.getElementById("clock");
-    clock.textContent = now.toLocaleString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
-    }).replace(" at ", " | ");
-}
+document.addEventListener("DOMContentLoaded", function () {
+    function updateClock() {
+        const now = new Date();
+        const clock = document.getElementById("clock");
 
-// Update immediately
-updateClock();
+        if (!clock) {
+            console.log("Clock element not found!");
+            return;
+        }
 
-// Update every second
-setInterval(updateClock, 1000);
+        clock.textContent = now.toLocaleString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+        }).replace(" at ", " | ");
+    }
+
+    // Run immediately
+    updateClock();
+
+    // Update every second
+    setInterval(updateClock, 1000);
+});
+
