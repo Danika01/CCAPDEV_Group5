@@ -18,7 +18,7 @@ async function main() {
 
 const express = require('express');
 const server = express();
-const dataModule = require('./data.js');
+const dataModule = require('/controller/data.js');
 const session = require('express-session');
 const path = require('path');
 
@@ -73,14 +73,14 @@ server.get('/login', function(req, resp) {
 });
 
 // render login.hbs (POST request)
-server.post('/login', function(req, resp) {
-    const { email, password } = req.body;
-    const users = dataModule.getAllUsers(); 
+server.post('/login', async function (req, resp) {
+    const {email, password} = req.body;
+    const users = dataModule.getAllUsers;
     const user = users.find(user => user.email === email && user.password === password);
 
     if (user) {
         req.session.email = email; // Store email for search matching purposes
-        resp.redirect('/account'); 
+        resp.redirect('/account');
     } else {
         resp.status(404).send('User not found'); // User not found or invalid credentials
     }
@@ -89,7 +89,7 @@ server.post('/login', function(req, resp) {
 // render home.hbs
 server.get('/home', function(req, resp) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData(email);
+    const userData = dataModule.getUserData;
     const reservations = dataModule.getReservationData(); 
 
     resp.render('home', {
@@ -194,7 +194,7 @@ server.get('/reservations', function(req, resp) {
 
 // render room.hbs
 server.get('/room/:building/:room', function(req, resp) {
-    const seatData = dataModule.getSeatData(); // Get seat data from data.js
+    const seatData = dataModule.getSeatData();
     const building = req.params.building; // Get building that the user is currently viewing from URL
     const room = req.params.room; // Get room from URL
     const email = req.session.email; 

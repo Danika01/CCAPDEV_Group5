@@ -1,43 +1,33 @@
 const fs = require('fs');
+const User = require('../src/model/Schemas/User');
+const Building = require('../src/model/Schemas/Building');
+const Reservation = require('src/model/Schemas/Reservation');
+const Announcement = require('src/model/Schemas/Announcement');
 
-// used in login
-function getAllUsers() {
-    try {
-        const rawdata = fs.readFileSync('./data.json');
-        const data = JSON.parse(rawdata);
-        return data.user || []; // Return the array of users or an empty array if not found
-    } catch (error) {
-        console.error('Error reading or parsing data.json:', error);
-        return []; // Return an empty array if there's an error
-    }
-} module.exports.getAllUsers = getAllUsers;
+async function getAllUsers (req, res) {
+    const users = await User.find();
+    if (!users) return res.status(204).json({'message': 'No users found.'});
+    res.json(users);
+}
+module.exports.getAllUsers = getAllUsers;
 
-function getUserData(email) {
-    try {
-        const rawdata = fs.readFileSync('./data.json');
-        const data = JSON.parse(rawdata);
-        const user = data.user.find(user => user.email === email); // Find user by email
-        return user || {}; 
-    } catch (error) {
-        console.error('Error reading or parsing data.json:', error);
-        return {}; 
-    }
-} module.exports.getUserData = getUserData;
+async function getUserData(req, res) {
+    if (!req?.params?.id) return res.status(400).json({ 'message': 'Email required.' });
 
-/*
-	getAnnouncements - used in login.hbs
-            - sample data found in data.json
-*/
-function getAnnouncements() {
-    try {
-        let rawdata = fs.readFileSync('./data.json');
-        const data = JSON.parse(rawdata);
-        return data.announcements || []; // Return announcements or an empty array if not found
-    } catch (error) {
-        console.error('Error reading or parsing data.json:', error);
-        return []; // Return an empty object if there's an error
+    const user = await User.findOne({_id: req.params.id}).exec();
+    if (!user) {
+        return res.status(204).json({ "message": `No email matches ID ${req.params.id}.` });
     }
-} module.exports.getAnnouncements = getAnnouncements;
+    res.json(user);
+}
+module.exports.getUserData = getUserData;
+
+async function getAnnouncements(req, res) {
+    const announcements = await Announcement.find();
+    if (!announcements) return  res.status(204).json({'message': 'No announcements found.'});
+    res.json(announcements);
+}
+module.exports.getAnnouncements = getAnnouncements;
 
 // used in login.hbs
 function getUnavailableRooms() {
