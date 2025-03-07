@@ -1,11 +1,8 @@
-const User = require('/src/model/Schemas/User');
-const Building = require('/src/model/Schemas/Building');
-const Reservation = require('src/model/Schemas/Reservation');
-const Announcement = require('src/model/Schemas/Announcement');
+const Schema = require('Schema')
 
 // used in login
 async function getAllUsers (req, res) {
-    const users = await User.find();
+    const users = await Schema.User.find();
     if (!users) return res.status(204).json({'message': 'No users found.'});
     res.json(users);
 }
@@ -14,7 +11,7 @@ module.exports.getAllUsers = getAllUsers;
 async function getUserData(req, res) {
     if (!req?.params?.id) return res.status(400).json({ 'message': 'Email required.' });
 
-    const user = await User.findOne({_id: req.params.id}).exec();
+    const user = await Schema.User.findOne({_id: req.params.id}).exec();
     if (!user) {
         return res.status(204).json({ "message": `No email matches ID ${req.params.id}.` });
     }
@@ -23,57 +20,109 @@ async function getUserData(req, res) {
 module.exports.getUserData = getUserData;
 
 async function getAnnouncements(req, res) {
-    const announcements = await Announcement.find();
+    const announcements = await Schema.Announcement.find();
     if (!announcements) return  res.status(204).json({'message': 'No announcements found.'});
     res.json(announcements);
 }
 module.exports.getAnnouncements = getAnnouncements;
 
-function getUnavailableRooms() {
+async function getUnavailableRooms(req, res) {
     try {
-        const rawdata = fs.readFileSync(dataPath);
-        const data = JSON.parse(rawdata);
-        return data.unavailableRooms || [];
-    } catch (error) {
-        console.error('Error reading or parsing data.json:', error);
-        return [];
+        const unavailable = await Schema.Lab.aggregate([
+            {
+                $lookup: {
+                    from: 'seat',
+                    localField: '_id',
+                    foreignField: 'lab',
+                    as: 'seats'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'reservation',
+                    localField: 'seats._id',
+                    foreignField: 'seatsId',
+                    as: 'reservation'
+                }
+
+            },
+            {
+                $addFields: {
+                    totalSeats: { $size: '$seats'},
+                    reservedSeats: {
+                        $size: {
+                            $filter: {
+                                input: 'reservation',
+                                as: 'res',
+                                cond: {
+                                    $eq: ['$$res.availability', false]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $match: {
+                    $expr: {
+                        $eq: ['$totalSeats', '$reservedSeats']
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'building',
+                    localField: 'buildingId',
+                    foreignField: '_id',
+                    as: 'building'
+                }
+            },
+            {
+                $unwind: 'building'
+            },
+            {
+                $project: {
+                    buildingName: '$building.name',
+                    labName: '$name'
+                }
+            }
+        ]);
+        res.json(unavailable)
     }
-} 
+    catch (err){
+        res.json({'message': err});
+    }
+
+}
 module.exports.getUnavailableRooms = getUnavailableRooms;
 
-function getReservationData() {
+async function getReservationData(req, res) {
     try {
-        const rawdata = fs.readFileSync(dataPath);
-        const data = JSON.parse(rawdata);
-        return data.reservations || [];
-    } catch (error) {
-        console.error('Error reading or parsing data.json:', error);
-        return [];
+        const reservation = await Schema.Reservation.find({req}).populate("seatId");
+        res.json(reservation);
+    } catch (err) {
+        res.json({'message': err});
     }
-} 
+}
 module.exports.getReservationData = getReservationData;
 
 
-function getSeatData() {
+async function getSeatData(req, res) {
     try {
-        const rawdata = fs.readFileSync(dataPath);
-        const jsonData = JSON.parse(rawdata);
-        return jsonData.seats; // return only the seats array
-    } catch (error) {
-        console.error('Error reading or parsing data.json:', error);
-        return [];
+        const seatData = await Schema.Seat.findOne({req});
+        res.json(seatData);
+    } catch (err) {
+        res.json({'message':err});
     }
 }
 module.exports.getSeatData = getSeatData;
 
-function getLaboratories() {
+async function getLaboratories(req, res) {
     try {
-        const rawdata = fs.readFileSync(dataPath);
-        const data = JSON.parse(rawdata);
-        return data.laboratories || [];
+        const labs = await Schema.Lab.find();
+        res.json(labs);
     } catch (error) {
-        console.error('Error reading or parsing data.json:', error);
-        return [];
+        res.json({'message': err});
     }
 } 
 module.exports.getLaboratories = getLaboratories;

@@ -2,6 +2,7 @@
     npm init -y
     npm i express express-handlebars body-parser
     npm install express-session
+    npm install mongoose
 */
 
 const uri = "mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/?retryWrites=true&w=majority&appName=G5Cluster";
