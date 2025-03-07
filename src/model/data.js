@@ -90,7 +90,7 @@ async function getUnavailableRooms(req, res) {
         res.json(unavailable)
     }
     catch (err){
-        res.json({'message': err});
+        res.status(500).json({message:err.message});
     }
 
 }
@@ -98,10 +98,10 @@ module.exports.getUnavailableRooms = getUnavailableRooms;
 
 async function getReservationData(req, res) {
     try {
-        const reservation = await Schema.Reservation.find({req}).populate("seatId");
+        const reservation = await Schema.Reservation.find({_id: req.params.id}).populate("seatId");
         res.json(reservation);
     } catch (err) {
-        res.json({'message': err});
+        res.status(500).json({message:err.message});
     }
 }
 module.exports.getReservationData = getReservationData;
@@ -109,10 +109,10 @@ module.exports.getReservationData = getReservationData;
 
 async function getSeatData(req, res) {
     try {
-        const seatData = await Schema.Seat.findOne({req});
+        const seatData = await Schema.Seat.findOne({_id: req.params.id});
         res.json(seatData);
     } catch (err) {
-        res.json({'message':err});
+        res.status(500).json({message:err.message});
     }
 }
 module.exports.getSeatData = getSeatData;
@@ -122,7 +122,7 @@ async function getLaboratories(req, res) {
         const labs = await Schema.Lab.find();
         res.json(labs);
     } catch (error) {
-        res.json({'message': err});
+        res.status(500).json({message:err.message});
     }
 } 
 module.exports.getLaboratories = getLaboratories;
