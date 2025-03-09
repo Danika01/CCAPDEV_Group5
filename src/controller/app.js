@@ -6,14 +6,13 @@
     npm install dotenv
 */
 
-//require('dotenv').config({ path: './.env' });
+require('dotenv').config();
 const mongoose = require('mongoose');
-const uri = 'mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/?retryWrites=true&w=majority&appName=G5Cluster';
 
 main().catch(err => console.log(err));
 async function main() {
     try {
-        await mongoose.connect(uri);
+        await mongoose.connect(process.env.DB_URI);
     } catch (err) {
         console.error(err);
     }
@@ -64,8 +63,8 @@ const carouselImages = [
 
 // render login.hbs (GET request)
 server.get('/login', function(req, resp) {
-    const announcements = dataModule.getAnnouncements(); 
-    const unavailableRooms = dataModule.getUnavailableRooms(); 
+    const announcements = dataModule.getAnnouncements(req, resp);
+    const unavailableRooms = dataModule.getUnavailableRooms(req, resp);
 
     resp.render('login', {
         layout: 'index',
@@ -79,7 +78,7 @@ server.get('/login', function(req, resp) {
 // render login.hbs (POST request)
 server.post('/login', function(req, resp) {
     const { email, password } = req.body;
-    const users = dataModule.getAllUsers(); 
+    const users = dataModule.getAllUsers(req,resp);
     const user = users.find(user => user.email === email && user.password === password);
 
     if (user) {
@@ -91,15 +90,15 @@ server.post('/login', function(req, resp) {
 });
 
 // used for lab-select-building, room
-let buildings =  dataModule.getLaboratories();
 const defaultSeats = 20; // Default number of seats for all rooms
-//let uniqueBuildings = [...new Set(buildings.map(lab => lab.building))];
+
 
 // render home.hbs
 server.get('/home', function(req, resp) {
     const email = req.session.email; 
     const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
-    const reservations = dataModule.getReservationData(); 
+    const reservations = dataModule.getReservationData();
+    const uniqueBuildings = dataModule.getBuildings();
 
     resp.render('home', {
         layout: 'index',
@@ -198,7 +197,7 @@ server.get('/lab-select-building/:building?', function(req, res) {
 // update table to only show rooms on selected building
 server.get('/get-rooms', (req, res) => {
     const selectedBuilding = req.query.building; // get building from request
-    const allRooms = dataModule.getLaboratories();
+    const allRooms = dataModule.getLaboratories(req, res);
     const filteredRooms = allRooms.filter(lab => lab.building === selectedBuilding); 
     res.json(filteredRooms);
 });
@@ -341,7 +340,7 @@ server.get('/edit-reservation/:reservationId', function(req, resp) {
     const reservation = reservations.find(res => res.reservationId === reservationId); // Find the specific reservation by ID
 
     const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
+    const userData = dataModule.getUserData("email");
     
     if (!reservation) {
         // Handle case where reservation is not found
