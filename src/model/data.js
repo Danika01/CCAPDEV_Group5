@@ -1,4 +1,4 @@
-const Schema = require('/src/model/Schema');
+const Schema = require('/src/model/Schema.js');
 
 // used in login
 async function getAllUsers (req, res) {

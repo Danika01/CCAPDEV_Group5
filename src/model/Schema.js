@@ -96,10 +96,10 @@ const announcementSchema = new Schema({
 });
 
 module.exports = {
-    User: mongoose.models('User', userSchema),
-    Reservation: mongoose.models('Reservation', reservationSchema),
-    Building: mongoose.models('Building', buildingSchema),
-    Lab: mongoose.models('Lab', labSchema),
-    Seat: mongoose.models('Seat', seatSchema),
-    Announcement: mongoose.models('Announcement', announcementSchema)
+    User: mongoose.model('User', userSchema),
+    Reservation: mongoose.model('Reservation', reservationSchema),
+    Building: mongoose.model('Building', buildingSchema),
+    Lab: mongoose.model('Lab', labSchema),
+    Seat: mongoose.model('Seat', seatSchema),
+    Announcement: mongoose.model('Announcement', announcementSchema)
 }
