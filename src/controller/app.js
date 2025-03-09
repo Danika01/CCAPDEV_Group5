@@ -3,10 +3,13 @@
     npm i express express-handlebars body-parser
     npm install express-session
     npm install mongoose
+    npm install dotenv
 */
 
-const uri = "mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/?retryWrites=true&w=majority&appName=G5Cluster";
+//require('dotenv').config({ path: './.env' });
 const mongoose = require('mongoose');
+const uri = 'mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/?retryWrites=true&w=majority&appName=G5Cluster';
+
 main().catch(err => console.log(err));
 async function main() {
     try {
@@ -90,7 +93,7 @@ server.post('/login', function(req, resp) {
 // used for lab-select-building, room
 let buildings =  dataModule.getLaboratories();
 const defaultSeats = 20; // Default number of seats for all rooms
-let uniqueBuildings = [...new Set(buildings.map(lab => lab.building))];
+//let uniqueBuildings = [...new Set(buildings.map(lab => lab.building))];
 
 // render home.hbs
 server.get('/home', function(req, resp) {

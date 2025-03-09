@@ -26,7 +26,7 @@ const userSchema = new Schema({
         User: Number,
         Technician: Number
     },
-    refreshToken: Number
+    refreshToken: String
 });
 
 const reservationSchema = new Schema ({
