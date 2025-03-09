@@ -122,7 +122,7 @@ async function getLaboratories(req, res) {
         const labs = await Schema.Lab.find();
         res.json(labs);
     } catch (error) {
-     //   res.status(500).json({message:err.message});
+        res.status(500).json({message:err.message});
     }
 } 
 module.exports.getLaboratories = getLaboratories;

@@ -6,18 +6,18 @@
     npm install dotenv
 */
 
-//require('dotenv').config({ path: './.env' });
+require('dotenv').config();
 const mongoose = require('mongoose');
-const uri = 'mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/?retryWrites=true&w=majority&appName=G5Cluster';
 
 main().catch(err => console.log(err));
 async function main() {
     try {
-        await mongoose.connect(uri);
+        await mongoose.connect(process.env.DB_URI);
     } catch (err) {
         console.error(err);
     }
 }
+console.log("MongoDB URI:", process.env.DB_URI);
 
 const express = require('express');
 const server = express();
@@ -381,9 +381,6 @@ server.get('/logout', function(req, resp) {
     req.session.destroy(); 
     resp.redirect('/login');
 });
-
-
-
 
 const port = process.env.PORT || 3000;
 mongoose.connection.once('open', () => {
