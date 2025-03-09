@@ -1,4 +1,4 @@
-const Schema = require('Schema')
+const Schema = require('/src/model/Schema');
 
 // used in login
 async function getAllUsers (req, res) {
@@ -126,3 +126,12 @@ async function getLaboratories(req, res) {
     }
 } 
 module.exports.getLaboratories = getLaboratories;
+
+async function getBuildings() {
+    try {
+        const buildings = await Schema.Building.find();
+        res.json(buildings);
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+}
