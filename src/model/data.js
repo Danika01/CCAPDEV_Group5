@@ -1,41 +1,48 @@
 const mongoose = require('mongoose');
 const Schema = require('./Schema.js');
 
-// used in login
-async function getAllUsers (req, res) {
-    const users = await Schema.User.find().exec();
-    if (!users) return res.status(204).json({'message': 'No users found.'});
-    return res.json(users);
+
+// ✅ Used in login - Get all users
+async function getAllUsers() {
+    try {
+        const users = await Schema.User.find().exec();
+        return users.length ? users : null;
+    } catch (err) {
+        console.error("Error fetching users:", err);
+        return null;
+    }
 }
 module.exports.getAllUsers = getAllUsers;
 
-async function getUserData(req, res) {
-    const user = await Schema.User.findOne({email: req.params}).exec();
-    if (!user) {
-        return res.status(401).json({ "message": `No email matches ID ${req.params.id}.` });
+
+// ✅ Get user data by email (Fixed req.params usage)
+async function getUserData({ email }) {
+    try {
+        const user = await Schema.User.findOne({ email }).exec();
+        return user ? user : null;
+    } catch (err) {
+        console.error("Error fetching user data:", err);
+        return null;
     }
-    return res.json(user);
 }
 module.exports.getUserData = getUserData;
 
-async function getAnnouncements(req, res) {
+
+// ✅ Get all announcements
+async function getAnnouncements() {
     try {
         const announcements = await Schema.Announcement.find().exec();
-        if (!announcements) {
-            return res.status(204).json({'message': 'No announcements found.'})
-        }
-        return res.json(announcements);
+        return announcements.length ? announcements : null;
+    } catch (err) {
+        console.error("Error fetching announcements:", err);
+        return null;
     }
-    catch (err){
-        if (!res.headersSent) {
-            return res.status(500).json({ message: err.message });
-        }
-    }
-
 }
 module.exports.getAnnouncements = getAnnouncements;
 
-async function getUnavailableRooms(req, res) {
+
+// ✅ Get unavailable rooms (Fix `$unwind` error)
+async function getUnavailableRooms() {
     try {
         const unavailable = await Schema.Lab.aggregate([
             {
@@ -51,32 +58,25 @@ async function getUnavailableRooms(req, res) {
                     from: 'reservation',
                     localField: 'seats._id',
                     foreignField: 'seatsId',
-                    as: 'reservation'
+                    as: 'reservations'
                 }
-
             },
             {
                 $addFields: {
-                    totalSeats: { $size: '$seats'},
+                    totalSeats: { $size: '$seats' },
                     reservedSeats: {
                         $size: {
                             $filter: {
-                                input: 'reservation',
+                                input: '$reservations',
                                 as: 'res',
-                                cond: {
-                                    $eq: ['$$res.availability', false]
-                                }
+                                cond: { $eq: ['$$res.availability', false] }
                             }
                         }
                     }
                 }
             },
             {
-                $match: {
-                    $expr: {
-                        $eq: ['$totalSeats', '$reservedSeats']
-                    }
-                }
+                $match: { $expr: { $eq: ['$totalSeats', '$reservedSeats'] } }
             },
             {
                 $lookup: {
@@ -86,61 +86,67 @@ async function getUnavailableRooms(req, res) {
                     as: 'building'
                 }
             },
-            {
-                $unwind: 'building'
-            },
+            { $unwind: '$building' },
             {
                 $project: {
+                    _id: 0,
                     buildingName: '$building.name',
                     labName: '$name'
                 }
             }
         ]).exec();
-        return res.json(unavailable)
-    }
-    catch (err){
-        if (!res.headersSent) {
-            return res.status(500).json({ message: err.message });
-            }
-    }
 
+        return unavailable;
+    } catch (err) {
+        console.error("Error fetching unavailable rooms:", err);
+        return [];
+    }
 }
 module.exports.getUnavailableRooms = getUnavailableRooms;
 
-async function getReservationData(req, res) {
+
+// ✅ Get reservation data (Fixed population)
+async function getReservationData(id) {
     try {
-        const reservation = await Schema.Reservation.find({_id: req.params.id}).populate("seatId").exec();
-        return res.json(reservation);
+        const reservation = await Schema.Reservation.findById(id).populate("seatId").exec();
+        return reservation ? reservation : null;
     } catch (err) {
-        return res.status(500).json({message:err.message});
+        console.error("Error fetching reservation data:", err);
+        return null;
     }
 }
 module.exports.getReservationData = getReservationData;
 
 
-async function getSeatData(req, res) {
+// ✅ Get seat data
+async function getSeatData(id) {
     try {
-        const seatData = await Schema.Seat.findOne({_id: req.params.id}).exec();
-        return res.json(seatData);
+        const seatData = await Schema.Seat.findById(id).exec();
+        return seatData ? seatData : null;
     } catch (err) {
-        return res.status(500).json({message:err.message});
+        console.error("Error fetching seat data:", err);
+        return null;
     }
 }
 module.exports.getSeatData = getSeatData;
 
-async function getLaboratories(req, res) {
+
+// ✅ Get all labs
+async function getLaboratories() {
     try {
         const labs = await Schema.Lab.find().exec();
-        return res.json(labs);
+        return labs;
     } catch (err) {
-        return res.status(500).json({message:err.message});
+        console.error("Error fetching labs:", err);
+        return [];
     }
 } 
 module.exports.getLaboratories = getLaboratories;
 
-async function getLabsInBuilding(req, res) {
+
+// ✅ Get labs by building name (Fixed `req.params` usage)
+async function getLabsInBuilding(buildingName) {
     try {
-        const buildingName = req.params;
         const laboratories = await Schema.Lab.aggregate([
             {
                 $lookup: {
@@ -148,28 +154,30 @@ async function getLabsInBuilding(req, res) {
                     localField: 'buildingId',
                     foreignField: '_id',
                     as: 'building'
-
                 }
             },
             {
-                $match: {'building.name': buildingName}
+                $match: { 'building.name': buildingName }
             }
         ]).exec();
-        return res.json(laboratories);
+
+        return laboratories;
     } catch (err) {
-        if (!res.headersSent) {
-            return res.status(500).json({ message: err.message });
-        }
+        console.error("Error fetching labs in building:", err);
+        return [];
     }
 }
 module.exports.getLabsInBuilding = getLabsInBuilding;
 
-async function getBuildings(req, res) {
+
+// ✅ Get all buildings
+async function getBuildings() {
     try {
         const buildings = await Schema.Building.find().exec();
-        return res.json(buildings);
+        return buildings;
     } catch (err) {
-        return res.status(500).json({message:err.message});
+        console.error("Error fetching buildings:", err);
+        return [];
     }
 }
 module.exports.getBuildings = getBuildings;

@@ -72,16 +72,13 @@ const labSchema = new Schema({
         required: true,
     },
     building: String,
-    /*buildingId: {
-        type: Schema.Types.ObjectId,
-        ref: "Building",
-        required: true
-    },*/
     capacity: {
         type: Number,
         required: true
     }
-})
+}, { collection: "laboratories" });  
+const Lab = mongoose.model("Lab", labSchema);
+
 /*
 const buildingSchema = new Schema({
     name: {

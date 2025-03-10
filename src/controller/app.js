@@ -6,16 +6,24 @@
     npm install dotenv
 */
 
-require('dotenv').config();
+//require('dotenv').config();
+// const mongoose = require('mongoose');
+
+// Connect to MongoDB Atlas
 const mongoose = require('mongoose');
-main().catch(err => console.log(err));
-async function main() {
-    try {
-        await mongoose.connect(process.env.DB_URI);
-    } catch (err) {
-        console.error(err);
-    }
-}
+
+const DB_URI = "mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/LabLink?retryWrites=true&w=majority&appName=G5Cluster";
+
+
+mongoose.connect(DB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => console.log("Connected to MongoDB Atlas!"))
+.catch(err => console.error("MongoDB Atlas connection error:", err));
+
+
+
 
 const express = require('express');
 const server = express();
@@ -93,25 +101,39 @@ const defaultSeats = 20; // Default number of seats for all rooms
 
 
 // render home.hbs
-server.get('/home', function(req, resp) {
-    const email = req.session.email; 
-    const userData = dataModule.getUserData({email});
-    const reservations = dataModule.getReservationData(req, resp);
-    const uniqueBuildings = dataModule.getBuildings();
+server.get('/home', async function(req, resp) {
+    try {
+        const email = req.session.email || "john_doe@dlsu.edu.ph"; 
+        const userData = await dataModule.getUserData(email); 
 
-    resp.render('home', {
-        layout: 'index',
-        title: 'Animo LabLink',
-        reservations: reservations,
-        currentRoute: 'home',
-        uniqueBuildings: uniqueBuildings,
-        selectedBuilding: req.session.building || "Choose a building",
-        selectedDate: req.session.date || "",
-        selectedTimeIn: req.session.timeIn || "08:00",
-        selectedTimeOut: req.session.timeOut || "08:30",
-        pfp: userData.pfp || '/Images/default.jpg'
-    });
+        const reservations = await dataModule.getReservationData(email);
+        const uniqueBuildings = await dataModule.getBuildings();
+
+        console.log("User Data:", userData);
+        console.log("Buildings:", uniqueBuildings); // 🔍 Debugging log
+
+        resp.render('home', {
+            layout: 'index',
+            title: 'Animo LabLink',
+            reservations: reservations || [],
+            currentRoute: 'home',
+            uniqueBuildings: uniqueBuildings || [], // ✅ Ensure it's an array
+            selectedBuilding: req.session.building || "Choose a building",
+            selectedDate: req.session.date || "",
+            selectedTimeIn: req.session.timeIn || "08:00",
+            selectedTimeOut: req.session.timeOut || "08:30",
+            pfp: userData?.pfp || '/Images/default.jpg', 
+            name: userData?.name || "Guest"  
+        });
+
+    } catch (error) {
+        console.error("Error fetching data for /home:", error);
+        resp.status(500).send("Internal Server Error");
+    }
 });
+
+
+
 
 
 server.post('/set-session', (req, res) => {
@@ -134,31 +156,35 @@ server.get('/get-session-data', (req, res) => {
 
 
 // render account.hbs
-server.get('/account', function(req, resp) {
-    const reservations = dataModule.getReservationData(req,resp);
-    let email = req.session.email; 
+server.get('/account', async function(req, resp) {
+    try {
+        let email = req.session.email || "john_doe@dlsu.edu.ph"; 
+        const userData = await dataModule.getUserData(email); 
+        const reservations = await dataModule.getReservationData(email); // ✅ Pass email to filter reservations
 
-    // USE EMAIL VARIABLE WHEN DONE CODING SESSION 
-    const userData = dataModule.getUserData({email});
+        console.log("User Data:", userData); 
+        console.log("Reservations:", reservations); // 🔍 Debugging log
 
-    console.log("User Data:", userData); // Debugging log
+        resp.render('account', {
+            layout: 'index',
+            title: 'Account Page',
+            name: userData?.name || "Guest",  
+            aboutInfo: userData?.aboutInfo || "No information available.",
+            pfp: userData?.pfp || '/Images/default.jpg', 
+            reservations: reservations || [], // ✅ Ensure it's always an array
+            currentRoute: 'account'
+        });
 
-    resp.render('account', {
-        layout: 'index',
-        title: 'Account Page',
-        name: userData.name, 
-        aboutInfo: userData.aboutInfo,
-        pfp: userData.pfp, // Should contain the image path
-        reservations: reservations,
-        currentRoute: 'account'
-    });
+    } catch (error) {
+        console.error("Error fetching data for /account:", error);
+        resp.status(500).send("Internal Server Error");
+    }
 });
-
 
 // render edit-profile.hbs
 server.get('/edit-profile', function(req, resp) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData({email});
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
 
     resp.render('edit-profile', {
         layout: 'index',
@@ -170,28 +196,29 @@ server.get('/edit-profile', function(req, resp) {
 });
 
 // render lab-select-building.hbs
-server.get('/lab-select-building/:building?', function(req, res) {
+server.get('/lab-select-building/:building?', async function(req, res) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData({email});
-    const uniqueBuildings = dataModule.getBuildings();
+    const userData = await dataModule.getUserData("john_doe@dlsu.edu.ph");
+    const uniqueBuildings = await dataModule.getBuildings();  // Get all unique buildings
+    const selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
 
-    // Get selected building from route param, session, or default
-    let selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
+    // Get labs in the selected building
+    const filteredRooms = await dataModule.getLabsInBuilding(selectedBuilding); 
 
-    let filteredRooms = dataModule.getLabsInBuilding(req, res);
-
+    // Pass the filtered rooms (labs) to Handlebars
     res.render('lab-select-building', {
         layout: 'index',
         title: 'Select Building and Room',
         uniqueBuildings,
-        buildings: filteredRooms,
-        defaultSeats: defaultSeats,
+        buildings: filteredRooms,  // Ensure this is an array of labs
         currentRoute: 'lab-select-building',
         pfp: userData.pfp || '/Images/default.jpg',
         selectedBuilding,
         isTechnician: false
     });
 });
+
+
 
 
 // update table to only show rooms on selected building
@@ -204,25 +231,35 @@ server.get('/get-rooms', (req, res) => {
 
 
 // render reservation.hbs
-server.get('/reservations', function(req, resp) {
-    const reservations = dataModule.getReservationData(req, resp);
-    const email = req.session.email; 
-    const userData = dataModule.getUserData({email});
+server.get('/reservations', async function(req, resp) {
+    try {
+        const email = req.session.email || "john_doe@dlsu.edu.ph"; // Use session email
+        const reservations = await dataModule.getReservationData(email); // ✅ Await the function
+        const userData = await dataModule.getUserData(email); // ✅ Await user data
 
-    resp.render('reservations', {
-        layout: 'index',
-        title: 'Reservations',
-        reservations: reservations,
-        currentRoute: 'reservations',
-        pfp: userData.pfp || '/Images/default.jpg'
-    });
+        console.log("Reservations:", reservations); // Debugging
+
+        resp.render('reservations', {
+            layout: 'index',
+            title: 'Reservations',
+            reservations: reservations || [], // ✅ Pass the whole array
+            currentRoute: 'reservations',
+            pfp: userData?.pfp || '/Images/default.jpg'
+        });
+    } catch (error) {
+        console.error("Error fetching reservations:", error);
+        resp.status(500).send("Internal Server Error");
+    }
 });
+
+
+
 
 // render room.hbs
 server.get('/room/:building/:room', function(req, resp) {
     const { building, room } = req.params;
     const email = req.session.email;
-    const userData = dataModule.getUserData({email});
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
 
     // Get all seat data for this room
     const allSeats = dataModule.getSeatData();
@@ -320,7 +357,7 @@ server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
     const building = req.params.building; 
     const room = req.params.room; 
     const email = req.session.email; 
-    const userData = dataModule.getUserData({email});
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
 
     resp.render('admin-lab-reserve', {
         layout: 'index',
@@ -340,7 +377,7 @@ server.get('/edit-reservation/:reservationId', function(req, resp) {
     const reservation = reservations.find(res => res.reservationId === reservationId); // Find the specific reservation by ID
 
     const email = req.session.email; 
-    const userData = dataModule.getUserData({email});
+    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
     
     if (!reservation) {
         // Handle case where reservation is not found

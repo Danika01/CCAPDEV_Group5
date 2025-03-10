@@ -40,7 +40,7 @@
             "anonymousReservation": false
         },
         {
-            "email": "john_doe@dlsu.edu.ph",
+            "email": "micamica@dlsu.edu.ph",
             "reservationId": "20250128-0002",
             "requestDate": "January 28, 2025",
             "requestTime": "20:05",
@@ -49,7 +49,7 @@
             "endTime": "09:30",
             "building": "Yuchengco Hall",
             "room": "Y602",
-            "seatNumber": 12,
+            "seatNumber": 2,
             "anonymousReservation": false
         },
         {
@@ -57,6 +57,19 @@
             "reservationId": "20250130-0001",
             "requestDate": "January 30, 2025",
             "requestTime": "15:01",
+            "reservationDate": "2025-03-23",
+            "startTime": "10:00",
+            "endTime": "14:30",
+            "building": "Yuchengco Hall",
+            "room": "Y602",
+            "seatNumber": 12,
+            "anonymousReservation": true
+        },
+        {
+            "email": "john_doe@dlsu.edu.ph",
+            "reservationId": "20250002-0001",
+            "requestDate": "January 31, 2025",
+            "requestTime": "19:01",
             "reservationDate": "2025-03-23",
             "startTime": "10:00",
             "endTime": "14:30",
