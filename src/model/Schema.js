@@ -95,12 +95,24 @@ const announcementSchema = new Schema({
     type : String
 });
 
+const unavailableRoomSchema = new Schema ({
+    room: String,
+    date: String,
+    status: String
+})
 
+const seatSchema = new Schema ({
+    seatNum: Number,
+    roomNum: String,
+    reservation: Object
+})
 
 module.exports = {
     User: mongoose.model('User', userSchema),
     Reservation: mongoose.model('Reservation', reservationSchema),
-    Building: mongoose.model('Building', buildingSchema),
+   // Building: mongoose.model('Building', buildingSchema),
     Lab: mongoose.model('Lab', labSchema),
+    Unavailableroom: mongoose.model('Unavailableroom', unavailableRoomSchema),
+    Seat: mongoose.model('Seat', seatSchema),
     Announcement: mongoose.model('Announcement', announcementSchema)
 }

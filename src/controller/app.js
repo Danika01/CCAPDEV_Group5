@@ -19,7 +19,7 @@ async function main() {
 
 const express = require('express');
 const server = express();
-const dataModule = require('../model/data.js');
+const dataModule = require('../model/data2.js');
 const session = require('express-session');
 const path = require('path');
 const bodyParser = require('body-parser');
