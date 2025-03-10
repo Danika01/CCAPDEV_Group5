@@ -8,7 +8,6 @@
 
 require('dotenv').config();
 const mongoose = require('mongoose');
-
 main().catch(err => console.log(err));
 async function main() {
     try {
@@ -78,8 +77,7 @@ server.get('/login', function(req, resp) {
 // render login.hbs (POST request)
 server.post('/login', function(req, resp) {
     const { email, password } = req.body;
-    const users = dataModule.getAllUsers(req,resp);
-    const user = users.find(user => user.email === email && user.password === password);
+    const user = dataModule.getUserData({email, password});
 
     if (user) {
         req.session.email = email; // Store email for search matching purposes
@@ -96,8 +94,8 @@ const defaultSeats = 20; // Default number of seats for all rooms
 // render home.hbs
 server.get('/home', function(req, resp) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
-    const reservations = dataModule.getReservationData();
+    const userData = dataModule.getUserData({email});
+    const reservations = dataModule.getReservationData(req, resp);
     const uniqueBuildings = dataModule.getBuildings();
 
     resp.render('home', {
@@ -136,11 +134,11 @@ server.get('/get-session-data', (req, res) => {
 
 // render account.hbs
 server.get('/account', function(req, resp) {
-    const reservations = dataModule.getReservationData();
+    const reservations = dataModule.getReservationData(req,resp);
     let email = req.session.email; 
 
     // USE EMAIL VARIABLE WHEN DONE CODING SESSION 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");  
+    const userData = dataModule.getUserData({email});
 
     console.log("User Data:", userData); // Debugging log
 
@@ -159,7 +157,7 @@ server.get('/account', function(req, resp) {
 // render edit-profile.hbs
 server.get('/edit-profile', function(req, resp) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
+    const userData = dataModule.getUserData({email});
 
     resp.render('edit-profile', {
         layout: 'index',
@@ -173,7 +171,7 @@ server.get('/edit-profile', function(req, resp) {
 // render lab-select-building.hbs
 server.get('/lab-select-building/:building?', function(req, res) {
     const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
+    const userData = dataModule.getUserData({email});
 
     // Get selected building from route param, session, or default
     let selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
@@ -205,9 +203,9 @@ server.get('/get-rooms', (req, res) => {
 
 // render reservation.hbs
 server.get('/reservations', function(req, resp) {
-    const reservations = dataModule.getReservationData(); 
+    const reservations = dataModule.getReservationData(req, resp);
     const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
+    const userData = dataModule.getUserData({email});
 
     resp.render('reservations', {
         layout: 'index',
@@ -222,7 +220,7 @@ server.get('/reservations', function(req, resp) {
 server.get('/room/:building/:room', function(req, resp) {
     const { building, room } = req.params;
     const email = req.session.email;
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
+    const userData = dataModule.getUserData({email});
 
     // Get all seat data for this room
     const allSeats = dataModule.getSeatData();
@@ -320,7 +318,7 @@ server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
     const building = req.params.building; 
     const room = req.params.room; 
     const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph"); 
+    const userData = dataModule.getUserData({email});
 
     resp.render('admin-lab-reserve', {
         layout: 'index',
@@ -336,11 +334,11 @@ server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
 // render edit-reservation.hbs
 server.get('/edit-reservation/:reservationId', function(req, resp) {
     const reservationId = req.params.reservationId; // Get reservation ID from URL
-    const reservations = dataModule.getReservationData(); // Get all reservations
+    const reservations = dataModule.getReservationData(req, resp); // Get all reservations
     const reservation = reservations.find(res => res.reservationId === reservationId); // Find the specific reservation by ID
 
     const email = req.session.email; 
-    const userData = dataModule.getUserData("email");
+    const userData = dataModule.getUserData({email});
     
     if (!reservation) {
         // Handle case where reservation is not found
