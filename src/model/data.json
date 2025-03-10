@@ -12,18 +12,35 @@
             "name": "John Doe",
             "email": "john_doe@dlsu.edu.ph",
             "password": "password",
-            "aboutInfo": "This is a sample bio for John Doe.",
+            "aboutInfo": "Freshman majoring in Software Tech.",
             "pfp": "/Images/test.jpg",
+            "type": "User"
+        },
+        {
+            "name": "Maria Santos",
+            "email": "maria_santos@dlsu.edu.ph",
+            "password": "maria123",
+            "aboutInfo": "CCS senior, President of LSCS.",
+            "pfp": "/Images/maria.jpg",
             "type": "User"
         },
         {
             "name": "Louis Lu",
             "email": "louis_lu@dlsu.edu.ph",
             "password": "PASS",
-            "aboutInfo": "This is a sample bio for Louis Lu.",
+            "aboutInfo": "Professor at DLSU.",
             "pfp": "/Images/aristotle.jpg",
             "type": "Admin"
+        },
+        {
+            "name": "Carlos Reyes",
+            "email": "carlos_reyes@dlsu.edu.ph",
+            "password": "carlos123",
+            "aboutInfo": "An admin staff managing room reservations.",
+            "pfp": "/Images/carlos.jpg",
+            "type": "Admin"
         }
+        
     ],
     "reservations": [
         {
