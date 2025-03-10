@@ -82,6 +82,11 @@ async function getBuildings(req, res) {
         const buildings = await Schema.Lab.aggregate([
             {
                 $match: {building}
+            },
+            {
+                $project: {
+                    building: '$building'
+                }
             }
         ]).exec();
         return res.json(buildings);
@@ -91,3 +96,19 @@ async function getBuildings(req, res) {
     }
 }
 module.exports.getBuildings = getBuildings;
+
+async function getLabsInBuilding(req, res) {
+    try {
+        const labs = await Schema.Lab.aggregate([
+            {
+                $match: {building}
+            }
+        ]).exec();
+        return res.json(labs);
+    } catch (err) {
+        console.error('Error reading or parsing data.json:', err);
+        return [];
+    }
+}
+module.exports.getLabsInBuilding = getLabsInBuilding;
+
