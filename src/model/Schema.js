@@ -30,7 +30,7 @@ const userSchema = new Schema({
 });
 
 const reservationSchema = new Schema ({
-    userID: {
+    /*userID: {
         type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
@@ -39,7 +39,8 @@ const reservationSchema = new Schema ({
         type: Schema.Types.ObjectId,
         ref:'Lab',
         required: true
-    },
+    },*/
+    email: String,
     requestDate: {
         type: Date,
         required: true
@@ -48,12 +49,17 @@ const reservationSchema = new Schema ({
         type: Date,
         required: true
     },
-    timeIn: {
+    /*timeIn: {
         type: Date,
         required: true
     },
     timeOut: {
         type: Date,
+        required: true
+    },*/
+    reservationTime: String,
+    room: {
+        type: String,
         required: true
     },
     seatNumber: Number
@@ -65,28 +71,31 @@ const labSchema = new Schema({
         type: String,
         required: true,
     },
-    buildingId: {
+    building: String,
+    /*buildingId: {
         type: Schema.Types.ObjectId,
         ref: "Building",
         required: true
-    },
+    },*/
     capacity: {
         type: Number,
         required: true
     }
 })
-
+/*
 const buildingSchema = new Schema({
     name: {
         type: String,
         required: true
     },
     nickname: String,           // Shortcut names for buildings (i.e. Goks)
-});
+}); */
 
 const announcementSchema = new Schema({
     type : String
 });
+
+
 
 module.exports = {
     User: mongoose.model('User', userSchema),
