@@ -2,11 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    firstname: {
-        type: String,
-        required: true
-    },
-    lastname: {
+    name: {
         type: String,
         required: true
     },
@@ -18,15 +14,19 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    pass: {
+    password: {
         type: String,
         required: true
     },
-    role: {
-        User: Number,
-        Technician: Number
+    aboutInfo: {
+        type: String,
+        required: true
     },
-    refreshToken: String
+    type : {
+        type: String,
+        required: true
+    },
+    pfp: String
 });
 
 const reservationSchema = new Schema ({
@@ -72,15 +72,15 @@ const labSchema = new Schema({
         type: String,
         required: true,
     },
-    floor: {
-        type: Number,
-        required: true
-    },
     buildingId: {
         type: Schema.Types.ObjectId,
         ref: "Building",
         required: true
     },
+    capacity: {
+        type: Number,
+        required: true
+    }
 })
 
 const buildingSchema = new Schema({
