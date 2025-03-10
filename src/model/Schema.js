@@ -79,14 +79,6 @@ const labSchema = new Schema({
 }, { collection: "laboratories" });  
 const Lab = mongoose.model("Lab", labSchema);
 
-/*
-const buildingSchema = new Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    nickname: String,           // Shortcut names for buildings (i.e. Goks)
-}); */
 
 const announcementSchema = new Schema({
     type : String
@@ -98,11 +90,19 @@ const unavailableRoomSchema = new Schema ({
     status: String
 })
 
-const seatSchema = new Schema ({
+const seatSchema = new Schema({
     seatNum: Number,
     roomNum: String,
-    reservation: Object
-})
+    reservation: [{
+        name: String,
+        email: String,
+        reservationId: String,
+        reservationDate: String,
+        startTime: String,
+        endTime: String
+    }]
+});
+
 
 module.exports = {
     User: mongoose.model('User', userSchema),

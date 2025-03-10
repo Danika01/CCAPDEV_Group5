@@ -1,5 +1,5 @@
 const Schema = require("./Schema");
-const { Lab } = require('./Schema');  // 👈 Import Lab model
+const { Lab } = require('./Schema');
 
 
 // Get all users
@@ -17,8 +17,8 @@ module.exports.getAllUsers = getAllUsers;
 async function getUserData(email) {
     try {
         const user = await Schema.User.findOne({ email: email }).exec();
-        console.log("Found user:", user);  // 🔍 Debugging
-        return user;  // ✅ Now it correctly returns the user object
+        console.log("Found user:", user); 
+        return user;  
     } catch (error) {
         console.error('Error fetching user:', error);
         return null;
@@ -60,19 +60,33 @@ async function getReservationData(email) {
         return [];
     }
 }
-
 module.exports.getReservationData = getReservationData;
 
+// Get reservation by custom reservationId
+async function getReservationByReservationId(reservationId) {
+    try {
+        const reservation = await Schema.Reservation.findOne({ reservationId: reservationId }).lean().exec();
+        console.log("Reservation from DB:", reservation); 
+        return reservation;
+    } catch (error) {
+        console.error("Error fetching reservation:", error);
+        return null; 
+    }
+}
+module.exports.getReservationByReservationId = getReservationByReservationId;
 
 // Get seat data
 async function getSeatData() {
     try {
-        return await Schema.Seat.find().exec();
+        const seats = await Schema.Seat.find().lean().exec(); 
+        console.log("Fetched seat data:", seats);  
+        return seats;
     } catch (error) {
         console.error("Error fetching seat data:", error);
         return [];
     }
 }
+
 module.exports.getSeatData = getSeatData;
 
 // Get all laboratories
@@ -89,8 +103,8 @@ module.exports.getLaboratories = getLaboratories;
 // Get unique building names
 async function getBuildings() {
     try {
-        const buildings = await Lab.distinct("building").exec();  // ✅ Uses correct collection
-        console.log("Buildings found:", buildings);  // ✅ Debugging log
+        const buildings = await Lab.distinct("building").exec(); 
+        console.log("Buildings found:", buildings);  
         return buildings;
     } catch (error) {
         console.error("Error fetching buildings:", error);

@@ -35,17 +35,20 @@
                                     <th style="font-size: 15.5pt;">Number of Seats</th>
                                 </tr>
                             </thead>
-                            <tbody id="room-list">
-                                {{#each buildings}}
-                                    <tr class="clickable-row" data-href="/room/{{building}}/{{room}}">
-                                        <td>{{building}}</td>
-                                        <td>{{room}}</td>
-                                        <td>{{capacity}}</td>
-                                    </tr>
-                                {{else}}
-                                    <tr><td colspan="3">No rooms found for this building.</td></tr>
-                                {{/each}}
-                            </tbody>
+                            {{#if laboratories}}
+                                <tbody id="room-list">
+                                    {{#each laboratories}}
+                                        <tr class="clickable-row" data-href="/room/{{building}}/{{room}}">
+                                            <td>{{this.building}}</td>
+                                            <td>{{this.room}}</td>
+                                            <td>{{this.capacity}}</td>
+                                        </tr>
+                                    {{/each}}
+                                </tbody>
+                            {{else}}
+                                <tr><td colspan="3">No rooms available.</td></tr>
+                            {{/if}}
+
                         </table>
                     </div>
                 </div>

@@ -12,29 +12,29 @@
             </div>
             
             <!-- RESERVATION CONTENT -->
-            {{#each reservations}}
+            
                 <div class="container edit-placeholder">
                     <div class="content-box justify-content-between">
                         <span class="value-name"> RESERVATION ID </span>
-                        <span class="value" style="padding-right: 2%;"> {{this.reservationId}} </span>
+                        <span class="value" style="padding-right: 2%;"> {{reservation.reservationId}} </span>
                     </div>
                     <div class="content-box justify-content-between">
                         <span class="value-name"> REQUEST DATE </span>
-                        <span class="value" style="padding-right: 2%;"> {{this.requestDate}} <br> {{this.requestTime}} </span>
+                        <span class="value" style="padding-right: 2%;"> {{reservation.requestDate}} <br> {{reservation.requestTime}} </span>
                     </div>
                     <div class="content-box justify-content-between">
                         <span class="value-name"> DATE & TIME OF RESERVATION </span>
                         <span class="value" style="padding-right: 2%;"> 
-                            {{this.reservationDate}} <br> <span>{{this.startTime}} to {{this.endTime}}</span> 
+                            {{reservation.reservationDate}} <br> <span>{{reservation.startTime}} to {{reservation.endTime}}</span> 
                         </span>
                     </div>
                     <div class="content-box justify-content-between">
                         <span class="value-name"> ROOM INFORMATION </span>
-                        <span class="value"> {{this.building}} <br> {{this.room}} </span>
+                        <span class="value"> {{reservation.building}} <br> {{reservation.room}} </span>
                     </div>
                     <div class="content-box justify-content-between">
                         <span class="value-name"> SEAT NUMBER </span>
-                        <span class="value" style="padding-right: 12%;"> {{this.seatNumber}} </span>
+                        <span class="value" style="padding-right: 12%;"> {{reservation.seatNumber}} </span>
                     </div>
                 </div>
 
@@ -61,12 +61,12 @@
                     </div>
                     <div>
                         <form action="/edit-reservation" method="POST">
-                            <input type="hidden" name="building" value="{{this.building}}">
-                            <input type="hidden" name="room" value="{{this.room}}">
-                            <input type="hidden" name="reservationId" value="{{this.reservationId}}">
-                            <input type="hidden" name="reservationDate" value="{{this.reservationDate}}">
-                            <input type="hidden" name="startTime" value="{{this.startTime}}">
-                            <input type="hidden" name="endTime" value="{{this.endTime}}">
+                            <input type="hidden" name="building" value="{{reservation.building}}">
+                            <input type="hidden" name="room" value="{{reservation.room}}">
+                            <input type="hidden" name="reservationId" value="{{reservation.reservationId}}">
+                            <input type="hidden" name="reservationDate" value="{{reservation.reservationDate}}">
+                            <input type="hidden" name="startTime" value="{{reservation.startTime}}">
+                            <input type="hidden" name="endTime" value="{{reservation.endTime}}">
 
                             <button type="submit" class="btn btn-success edit-res-btn" id="confirm-reservation">
                                 Edit Reservation
@@ -74,7 +74,7 @@
                         </form>
                     </div>
                 </div>
-            {{/each}}
+            
         </div>
     </div>
 </div>

@@ -15,14 +15,9 @@ const mongoose = require('mongoose');
 const DB_URI = "mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/LabLink?retryWrites=true&w=majority&appName=G5Cluster";
 
 
-mongoose.connect(DB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log("Connected to MongoDB Atlas!"))
-.catch(err => console.error("MongoDB Atlas connection error:", err));
-
-
+mongoose.connect(DB_URI)
+  .then(() => console.log("Connected to MongoDB Atlas!"))
+  .catch(err => console.error("MongoDB Atlas connection error:", err));
 
 
 const express = require('express');
@@ -45,8 +40,11 @@ server.engine('hbs', handlebars.engine({
         eq: function (a, b) {
             return a === b;
         }
-    }
+    },
+    allowProtoPropertiesByDefault: true,  
+    allowProtoMethodsByDefault: true      
 }));
+
 
 server.set('views', path.join(__dirname, '..', '..', 'src', 'views'));
 server.use(express.static(path.join(__dirname, '..', 'public')));
@@ -110,19 +108,19 @@ server.get('/home', async function(req, resp) {
         const uniqueBuildings = await dataModule.getBuildings();
 
         console.log("User Data:", userData);
-        console.log("Buildings:", uniqueBuildings); // 🔍 Debugging log
+        console.log("Buildings:", uniqueBuildings); 
 
         resp.render('home', {
             layout: 'index',
             title: 'Animo LabLink',
             reservations: reservations || [],
             currentRoute: 'home',
-            uniqueBuildings: uniqueBuildings || [], // ✅ Ensure it's an array
+            uniqueBuildings: uniqueBuildings || [], 
             selectedBuilding: req.session.building || "Choose a building",
             selectedDate: req.session.date || "",
             selectedTimeIn: req.session.timeIn || "08:00",
             selectedTimeOut: req.session.timeOut || "08:30",
-            pfp: userData?.pfp || '/Images/default.jpg', 
+            pfp: userData?.pfp || '/Images/default.png', 
             name: userData?.name || "Guest"  
         });
 
@@ -160,18 +158,18 @@ server.get('/account', async function(req, resp) {
     try {
         let email = req.session.email || "john_doe@dlsu.edu.ph"; 
         const userData = await dataModule.getUserData(email); 
-        const reservations = await dataModule.getReservationData(email); // ✅ Pass email to filter reservations
+        const reservations = await dataModule.getReservationData(email); 
 
         console.log("User Data:", userData); 
-        console.log("Reservations:", reservations); // 🔍 Debugging log
+        console.log("Reservations:", reservations); 
 
         resp.render('account', {
             layout: 'index',
             title: 'Account Page',
             name: userData?.name || "Guest",  
             aboutInfo: userData?.aboutInfo || "No information available.",
-            pfp: userData?.pfp || '/Images/default.jpg', 
-            reservations: reservations || [], // ✅ Ensure it's always an array
+            pfp: userData?.pfp || '/Images/default.png', 
+            reservations: reservations || [],
             currentRoute: 'account'
         });
 
@@ -191,7 +189,7 @@ server.get('/edit-profile', function(req, resp) {
         title: 'Edit Profile',
         name: userData.name,
         aboutInfo: userData.aboutInfo,
-        pfp: userData.pfp || '/Images/default.jpg'
+        pfp: userData.pfp || '/Images/test.jpg'
     });
 });
 
@@ -203,48 +201,52 @@ server.get('/lab-select-building/:building?', async function(req, res) {
     const selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
 
     // Get labs in the selected building
-    const filteredRooms = await dataModule.getLabsInBuilding(selectedBuilding); 
+    let filteredRooms = await dataModule.getLabsInBuilding(selectedBuilding); 
+    filteredRooms = filteredRooms.map(room => room.toObject());
+    console.log("THE ROOMS ARE" + filteredRooms);  
 
-    // Pass the filtered rooms (labs) to Handlebars
+
     res.render('lab-select-building', {
         layout: 'index',
         title: 'Select Building and Room',
         uniqueBuildings,
-        buildings: filteredRooms,  // Ensure this is an array of labs
+        laboratories: filteredRooms,  
         currentRoute: 'lab-select-building',
-        pfp: userData.pfp || '/Images/default.jpg',
+        pfp: userData.pfp || '/Images/default.png',
         selectedBuilding,
         isTechnician: false
     });
 });
 
 
-
-
 // update table to only show rooms on selected building
-server.get('/get-rooms', (req, res) => {
-    const selectedBuilding = req.query.building; // get building from request
-    const allRooms = dataModule.getLaboratories(req, res);
-    const filteredRooms = allRooms.filter(lab => lab.building === selectedBuilding); 
+server.get('/get-rooms', async (req, res) => {
+    const selectedBuilding = req.query.building;
+    if (!selectedBuilding) {
+        return res.status(400).send({ error: 'Building parameter is required.' });
+    }
+    const allRooms = await dataModule.getLaboratories(); 
+    const filteredRooms = allRooms.filter(lab => lab.building === selectedBuilding);
     res.json(filteredRooms);
 });
+
 
 
 // render reservation.hbs
 server.get('/reservations', async function(req, resp) {
     try {
         const email = req.session.email || "john_doe@dlsu.edu.ph"; // Use session email
-        const reservations = await dataModule.getReservationData(email); // ✅ Await the function
-        const userData = await dataModule.getUserData(email); // ✅ Await user data
+        const reservations = await dataModule.getReservationData(email); 
+        const userData = await dataModule.getUserData(email); 
 
         console.log("Reservations:", reservations); // Debugging
 
         resp.render('reservations', {
             layout: 'index',
             title: 'Reservations',
-            reservations: reservations || [], // ✅ Pass the whole array
+            reservations: reservations || [], 
             currentRoute: 'reservations',
-            pfp: userData?.pfp || '/Images/default.jpg'
+            pfp: userData?.pfp || '/Images/default.png'
         });
     } catch (error) {
         console.error("Error fetching reservations:", error);
@@ -256,14 +258,25 @@ server.get('/reservations', async function(req, resp) {
 
 
 // render room.hbs
-server.get('/room/:building/:room', function(req, resp) {
+server.get('/room/:building/:room', async function(req, resp) {
     const { building, room } = req.params;
     const email = req.session.email;
     const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
 
     // Get all seat data for this room
-    const allSeats = dataModule.getSeatData();
-    
+    let allSeats;
+    try {
+        allSeats = await dataModule.getSeatData(); // Await the result from the DB
+    } catch (error) {
+        console.error("Error fetching seat data:", error);
+        return resp.status(500).send("Error: Unable to fetch seat data.");
+    }
+
+    if (!Array.isArray(allSeats)) {
+        console.error("Expected an array but got:", typeof allSeats);
+        return resp.status(500).send("Error: Seat data is not an array.");
+    }
+
     // Default date & time if not set in session
     if (!req.session.date) req.session.date = new Date().toISOString().split("T")[0];
     if (!req.session.timeIn) req.session.timeIn = "08:00";
@@ -272,10 +285,6 @@ server.get('/room/:building/:room', function(req, resp) {
     const selectedDate = req.session.date;
     const selectedStartTime = req.session.timeIn;
     const selectedEndTime = req.session.timeOut;
-
-    console.log("Selected Date:", selectedDate);
-    console.log("Start Time:", selectedStartTime);
-    console.log("End Time:", selectedEndTime);
 
     const roomSeats = allSeats
         .filter(seat => seat.roomNum === room)
@@ -308,19 +317,21 @@ server.get('/room/:building/:room', function(req, resp) {
         seats: roomSeats,
         building: building,
         room: room,
-        buildings: buildings,
-        pfp: userData.pfp || '/Images/default.jpg',
+        buildings: req.session.building,
+        pfp: userData.pfp || '/Images/test.jpg',
         date: selectedDate,
         startTime: selectedStartTime,
         endTime: selectedEndTime,
+        currentRoute: 'reservations',
         hasAvailableSeats: roomSeats.some(seat => !seat.reserved)
     });
 });
 
 
 
+
 // check if seats are available
-server.get('/check-seat-availability', (req, res) => {
+server.get('/check-seat-availability', async (req, res) => {
     const { room, date, timeIn, timeOut } = req.query;
 
     if (!room || !date || !timeIn || !timeOut) {
@@ -328,10 +339,19 @@ server.get('/check-seat-availability', (req, res) => {
     }
 
     // Get seat data for the selected room
-    const seats = dataModule.getSeatData().filter(seat => seat.roomNum === room);
+    let seats;
+    try {
+        seats = await dataModule.getSeatData();  // Await the result from the DB
+    } catch (error) {
+        console.error("Error fetching seat data:", error);
+        return res.status(500).json({ error: "Unable to fetch seat data" });
+    }
+
+    // Filter for the selected room
+    const filteredSeats = seats.filter(seat => seat.roomNum === room);
 
     // Check if ANY seat is occupied during the requested time
-    const isSeatUnavailable = seats.some(seat => {
+    const isSeatUnavailable = filteredSeats.some(seat => {
         return seat.reservations.some(reservation => {
             // Convert reservationDate to YYYY-MM-DD before comparing
             const formattedReservationDate = new Date(reservation.reservationDate).toISOString().split('T')[0];
@@ -340,15 +360,9 @@ server.get('/check-seat-availability', (req, res) => {
                    !(timeOut <= reservation.startTime || timeIn >= reservation.endTime);
         });
     });
-    
 
     res.json({ hasAvailableSeats: !isSeatUnavailable });
 });
-
-
-
-
-
 
 
 // render admin-lab-reserve.hbs
@@ -366,21 +380,19 @@ server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
         building: building, 
         room: room, 
         buildings: buildings, 
-        pfp: userData.pfp || '/Images/default.jpg'
+        pfp: userData.pfp || '/Images/default.png'
     });
 });
 
 // render edit-reservation.hbs
-server.get('/edit-reservation/:reservationId', function(req, resp) {
+server.get('/edit-reservation/:reservationId', async function(req, resp) {
     const reservationId = req.params.reservationId; // Get reservation ID from URL
-    const reservations = dataModule.getReservationData(req, resp); // Get all reservations
-    const reservation = reservations.find(res => res.reservationId === reservationId); // Find the specific reservation by ID
-
     const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
+
+    const reservation = await dataModule.getReservationByReservationId(reservationId); 
+    const userData = await dataModule.getUserData("john_doe@dlsu.edu.ph");
     
     if (!reservation) {
-        // Handle case where reservation is not found
         resp.status(404).send('Reservation not found');
         return;
     }
@@ -388,8 +400,9 @@ server.get('/edit-reservation/:reservationId', function(req, resp) {
     resp.render('edit-reservation', {
         layout: 'index',
         title: 'Edit Reservation',
-        reservations: [reservation], // Pass the reservation as an array (for {{#each}})
-        pfp: userData.pfp || '/Images/default.jpg'
+        reservation: reservation,
+        pfp: userData.pfp || '/Images/default.png', // use session for this in the future
+        currentRoute: 'reservations'
     });
 });
 
@@ -406,9 +419,6 @@ server.post('/edit-reservation', (req, res) => {
     console.log(`Start Time: ${startTime}`);
     console.log(`End Time: ${endTime}`);
 
-    // TODO: Update reservation logic in your data module
-
-
     // Redirect back to the room page after editing
     res.redirect(`/room/${building}/${room}`);
 });
@@ -418,8 +428,6 @@ server.get('/logout', function(req, resp) {
     req.session.destroy(); 
     resp.redirect('/login');
 });
-
-
 
 
 const port = process.env.PORT || 3000;
