@@ -138,6 +138,32 @@ async function getLaboratories(req, res) {
 } 
 module.exports.getLaboratories = getLaboratories;
 
+async function getLabsInBuilding(req, res) {
+    try {
+        const buildingName = req.params;
+        const laboratories = await Schema.Lab.aggregate([
+            {
+                $lookup: {
+                    from: 'building',
+                    localField: 'buildingId',
+                    foreignField: '_id',
+                    as: 'building'
+
+                }
+            },
+            {
+                $match: {'building.name': buildingName}
+            }
+        ]).exec();
+        return res.json(laboratories);
+    } catch (err) {
+        if (!res.headersSent) {
+            return res.status(500).json({ message: err.message });
+        }
+    }
+}
+module.exports.getLabsInBuilding = getLabsInBuilding;
+
 async function getBuildings(req, res) {
     try {
         const buildings = await Schema.Building.find().exec();

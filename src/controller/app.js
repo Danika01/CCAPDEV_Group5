@@ -29,6 +29,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
 const handlebars = require('express-handlebars');
+const {data} = require("express-session/session/cookie");
 server.set('view engine', 'hbs');
 server.engine('hbs', handlebars.engine({
     extname: 'hbs',
@@ -172,17 +173,18 @@ server.get('/edit-profile', function(req, resp) {
 server.get('/lab-select-building/:building?', function(req, res) {
     const email = req.session.email; 
     const userData = dataModule.getUserData({email});
+    const uniqueBuildings = dataModule.getBuildings();
 
     // Get selected building from route param, session, or default
     let selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
 
-    let filteredRooms = buildings.filter(b => b.building === selectedBuilding);
+    let filteredRooms = dataModule.getLabsInBuilding(req, res);
 
     res.render('lab-select-building', {
         layout: 'index',
         title: 'Select Building and Room',
-        uniqueBuildings, 
-        buildings: filteredRooms, 
+        uniqueBuildings,
+        buildings: filteredRooms,
         defaultSeats: defaultSeats,
         currentRoute: 'lab-select-building',
         pfp: userData.pfp || '/Images/default.jpg',
