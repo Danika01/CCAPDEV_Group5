@@ -35,12 +35,16 @@ const reservationSchema = new Schema ({
         ref: 'User',
         required: true
     },
-    seatID: {
+    labID: {
         type: Schema.Types.ObjectId,
-        ref: 'Seat',
+        ref:'Lab',
         required: true
     },
-    date: {
+    requestDate: {
+        type: Date,
+        required: true
+    },
+    reservationDate: {
         type: Date,
         required: true
     },
@@ -52,20 +56,9 @@ const reservationSchema = new Schema ({
         type: Date,
         required: true
     },
-    availability: Boolean
+    seatNumber: Number
 });
 
-const seatSchema = new Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    lab: {
-        type: Schema.Types.ObjectId,
-        ref: 'Lab',
-        required: true
-    },
-});
 
 const labSchema = new Schema({
     name: {
@@ -100,6 +93,5 @@ module.exports = {
     Reservation: mongoose.model('Reservation', reservationSchema),
     Building: mongoose.model('Building', buildingSchema),
     Lab: mongoose.model('Lab', labSchema),
-    Seat: mongoose.model('Seat', seatSchema),
     Announcement: mongoose.model('Announcement', announcementSchema)
 }
