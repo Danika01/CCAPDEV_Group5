@@ -30,7 +30,7 @@ module.exports.getUserData = getUserData;
 // Get announcements
 async function getAnnouncements() {
     try {
-        return await Schema.Announcement.find().exec();
+        return await Schema.Announcement.find().lean().exec();
     } catch (error) {
         console.error("Error fetching announcements:", error);
         return [];

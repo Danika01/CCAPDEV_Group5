@@ -74,7 +74,9 @@
                                         {{#if this.isAnonymous}}
                                             Anonymous
                                         {{else}}
-                                            <a class="username" href="{{this.profileLink}}">{{this.reservationName}}</a>
+                                            <a class="username" href="/account?email={{this.reservationEmail}}">
+                                                {{this.reservationName}}
+                                            </a>
                                         {{/if}}
                                     {{else}}
                                         Available
@@ -83,7 +85,6 @@
                                 <div>{{this.roomNum}}</div>
                             </div>
                         {{/each}}
-
 
                     </div>
 

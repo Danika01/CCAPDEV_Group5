@@ -81,7 +81,7 @@ const Lab = mongoose.model("Lab", labSchema);
 
 
 const announcementSchema = new Schema({
-    type : String
+    type: String
 });
 
 const unavailableRoomSchema = new Schema ({

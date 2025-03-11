@@ -73,9 +73,7 @@
     <!--BODY-->
     <div class="body-container">
         <div>
-            {{#each carouselImages}}
-                <img src="{{this}}" alt="Lab Image" style="width: 655px; height: 650px;">
-            {{/each}}
+            <img src="..\Images\lab2.png" alt="Lab Image" style="width: 655px; height: 615px;">
         </div>         
         <div class ="halfbody-container">
             <h1 style="color:#355f2e; padding-left: 175px; padding-top: 20px; font-style:bold; font-size: 50px;">Lab Reservation</h1>
@@ -84,8 +82,8 @@
             </div>
             <div class="boxInner" style="position: absolute; top: 135px; left: 170px; background-color: #b9b4a2">
                 <ul style="font-size: 20px; padding-top: 10px;">
-                    {{#each announcements}}
-                        <li>{{this}}</li>
+                    {{#each announcement}}
+                        <li>{{this.type}}</li>
                     {{/each}}
                 </ul>
             </div>

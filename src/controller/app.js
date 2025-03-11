@@ -68,18 +68,24 @@ const carouselImages = [
 ];
 
 // render login.hbs (GET request)
-server.get('/login', function(req, resp) {
-    const announcements = dataModule.getAnnouncements(req, resp);
-    const unavailableRooms = dataModule.getUnavailableRooms(req, resp);
+server.get('/login', async function(req, resp) {
+    try {
+        const announcements = await dataModule.getAnnouncements(req, resp);
+        const unavailableRooms = await dataModule.getUnavailableRooms(req, resp);
 
-    resp.render('login', {
-        layout: 'index',
-        title: 'Login Page',
-        carouselImages: carouselImages, 
-        announcements: announcements, 
-        unavailableRooms: unavailableRooms
-    });
+        resp.render('login', {
+            layout: 'index',
+            title: 'Login Page',
+            carouselImages: carouselImages,
+            announcement: announcements,
+            unavailableRooms: unavailableRooms
+        });
+    } catch (error) {
+        console.error("Error fetching data for /login:", error);
+        resp.status(500).send("Error: Unable to fetch required data.");
+    }
 });
+
 
 // render login.hbs (POST request)
 server.post('/login', function(req, resp) {
@@ -156,7 +162,7 @@ server.get('/get-session-data', (req, res) => {
 // render account.hbs
 server.get('/account', async function(req, resp) {
     try {
-        let email = req.session.email || "john_doe@dlsu.edu.ph"; 
+        let email = req.query.email || req.session.email || "john_doe@dlsu.edu.ph"; 
         const userData = await dataModule.getUserData(email); 
         const reservations = await dataModule.getReservationData(email); 
 
@@ -179,19 +185,27 @@ server.get('/account', async function(req, resp) {
     }
 });
 
-// render edit-profile.hbs
-server.get('/edit-profile', function(req, resp) {
-    const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
 
-    resp.render('edit-profile', {
-        layout: 'index',
-        title: 'Edit Profile',
-        name: userData.name,
-        aboutInfo: userData.aboutInfo,
-        pfp: userData.pfp || '/Images/test.jpg'
-    });
+
+// render edit-profile.hbs
+server.get('/edit-profile', async function(req, resp) {
+    try {
+        const email = req.session.email || "john_doe@dlsu.edu.ph"; 
+        const userData = await dataModule.getUserData(email); // Await here!
+
+        resp.render('edit-profile', {
+            layout: 'index',
+            title: 'Edit Profile',
+            name: userData?.name || "Guest",
+            aboutInfo: userData?.aboutInfo || "No information available.",
+            pfp: userData?.pfp || '/Images/test.jpg'
+        });
+    } catch (error) {
+        console.error("Error fetching user data for /edit-profile:", error);
+        resp.status(500).send("Internal Server Error");
+    }
 });
+
 
 // render lab-select-building.hbs
 server.get('/lab-select-building/:building?', async function(req, res) {
@@ -261,9 +275,15 @@ server.get('/reservations', async function(req, resp) {
 server.get('/room/:building/:room', async function(req, resp) {
     const { building, room } = req.params;
     const email = req.session.email;
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
 
-    // Get all seat data for this room
+    let userData;
+    try {
+        userData = await dataModule.getUserData(email || "john_doe@dlsu.edu.ph");
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        return resp.status(500).send("Error: Unable to fetch user data.");
+    }
+
     let allSeats;
     try {
         allSeats = await dataModule.getSeatData(); // Await the result from the DB
@@ -318,7 +338,7 @@ server.get('/room/:building/:room', async function(req, resp) {
         building: building,
         room: room,
         buildings: req.session.building,
-        pfp: userData.pfp || '/Images/test.jpg',
+        pfp: userData?.pfp || '/Images/test.jpg',
         date: selectedDate,
         startTime: selectedStartTime,
         endTime: selectedEndTime,
@@ -326,8 +346,6 @@ server.get('/room/:building/:room', async function(req, resp) {
         hasAvailableSeats: roomSeats.some(seat => !seat.reserved)
     });
 });
-
-
 
 
 // check if seats are available
@@ -338,10 +356,9 @@ server.get('/check-seat-availability', async (req, res) => {
         return res.status(400).json({ error: "Missing required parameters" });
     }
 
-    // Get seat data for the selected room
     let seats;
     try {
-        seats = await dataModule.getSeatData();  // Await the result from the DB
+        seats = await dataModule.getSeatData(); 
     } catch (error) {
         console.error("Error fetching seat data:", error);
         return res.status(500).json({ error: "Unable to fetch seat data" });
@@ -366,23 +383,30 @@ server.get('/check-seat-availability', async (req, res) => {
 
 
 // render admin-lab-reserve.hbs
-server.get('/admin-lab-reserve/:building/:room', function(req, resp) {
-    const seatData = dataModule.getSeatData(); 
-    const building = req.params.building; 
-    const room = req.params.room; 
-    const email = req.session.email; 
-    const userData = dataModule.getUserData("john_doe@dlsu.edu.ph");
+server.get('/admin-lab-reserve/:building/:room', async function(req, resp) {
+    try {
+        const seatData = await dataModule.getSeatData();
+        const building = req.params.building;
+        const room = req.params.room;
+        const email = req.session.email;
 
-    resp.render('admin-lab-reserve', {
-        layout: 'index',
-        title: 'Admin Lab Reservation',
-        seats: seatData, 
-        building: building, 
-        room: room, 
-        buildings: buildings, 
-        pfp: userData.pfp || '/Images/default.png'
-    });
+        const userData = await dataModule.getUserData(email || "john_doe@dlsu.edu.ph");
+
+        resp.render('admin-lab-reserve', {
+            layout: 'index',
+            title: 'Admin Lab Reservation',
+            seats: seatData, 
+            building: building,
+            room: room,
+            buildings: buildings,
+            pfp: userData?.pfp || '/Images/default.png'
+        });
+    } catch (error) {
+        console.error("Error fetching data for /admin-lab-reserve:", error);
+        resp.status(500).send("Error: Unable to fetch required data.");
+    }
 });
+
 
 // render edit-reservation.hbs
 server.get('/edit-reservation/:reservationId', async function(req, resp) {
