@@ -12,18 +12,43 @@
             "name": "John Doe",
             "email": "john_doe@dlsu.edu.ph",
             "password": "password",
-            "aboutInfo": "This is a sample bio for John Doe.",
+            "aboutInfo": "Hello, my name is John Doe. I am a person who believes in gravity.",
+            "pfp": "/Images/aristotle.jpg",
+            "type": "User"
+        },
+        {
+            "name": "Maria Santos",
+            "email": "maria_santos@dlsu.edu.ph",
+            "password": "maria123",
+            "aboutInfo": "CCS senior, President of LSCS.",
+            "pfp": "/Images/test.jpg",
+            "type": "User"
+        },
+        {
+            "name": "Ryan Chan",
+            "email": "ryan_chan@dlsu.edu.ph",
+            "password": "ryan123",
+            "aboutInfo": "Future computer engineer!",
             "pfp": "/Images/test.jpg",
             "type": "User"
         },
         {
             "name": "Louis Lu",
             "email": "louis_lu@dlsu.edu.ph",
-            "password": "PASS",
-            "aboutInfo": "This is a sample bio for Louis Lu.",
-            "pfp": "/Images/aristotle.jpg",
+            "password": "louis123",
+            "aboutInfo": "Professor at DLSU.",
+            "pfp": "/Images/test.jpg",
             "type": "Admin"
-        }
+        },
+        {
+            "name": "Carlos Reyes",
+            "email": "carlos_reyes@dlsu.edu.ph",
+            "password": "carlos123",
+            "aboutInfo": "An admin staff for DLSU.",
+            "pfp": "/Images/test.jpg",
+            "type": "Admin"
+        },
+        
     ],
     "reservations": [
         {
@@ -40,42 +65,55 @@
             "anonymousReservation": false
         },
         {
-            "email": "micamica@dlsu.edu.ph",
+            "email": "maria_santos@dlsu.edu.ph",
             "reservationId": "20250128-0002",
-            "requestDate": "January 28, 2025",
-            "requestTime": "20:05",
-            "reservationDate": "2025-03-22",
-            "startTime": "09:00",
-            "endTime": "09:30",
+            "requestDate": "January 31, 2025",
+            "requestTime": "12:36",
+            "reservationDate": "2025-03-21",
+            "startTime": "15:00",
+            "endTime": "16:00",
             "building": "Yuchengco Hall",
             "room": "Y602",
-            "seatNumber": 2,
-            "anonymousReservation": false
-        },
-        {
-            "email": "john_doe@dlsu.edu.ph",
-            "reservationId": "20250130-0001",
-            "requestDate": "January 30, 2025",
-            "requestTime": "15:01",
-            "reservationDate": "2025-03-23",
-            "startTime": "10:00",
-            "endTime": "14:30",
-            "building": "Yuchengco Hall",
-            "room": "Y602",
-            "seatNumber": 12,
+            "seatNumber": 1,
             "anonymousReservation": true
         },
         {
-            "email": "john_doe@dlsu.edu.ph",
-            "reservationId": "20250002-0001",
-            "requestDate": "January 31, 2025",
-            "requestTime": "19:01",
+            "email": "ryan_chan@dlsu.edu.ph",
+            "reservationId": "20250130-0001",
+            "requestDate": "February 9, 2025",
+            "requestTime": "15:01",
             "reservationDate": "2025-03-23",
-            "startTime": "10:00",
-            "endTime": "14:30",
+            "startTime": "11:00",
+            "endTime": "13:30",
             "building": "Yuchengco Hall",
             "room": "Y602",
             "seatNumber": 18,
+            "anonymousReservation": false
+        },
+        {
+            "email": "ryan_chan@dlsu.edu.ph",
+            "reservationId": "20250130-0001",
+            "requestDate": "February 9, 2025",
+            "requestTime": "15:10",
+            "reservationDate": "2025-03-24",
+            "startTime": "12:30",
+            "endTime": "14:00",
+            "building": "Yuchengco Hall",
+            "room": "Y602",
+            "seatNumber": 19,
+            "anonymousReservation": true
+        },
+        {
+            "email": "louis_lu@dlsu.edu.ph",
+            "reservationId": "20250130-0001",
+            "requestDate": "February 11, 2025",
+            "requestTime": "13:26",
+            "reservationDate": "2025-03-21",
+            "startTime": "10:30",
+            "endTime": "13:00",
+            "building": "Yuchengco Hall",
+            "room": "Y602",
+            "seatNumber": 12,
             "anonymousReservation": true
         }
     ],
