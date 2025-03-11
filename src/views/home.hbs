@@ -1,0 +1,122 @@
+<div class="container">
+    {{> navbar}}
+
+    <!-- BODY -->
+    <div class="container main-area">
+        <div class="row ">
+            <div class="col-8">
+                <div class="container current-reservations fade-in">
+                    <h2>Hello, {{name}}!</h2>
+                    <h2 style="color: green; font-weight: bolder;">Upcoming Reservations </h2>
+                
+                    <div class="container home-reservations">
+                    <div class="table-responsive table-striped">
+                        <table class="table up-res-home table-hover">
+                            <thead style="font-size: 11px;">
+                                <tr>
+                                    <th>RESERVATION ID</th>
+                                    <th>REQUEST DATE</th>
+                                    <th>DATE/TIME OF RESERVATION</th>
+                                    <th>ROOM INFORMATION</th>
+                                    <th>SEAT NUMBER</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each reservations}}
+                                    <tr class="clickable-row" data-href="/edit-reservation/{{this.reservationId}}" style="font-size: 10px;">
+                                        <td>{{this.reservationId}}</td>
+                                        <td>
+                                            <div class="container stacked-rows">
+                                                <span>{{this.requestDate}}</span>
+                                                <span>{{this.requestTime}}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="container stacked-rows">
+                                                <span>{{this.reservationDate}}</span>
+                                                <span>{{this.startTime}} to {{this.endTime}}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="container stacked-rows">
+                                                <span>{{this.building}}</span>
+                                                <span>{{this.room}}</span>
+                                            </div>
+                                        </td>
+                                        <td>{{this.seatNumber}}</td>
+                                    </tr>
+                                {{/each}}
+                            </tbody>
+
+                        </table>
+                    </div> 
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- BOOKING A SEAT -->
+            <div class="col">
+                <div class="container search-lab-seat fade-in" >
+                    <div> 
+                        <h2> Book a Seat </h2>
+                       
+                
+                        
+                        <div class="container mt-1">
+                            <div class="form-floating">
+                                <div class="dropdown">
+                                    <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
+                                        <span id="selected-building-text">{{selectedBuilding}}</span>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="building-dropdown">
+                                        {{#each uniqueBuildings}}
+                                            <li>
+                                                <a class="dropdown-item" onclick="selectItem(this)">{{this}}</a>
+                                            </li>
+                                        {{/each}}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="container mt-1">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="date" name="date" value="{{selectedDate}}" min="2025-01-01" required>
+                                <label for="date">Select a Date</label>
+                            </div>
+                        </div>
+
+                        <div class="container mt-1">
+                            <div class="form-floating">
+                                <select class="form-select" id="startTime" required>
+                                    <option selected>{{selectedTimeIn}}</option>
+                                </select>
+                                <label for="startTime">Select Start Time</label>
+                            </div>
+                        </div>
+
+                        <div class="container mt-1">
+                            <div class="form-floating">
+                                <select class="form-select" id="endTime" required>
+                                    <option selected>{{selectedTimeOut}}</option>
+                                </select>
+                                <label for="endTime">Select End Time</label>
+                            </div>
+                        </div>
+
+                        <div class="container mt-2 md-4">
+                            <button id="search-seat" class="btn btn-success w-100">Search</button>
+                        </div>
+
+                        <div id="clock"></div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+ </div>
