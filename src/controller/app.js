@@ -22,7 +22,7 @@ mongoose.connect(DB_URI)
 
 const express = require('express');
 const server = express();
-const dataModule = require('../model/data2.js');
+const dataModule = require('../model/data.js');
 const session = require('express-session');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -32,7 +32,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
 const handlebars = require('express-handlebars');
-const {data} = require("express-session/session/cookie");
+
 server.set('view engine', 'hbs');
 server.engine('hbs', handlebars.engine({
     extname: 'hbs',

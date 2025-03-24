@@ -1,183 +1,129 @@
-const mongoose = require('mongoose');
-const Schema = require('./Schema.js');
+const Schema = require("./Schema");
+const { Lab } = require('./Schema');
 
 
-// ✅ Used in login - Get all users
+// Get all users
 async function getAllUsers() {
     try {
-        const users = await Schema.User.find().exec();
-        return users.length ? users : null;
-    } catch (err) {
-        console.error("Error fetching users:", err);
-        return null;
+        return await Schema.User.find().exec();
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        return [];
     }
 }
 module.exports.getAllUsers = getAllUsers;
 
-
-// ✅ Get user data by email (Fixed req.params usage)
-async function getUserData({ email }) {
+// Get a single user by email
+async function getUserData(email) {
     try {
-        const user = await Schema.User.findOne({ email }).exec();
-        return user ? user : null;
-    } catch (err) {
-        console.error("Error fetching user data:", err);
+        const user = await Schema.User.findOne({ email: email }).exec();
+        console.log("Found user:", user); 
+        return user;  
+    } catch (error) {
+        console.error('Error fetching user:', error);
         return null;
     }
-}
+} 
+
 module.exports.getUserData = getUserData;
 
-
-// ✅ Get all announcements
+// Get announcements
 async function getAnnouncements() {
     try {
-        const announcements = await Schema.Announcement.find().exec();
-        return announcements.length ? announcements : null;
-    } catch (err) {
-        console.error("Error fetching announcements:", err);
-        return null;
+        return await Schema.Announcement.find().lean().exec();
+    } catch (error) {
+        console.error("Error fetching announcements:", error);
+        return [];
     }
 }
 module.exports.getAnnouncements = getAnnouncements;
 
-
-// ✅ Get unavailable rooms (Fix `$unwind` error)
+// Get unavailable rooms
 async function getUnavailableRooms() {
     try {
-        const unavailable = await Schema.Lab.aggregate([
-            {
-                $lookup: {
-                    from: 'seat',
-                    localField: '_id',
-                    foreignField: 'lab',
-                    as: 'seats'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'reservation',
-                    localField: 'seats._id',
-                    foreignField: 'seatsId',
-                    as: 'reservations'
-                }
-            },
-            {
-                $addFields: {
-                    totalSeats: { $size: '$seats' },
-                    reservedSeats: {
-                        $size: {
-                            $filter: {
-                                input: '$reservations',
-                                as: 'res',
-                                cond: { $eq: ['$$res.availability', false] }
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                $match: { $expr: { $eq: ['$totalSeats', '$reservedSeats'] } }
-            },
-            {
-                $lookup: {
-                    from: 'building',
-                    localField: 'buildingId',
-                    foreignField: '_id',
-                    as: 'building'
-                }
-            },
-            { $unwind: '$building' },
-            {
-                $project: {
-                    _id: 0,
-                    buildingName: '$building.name',
-                    labName: '$name'
-                }
-            }
-        ]).exec();
-
-        return unavailable;
-    } catch (err) {
-        console.error("Error fetching unavailable rooms:", err);
+        return await Schema.Unavailableroom.find().exec();
+    } catch (error) {
+        console.error("Error fetching unavailable rooms:", error);
         return [];
     }
 }
 module.exports.getUnavailableRooms = getUnavailableRooms;
 
-
-// ✅ Get reservation data (Fixed population)
-async function getReservationData(id) {
+// Get reservations
+async function getReservationData(email) {
     try {
-        const reservation = await Schema.Reservation.findById(id).populate("seatId").exec();
-        return reservation ? reservation : null;
-    } catch (err) {
-        console.error("Error fetching reservation data:", err);
-        return null;
+        const reservations = await Schema.Reservation.find({ email: email }).lean().exec(); 
+        console.log("Reservations from DB:", reservations); // Debugging
+        return reservations;
+    } catch (error) {
+        console.error("Error fetching reservations:", error);
+        return [];
     }
 }
 module.exports.getReservationData = getReservationData;
 
-
-// ✅ Get seat data
-async function getSeatData(id) {
+// Get reservation by custom reservationId
+async function getReservationByReservationId(reservationId) {
     try {
-        const seatData = await Schema.Seat.findById(id).exec();
-        return seatData ? seatData : null;
-    } catch (err) {
-        console.error("Error fetching seat data:", err);
-        return null;
+        const reservation = await Schema.Reservation.findOne({ reservationId: reservationId }).lean().exec();
+        console.log("Reservation from DB:", reservation); 
+        return reservation;
+    } catch (error) {
+        console.error("Error fetching reservation:", error);
+        return null; 
     }
 }
+module.exports.getReservationByReservationId = getReservationByReservationId;
+
+// Get seat data
+async function getSeatData() {
+    try {
+        const seats = await Schema.Seat.find().lean().exec(); 
+        console.log("Fetched seat data:", seats);  
+        return seats;
+    } catch (error) {
+        console.error("Error fetching seat data:", error);
+        return [];
+    }
+}
+
 module.exports.getSeatData = getSeatData;
 
-
-// ✅ Get all labs
+// Get all laboratories
 async function getLaboratories() {
     try {
-        const labs = await Schema.Lab.find().exec();
-        return labs;
-    } catch (err) {
-        console.error("Error fetching labs:", err);
-        return [];
-    }
-} 
-module.exports.getLaboratories = getLaboratories;
-
-
-// ✅ Get labs by building name (Fixed `req.params` usage)
-async function getLabsInBuilding(buildingName) {
-    try {
-        const laboratories = await Schema.Lab.aggregate([
-            {
-                $lookup: {
-                    from: 'building',
-                    localField: 'buildingId',
-                    foreignField: '_id',
-                    as: 'building'
-                }
-            },
-            {
-                $match: { 'building.name': buildingName }
-            }
-        ]).exec();
-
-        return laboratories;
-    } catch (err) {
-        console.error("Error fetching labs in building:", err);
+        return await Schema.Lab.find().exec();
+    } catch (error) {
+        console.error("Error fetching laboratories:", error);
         return [];
     }
 }
-module.exports.getLabsInBuilding = getLabsInBuilding;
+module.exports.getLaboratories = getLaboratories;
 
-
-// ✅ Get all buildings
+// Get unique building names
 async function getBuildings() {
     try {
-        const buildings = await Schema.Building.find().exec();
+        const buildings = await Lab.distinct("building").exec(); 
+        console.log("Buildings found:", buildings);  
         return buildings;
-    } catch (err) {
-        console.error("Error fetching buildings:", err);
+    } catch (error) {
+        console.error("Error fetching buildings:", error);
         return [];
     }
 }
 module.exports.getBuildings = getBuildings;
+
+// Get laboratories in a specific building
+async function getLabsInBuilding(buildingName) {
+    try {
+        console.log("Fetching labs for building:", buildingName);
+        const labs = await Lab.find({ building: buildingName }).exec();
+        console.log("Labs found:", labs); 
+        return labs;
+    } catch (error) {
+        console.error("Error fetching labs in building:", error);
+        return [];
+    }
+}
+
+module.exports.getLabsInBuilding = getLabsInBuilding;

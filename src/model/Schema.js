@@ -27,7 +27,7 @@ const userSchema = new Schema({
         required: true
     },
     type : {
-        type: Number,              // 0 for student, 1 for lab-tech
+        type: Number,   // 0 for student, 1 for lab-tech
         default: 0,
         required: true
     },
@@ -35,12 +35,12 @@ const userSchema = new Schema({
 });
 
 const seatSchema = new Schema({
-    name: {
-        type: String,
+    seatNum: {
+        type: Number,
         required: true
     },
-    number: {
-        type: Number,
+    roomNum: {
+        type: String,
         required: true
     },
     reservations: [
@@ -71,23 +71,23 @@ const labSchema = new Schema({
 const reservationSchema = new Schema ({
     requestDate: {
         type: Date,
-        default: Date.now(),
+        default: Date.now, // date stamp on document creation
         required: true
     },
     reservationDate: {
-        type: Date,
+        type: Date, 
         required: true
     },
     timeIn: {
-        type: Date,
+        type: String, // changed to string so it only will use the time
         required: true
     },
     timeOut: {
-        type: Date,
+        type: String,
         required: true
     },
     user: {
-        type: mongoose.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
 });
