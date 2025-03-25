@@ -1,82 +1,99 @@
 <div class="container">
 
-    <!--NAVIGATION BAR-->
+    <!-- NAVIGATION BAR -->
     <div class="container navigation sticky-top">
         <nav class="navbar navbar-expand">
             <div class="container-fluid">
-            <ul class="navbar-nav">
-                <a class="navbar-brand" href="/login">
-                    <img src="..\Images\logo.png" alt="Logo" style="width: 200px; height: 50px;"> 
-                </a>
-                <div class="square" style="top: 0px;"></div>
-                <div class="navContainer" style="flex-direction: row; position: absolute; right:120px;">
-                    <div class="logIn-container" style="right:20px; position:relative;">
-                        <textarea class="logIn-textbox" placeholder="EMAIL"></textarea>
-                        <div class="circle-text-container">
-                        
-                            <div class="form-check d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" value="" id="rememberMe" style="scale: 0.5; margin-top: -5px;">
-                                <label class="form-check-label loginLabel" for="checkbox2" style="margin-top: -5px;">
-                                    Remember me
-                                </label>
+                <ul class="navbar-nav">
+                    <a class="navbar-brand" href="/login">
+                        <img src="../Images/logo.png" alt="Logo" style="width: 200px; height: 50px;"> 
+                    </a>
+                    <div class="square" style="top: 0px;"></div>
+
+                    <!-- LOGIN FORM -->
+                    <form action="/login" method="POST" class="navContainer" style="flex-direction: row; position: absolute; right:120px;">
+                        {{#if errorMessage}}
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                {{errorMessage}}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
-                        
-                        </div>
-                    </div>
-                    <div class="logIn-container" style="right:10px; position:relative;">
-                        <input class="logIn-textbox" type="password" id="password" placeholder="PASSWORD">
-                        <div class="circle-text-container">
-                            <a class="loginLabel" href="/login" style="text-decoration: none;" >Forgot password?</span>
-                        </div>
-                    </div>
-                    <div class="logIn-container">
-                        <a href="/home" class="logInButton">Login</a>
-                        <button onclick="document.getElementById('signupModal').showModal();" class="logInButton">Sign Up</button>
-                        <dialog style="height:550px; width: 500px; border-color: #b9b4a2; border-style: solid; border-width:10px;" id="signupModal">
-                            <form method="dialog">
-                                <div class="signUp-container">
-                                    <img src="..\Images\x.png" style="position: absolute; width:40px; height:auto; left: 30px; cursor: pointer;" onclick="document.getElementById('signupModal').close();">                                        
-                                    <img src="..\Images\ANIMO.png" style="width: 200px; height:auto;">
-                                    <p>Create an account to make your reservations.</p>
-                                    <div class="line"></div>
-                                    <div class="nameSignup-container">
-                                        <input class="name-field" type="text" placeholder="First Name">
-                                        <input class="name-field" type="text" placeholder="Last Name">
-                                    </div>             
-                                    <input class="reg-field" type="email" placeholder="DLSU Email">
-                                    <input class="reg-field" type="password" placeholder="Password">
-                                    <input class="reg-field" type="password" placeholder="Confirm Password">
-                                    <button style="width: 100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;" onclick="document.getElementById('successModal').showModal();">SIGN UP</button>
-                                    <div class="line"></div>
-                                    <a style="font-size: 10px; color:#423f32" href="/login">Sign up as a lab technician</a>
+                        {{/if}}
+
+                        <!-- EMAIL INPUT -->
+                        <div class="logIn-container" style="right:20px; position:relative;">                            <input class="logIn-textbox" type="email" name="email" placeholder="EMAIL" required>
+                            <div class="circle-text-container">
+                                <div class="form-check d-flex align-items-center">
+                                    <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe" style="scale: 0.5; margin-top: -5px;">
+                                    <label class="form-check-label loginLabel" for="rememberMe" style="margin-top: -5px;">
+                                        Remember me
+                                    </label>
                                 </div>
-                                </form>
-                        </dialog>
-                        <dialog style="border-color: #b9b4a2; border-style: solid; border-width:10px;" id="successModal">
-                            <form method="dialog">
-                                <img src="..\Images\ANIMO.png" style="width: 200px; height:auto;">
-                                <div class="line"></div>
-                                <p style="padding: 20px;">Account Successfully Created!</p>
-                                <div class="line" style="height:2.5px;"></div>
-                                <a href="/home">
-                                <button style="gap:20px; width:100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;">CLOSE</button>
-                                </a>
-                            </form>
-                        </dialog>                                                        
-                    </div>
-                </div>
-            </ul>
+                            </div>
+                        </div>
+
+                        <!-- PASSWORD INPUT -->
+                        <div class="logIn-container" style="right:10px; position:relative;">
+                            <input class="logIn-textbox" type="password" name="password" placeholder="PASSWORD" required>
+                            <div class="circle-text-container">
+                                <a class="loginLabel" href="/forgot-password" style="text-decoration: none;">Forgot password?</a>
+                            </div>
+                        </div>
+
+                        <!-- LOGIN & SIGNUP BUTTONS -->
+                        <div class="logIn-container">
+                            <button type="submit" class="logInButton">Login</button>
+                            <button type="button" onclick="document.getElementById('signupModal').showModal();" class="logInButton">Sign Up</button>
+                        </div>
+                    </form>
+                </ul>
             </div>
         </nav>
     </div>
 
-    <!--BODY-->
+    <!-- SIGN-UP MODAL -->
+    <dialog id="signupModal" style="height:550px; width: 500px; border-color: #b9b4a2; border-style: solid; border-width:10px;">
+        <form method="dialog">
+            <div class="signUp-container">
+                <img src="../Images/x.png" style="position: absolute; width:40px; height:auto; left: 30px; cursor: pointer;" onclick="document.getElementById('signupModal').close();">                                        
+                <img src="../Images/ANIMO.png" style="width: 200px; height:auto;">
+                <p>Create an account to make your reservations.</p>
+                <div class="line"></div>
+                <div class="nameSignup-container">
+                    <input class="name-field" type="text" name="firstName" placeholder="First Name" required>
+                    <input class="name-field" type="text" name="lastName" placeholder="Last Name" required>
+                </div>             
+                <input class="reg-field" type="email" name="signupEmail" placeholder="DLSU Email" required>
+                <input class="reg-field" type="password" name="signupPassword" placeholder="Password" required>
+                <input class="reg-field" type="password" name="confirmPassword" placeholder="Confirm Password" required>
+                <button type="submit" style="width: 100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;">SIGN UP</button>
+                <div class="line"></div>
+                <a style="font-size: 10px; color:#423f32" href="/register-tech">Sign up as a lab technician</a>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- SUCCESS MODAL -->
+    <dialog id="successModal" style="border-color: #b9b4a2; border-style: solid; border-width:10px;">
+        <form method="dialog">
+            <img src="../Images/ANIMO.png" style="width: 200px; height:auto;">
+            <div class="line"></div>
+            <p style="padding: 20px;">Account Successfully Created!</p>
+            <div class="line" style="height:2.5px;"></div>
+            <a href="/home">
+                <button type="button" style="gap:20px; width:100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;">CLOSE</button>
+            </a>
+        </form>
+    </dialog>
+
+    <!-- BODY SECTION -->
     <div class="body-container">
         <div>
-               <img src="..\Images\lab2.png" alt="Lab Image" style="width: 655px; height: 615px;">
+            <img src="../Images/lab2.png" alt="Lab Image" style="width: 655px; height: 615px;">
         </div>         
-        <div class ="halfbody-container">
+        <div class="halfbody-container">
             <h1 style="color:#355f2e; padding-left: 175px; padding-top: 20px; font-style:bold; font-size: 50px;">Lab Reservation</h1>
+
+            <!-- NEWS SECTION -->
             <div class="boxOuter" style="position: absolute; top: 100px; left: 155px; background-color: #cdcfc0; border-radius: 20px;">
                 <p style="font-weight: bold; font-size: 20px; top:2px; text-align: center;">NEWS</p>
             </div>
@@ -87,7 +104,8 @@
                     {{/each}}
                 </ul>
             </div>
-            
+
+            <!-- UNAVAILABLE ROOMS -->
             <div class="boxOuter" style="position: absolute; top: 350px; left: 155px; background-color: #b9b4a2; border-radius: 20px;">
                 <p style="font-weight: bold; font-size: 20px; top:2px; text-align: center;">UNAVAILABLE ROOMS</p>
             </div>

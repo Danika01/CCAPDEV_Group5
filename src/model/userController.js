@@ -35,20 +35,40 @@ async function getAllUsers() {
     }
 }
 
-async function getUser() {
+async function getUser(email, password) {
     try {
-        const user = await Schema.User.findOne({'email': req.body.email, 'password': req.body.password}).exec();
+        const user = await Schema.User.findOne({ email }).exec();
         if (!user) {
             console.log('No User with email found!');
+            return null;
         }
-        user.lastLogin = Date.now;
-        const result = await user.save();
-        return result;
+
+        
+        // Compare hashed password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            console.log('Invalid password!');
+            return null;
+        } 
+        
+/*
+        if (password !== user.password) {
+            console.log('Invalid password!');
+            return null;
+        }
+*/
+        // Update last login time
+        user.lastLogin = Date.now();
+        await user.save();
+
+        return user;
     } catch (err) {
-        console.error("Error fetching users:", error);
-        return [];
+        console.error("Error fetching user:", err);
+        return null;
     }
 }
+
+
 
 async function updateAboutInfo() {
     try {
@@ -86,11 +106,12 @@ async function getAnnouncements() {
 }
 
 module.exports = {
-    createUser: createUser(),
-    getAllUsers: getAllUsers(),
-    getUser: getUser(),
-    updateAboutInfo: updateAboutInfo(),
-    deleteUser: deleteUser(),
-    getAnnouncements: getAnnouncements()
-}
+    createUser,
+    getAllUsers,
+    getUser,
+    updateAboutInfo,
+    deleteUser,
+    getAnnouncements
+};
+
 

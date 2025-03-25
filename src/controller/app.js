@@ -22,7 +22,10 @@ mongoose.connect(DB_URI)
 
 const express = require('express');
 const server = express();
+
 const dataModule = require('../model/data.js');
+const userDataModule = require('../model/userController.js');
+
 const session = require('express-session');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -31,6 +34,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
 const handlebars = require('express-handlebars');
+
 
 server.set('view engine', 'hbs');
 server.engine('hbs', handlebars.engine({
@@ -69,8 +73,11 @@ const carouselImages = [
 // render login.hbs (GET request)
 server.get('/login', async function(req, resp) {
     try {
-        const announcements = await dataModule.getAnnouncements(req, resp);
-        const unavailableRooms = await dataModule.getUnavailableRooms(req, resp);
+
+        // fix this in the future
+         const announcements = await dataModule.getAnnouncements(req, resp);
+         const unavailableRooms = null;
+        // await dataModule.getUnavailableRooms(req, resp);
 
         resp.render('login', {
             layout: 'index',
@@ -87,15 +94,34 @@ server.get('/login', async function(req, resp) {
 
 
 // render login.hbs (POST request)
-server.post('/login', function(req, resp) {
-    const { email, password } = req.body;
-    const user = dataModule.getUserData({email, password});
+server.post('/login', async function(req, resp) {
+    try {
+        const { email, password } = req.body;
+        const user = await userDataModule.getUser( email, password );
 
-    if (user) {
-        req.session.email = email; // Store email for search matching purposes
-        resp.redirect('/account'); 
-    } else {
-        resp.status(404).send('User not found'); // User not found or invalid credentials
+        if (user) {
+            req.session.email = email;
+            req.session.user = user; 
+            return resp.redirect('/home');  
+        }
+
+        // fix this in the future
+         const announcements = await dataModule.getAnnouncements(req, resp);
+         const unavailableRooms = null;
+         // await dataModule.getUnavailableRooms(req, resp);
+
+        return resp.render('login', {
+            layout: 'index',
+            title: 'Login Page',
+            carouselImages: carouselImages,
+            announcement: announcements,
+            unavailableRooms: unavailableRooms,
+            errorMessage: 'Invalid email or password. Please try again.' 
+        });
+
+    } catch (error) {
+        console.error("Error during login:", error);
+        return resp.status(500).send("Error: Unable to process login request.");
     }
 });
 
@@ -107,7 +133,7 @@ const defaultSeats = 20; // Default number of seats for all rooms
 server.get('/home', async function(req, resp) {
     try {
         const email = req.session.email || "john_doe@dlsu.edu.ph"; 
-        const userData = await dataModule.getUserData(email); 
+        const userData = req.session.user;
 
         const reservations = await dataModule.getReservationData(email);
         const uniqueBuildings = await dataModule.getBuildings();
@@ -126,7 +152,7 @@ server.get('/home', async function(req, resp) {
             selectedTimeIn: req.session.timeIn || "08:00",
             selectedTimeOut: req.session.timeOut || "08:30",
             pfp: userData?.pfp || '/Images/default.png', 
-            name: userData?.name || "Guest"  
+            name: userData?.firstname || "Guest"
         });
 
     } catch (error) {
@@ -135,17 +161,6 @@ server.get('/home', async function(req, resp) {
     }
 });
 
-
-
-
-
-server.post('/set-session', (req, res) => {
-   // req.session.building = req.body.building || "Choose building",
-    req.session.date = req.body.date;
-    req.session.timeIn = req.body.timeIn;
-    req.session.timeOut = req.body.timeOut;
-    res.json({ message: "Session updated successfully!" });
-});
 
 
 server.get('/get-session-data', (req, res) => {
@@ -162,7 +177,7 @@ server.get('/get-session-data', (req, res) => {
 server.get('/account', async function(req, resp) {
     try {
         let email = req.query.email || req.session.email || "john_doe@dlsu.edu.ph"; 
-        const userData = await dataModule.getUserData(email); 
+        const userData = req.session.user; 
         const reservations = await dataModule.getReservationData(email); 
 
         console.log("User Data:", userData); 
@@ -171,7 +186,7 @@ server.get('/account', async function(req, resp) {
         resp.render('account', {
             layout: 'index',
             title: 'Account Page',
-            name: userData?.name || "Guest",  
+            name: userData?.firstname || "Guest",  
             aboutInfo: userData?.aboutInfo || "No information available.",
             pfp: userData?.pfp || '/Images/default.png', 
             reservations: reservations || [],
@@ -190,7 +205,7 @@ server.get('/account', async function(req, resp) {
 server.get('/edit-profile', async function(req, resp) {
     try {
         const email = req.session.email || "john_doe@dlsu.edu.ph"; 
-        const userData = await dataModule.getUserData(email); // Await here!
+        const userData = req.session.user;
 
         resp.render('edit-profile', {
             layout: 'index',
@@ -250,7 +265,7 @@ server.get('/reservations', async function(req, resp) {
     try {
         const email = req.session.email || "john_doe@dlsu.edu.ph"; // Use session email
         const reservations = await dataModule.getReservationData(email); 
-        const userData = await dataModule.getUserData(email); 
+        const userData = req.session.user; 
 
         console.log("Reservations:", reservations); // Debugging
 
@@ -259,7 +274,7 @@ server.get('/reservations', async function(req, resp) {
             title: 'Reservations',
             reservations: reservations || [], 
             currentRoute: 'reservations',
-            pfp: userData?.pfp || '/Images/default.png'
+            pfp: userData.pfp || '/Images/default.png'
         });
     } catch (error) {
         console.error("Error fetching reservations:", error);
@@ -413,7 +428,7 @@ server.get('/edit-reservation/:reservationId', async function(req, resp) {
     const email = req.session.email; 
 
     const reservation = await dataModule.getReservationByReservationId(reservationId); 
-    const userData = await dataModule.getUserData("john_doe@dlsu.edu.ph");
+    const userData = req.session.user;
     
     if (!reservation) {
         resp.status(404).send('Reservation not found');
