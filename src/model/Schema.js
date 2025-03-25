@@ -16,19 +16,20 @@ const userSchema = new Schema({
     },
     password: {
         type: String,   // temporary
-        required: true
+        required: true,
+        minLength: 8
     },
     aboutInfo: {
         type: String,
         required: true
     },
-    type : {
-        type: Number,   // 0 for student, 1 for lab-tech
-        default: 0,
-        required: true
+    isTechnician : {
+        type: Boolean,
+        default: false,
     },
     pfp: String,
-    lastLogin: Date
+    lastLogin: Date,
+    rememberMe: Boolean
 });
 
 const seatSchema = new Schema({

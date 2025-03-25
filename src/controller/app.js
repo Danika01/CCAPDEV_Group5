@@ -27,7 +27,6 @@ const session = require('express-session');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-
 server.use(express.json()); 
 server.use(express.urlencoded({ extended: true }));
 
