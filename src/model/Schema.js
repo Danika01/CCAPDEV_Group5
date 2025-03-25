@@ -14,10 +14,6 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    username: {
-        type: String,
-        required: true
-    },
     password: {
         type: String,   // temporary
         required: true
@@ -31,7 +27,8 @@ const userSchema = new Schema({
         default: 0,
         required: true
     },
-    pfp: String
+    pfp: String,
+    lastLogin: Date
 });
 
 const seatSchema = new Schema({
@@ -52,13 +49,22 @@ const seatSchema = new Schema({
     ]
 });
 
+const buildingSchema = new Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    nickname: String
+})
+
 const labSchema = new Schema({
     name: {
         type: String,
         required: true,
     },
     building: {
-        type: String,
+        type: mongoose.ObjectId,
+        ref: 'Building',
         required: true
     },
     capacity: {
@@ -75,7 +81,7 @@ const reservationSchema = new Schema ({
         required: true
     },
     reservationDate: {
-        type: Date, 
+        type: String,
         required: true
     },
     timeIn: {
@@ -87,8 +93,16 @@ const reservationSchema = new Schema ({
         required: true
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.ObjectId,
         ref: 'User'
+    },
+    seat: {
+        type: mongoose.ObjectId,
+        ref: 'Seat'
+    },
+    anonymous: {
+        type: Boolean,
+        default: false
     }
 });
 
@@ -99,6 +113,8 @@ const announcementSchema = new Schema({
 module.exports = {
     User: mongoose.model('User', userSchema),
     Reservation: mongoose.model('Reservation', reservationSchema),
+    Building: mongoose.model('Building', buildingSchema),
     Lab: mongoose.model('Lab', labSchema),
+    Seat: mongoose.model('Seat', seatSchema),
     Announcement: mongoose.model('Announcement', announcementSchema)
 }
