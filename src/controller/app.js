@@ -97,18 +97,23 @@ server.get('/login', async function(req, resp) {
 server.post('/login', async function(req, resp) {
     try {
         const { email, password } = req.body;
-        const user = await userDataModule.getUser( email, password );
+        const rememberMe = req.body.rememberMe === "on"; 
+
+        let user = await userDataModule.getUser(email, password);
 
         if (user) {
+        user.rememberMe = rememberMe;
+        await user.save();
+
             req.session.email = email;
-            req.session.user = user; 
+            req.session.user = user;
+
             return resp.redirect('/home');  
         }
 
-        // fix this in the future
-         const announcements = await dataModule.getAnnouncements(req, resp);
-         const unavailableRooms = null;
-         // await dataModule.getUnavailableRooms(req, resp);
+        // Fix this in the future
+        const announcements = await dataModule.getAnnouncements(req, resp);
+        const unavailableRooms = null;
 
         return resp.render('login', {
             layout: 'index',
@@ -124,6 +129,55 @@ server.post('/login', async function(req, resp) {
         return resp.status(500).send("Error: Unable to process login request.");
     }
 });
+
+
+
+
+// sign up as new user
+server.post('/signup', async (req, resp) => {
+    try {
+        const { firstName, lastName, email, password, confirmPassword } = req.body;
+        const isTechnician = req.body.isTechnician === "on";
+
+        // Fix this in the future
+        const announcements = await dataModule.getAnnouncements(req, resp);
+        const unavailableRooms = null;
+        // const unavailableRooms = await dataModule.getUnavailableRooms(req, resp);
+
+        if (password !== confirmPassword) {
+            return resp.render('login', { 
+                layout: 'index',
+                title: 'Sign Up Error',
+                carouselImages: carouselImages,
+                announcement: announcements,
+                unavailableRooms: unavailableRooms,
+                errorMessage: "Passwords do not match" 
+            });
+        }
+
+        const existingUser = await userDataModule.isExistingUser(email);
+        if (existingUser) {
+            return resp.render('login', { 
+                layout: 'index',
+                title: 'Sign Up Error',
+                carouselImages: carouselImages,
+                announcement: announcements,
+                unavailableRooms: unavailableRooms,
+                errorMessage: "User already exists!" 
+            });
+        }
+
+
+        await userDataModule.createUser(firstName, lastName, email, password, isTechnician);
+        return resp.redirect('/login');  
+
+    } catch (error) {
+        console.error("Error during signup:", error);
+        return resp.status(500).send("Error: Unable to process signup request.");
+    }
+});
+
+
 
 // used for lab-select-building, room
 const defaultSeats = 20; // Default number of seats for all rooms
@@ -186,7 +240,8 @@ server.get('/account', async function(req, resp) {
         resp.render('account', {
             layout: 'index',
             title: 'Account Page',
-            name: userData?.firstname || "Guest",  
+            firstname: userData?.firstname || "Guest",
+            lastname: userData?.lastname,  
             aboutInfo: userData?.aboutInfo || "No information available.",
             pfp: userData?.pfp || '/Images/default.png', 
             reservations: reservations || [],
@@ -199,18 +254,24 @@ server.get('/account', async function(req, resp) {
     }
 });
 
-
-
-// render edit-profile.hbs
-server.get('/edit-profile', async function(req, resp) {
+// Render edit-profile.hbs
+server.get('/edit-profile', async function (req, resp) {
     try {
-        const email = req.session.email || "john_doe@dlsu.edu.ph"; 
-        const userData = req.session.user;
+        if (!req.session.user) {
+            return resp.redirect('/login'); // Redirect if not logged in
+        }
+
+        const userData = req.session.user; 
+
+        if (!userData) {
+            return resp.status(404).send("User not found.");
+        }
 
         resp.render('edit-profile', {
             layout: 'index',
             title: 'Edit Profile',
-            name: userData?.name || "Guest",
+            firstname: userData?.firstname || "Guest",
+            lastname: userData?.lastname,
             aboutInfo: userData?.aboutInfo || "No information available.",
             pfp: userData?.pfp || '/Images/test.jpg'
         });
@@ -219,6 +280,40 @@ server.get('/edit-profile', async function(req, resp) {
         resp.status(500).send("Internal Server Error");
     }
 });
+
+
+server.post('/updateProfile', async function (req, res) {
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({ error: "Unauthorized. Please log in." });
+        }
+
+        const email = req.session.user.email; 
+        const { aboutInfo } = req.body;
+
+        // Ensure aboutInfo is not empty
+        if (!aboutInfo.trim()) {
+            return res.status(400).json({ error: "About info cannot be empty." });
+        }
+
+        // Update the user's about info in the database
+        const updatedUser = await userDataModule.updateAboutInfo(email, aboutInfo);
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found." });
+        }
+
+        // Update session data with the new aboutInfo
+        req.session.user.aboutInfo = aboutInfo;
+
+        res.json({ message: "About info updated successfully!", updatedAbout: aboutInfo });
+    } catch (error) {
+        console.error("Error updating about info:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
 
 
 // render lab-select-building.hbs

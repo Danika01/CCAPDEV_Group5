@@ -13,14 +13,15 @@
                     <!-- LOGIN FORM -->
                     <form action="/login" method="POST" class="navContainer" style="flex-direction: row; position: absolute; right:120px;">
                         {{#if errorMessage}}
-                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                {{errorMessage}}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
+                            <script>
+                                alert("{{errorMessage}}");
+                            </script>
                         {{/if}}
 
+
                         <!-- EMAIL INPUT -->
-                        <div class="logIn-container" style="right:20px; position:relative;">                            <input class="logIn-textbox" type="email" name="email" placeholder="EMAIL" required>
+                        <div class="logIn-container" style="right:20px; position:relative;">      
+                        <input class="logIn-textbox" type="email" name="email" placeholder="EMAIL" required>
                             <div class="circle-text-container">
                                 <div class="form-check d-flex align-items-center">
                                     <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe" style="scale: 0.5; margin-top: -5px;">
@@ -52,7 +53,7 @@
 
     <!-- SIGN-UP MODAL -->
     <dialog id="signupModal" style="height:550px; width: 500px; border-color: #b9b4a2; border-style: solid; border-width:10px;">
-        <form method="dialog">
+        <form action="/signup" method="POST">
             <div class="signUp-container">
                 <img src="../Images/x.png" style="position: absolute; width:40px; height:auto; left: 30px; cursor: pointer;" onclick="document.getElementById('signupModal').close();">                                        
                 <img src="../Images/ANIMO.png" style="width: 200px; height:auto;">
@@ -62,12 +63,18 @@
                     <input class="name-field" type="text" name="firstName" placeholder="First Name" required>
                     <input class="name-field" type="text" name="lastName" placeholder="Last Name" required>
                 </div>             
-                <input class="reg-field" type="email" name="signupEmail" placeholder="DLSU Email" required>
-                <input class="reg-field" type="password" name="signupPassword" placeholder="Password" required>
+                <input class="reg-field" type="email" name="email" placeholder="DLSU Email" required>
+                <input class="reg-field" type="password" name="password" placeholder="Password" required>
                 <input class="reg-field" type="password" name="confirmPassword" placeholder="Confirm Password" required>
                 <button type="submit" style="width: 100px; height:30px; border-radius:30px; font-size:10px; font-weight: bold;">SIGN UP</button>
                 <div class="line"></div>
-                <a style="font-size: 10px; color:#423f32" href="/register-tech">Sign up as a lab technician</a>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="isTechnician" name="isTechnician">
+                    <label class="form-check-label" for="isTechnician" style="font-size: 10px; color:#423f32">
+                        Sign up as a lab technician
+                    </label>
+                </div>
+
             </div>
         </form>
     </dialog>

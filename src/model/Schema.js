@@ -22,15 +22,21 @@ const userSchema = new Schema({
     },
     aboutInfo: {
         type: String,
-        required: true
+        default: "Hello!"
     },
     isTechnician : {
         type: Boolean,
         default: false,
     },
-    pfp: String,
+    pfp: {
+        type: String,
+        default: "/Images/default.png",
+    },
     lastLogin: Date,
-    rememberMe: Boolean
+    rememberMe: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const seatSchema = new Schema({

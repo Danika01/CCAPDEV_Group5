@@ -103,6 +103,30 @@ function selectItem(element) {
 }
 
 
+// Update profile info
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("saveProfileBtn").addEventListener("click", async function () {
+        const aboutInfo = document.getElementById("editableText").value;
+
+        const response = await fetch("/updateProfile", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ aboutInfo }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            
+        } else {
+            alert("Error: " + result.error);
+        }
+    });
+});
+
+
 
 // Populate dropdowns when the page loads
 document.addEventListener("DOMContentLoaded", function () {

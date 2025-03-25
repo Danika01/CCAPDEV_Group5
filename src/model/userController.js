@@ -1,30 +1,34 @@
 const Schema = require('./Schema');
 const bcrypt = require('bcrypt')
 
-// Create New User / Register
-async function createUser(firstname, lastname, email, password)
-{
-    try{
-        const existingUser = await Schema.User.findOne({email}).exec();
-        if(existingUser) {
+// Create New User
+async function createUser(firstname, lastname, email, password, isTechnician) {
+    try {
+        const existingUser = await Schema.User.findOne({ email }).exec();
+        if (existingUser) {
             throw new Error('User already exists!');
         }
-        // if new user
+
         const hashedPassword = await bcrypt.hash(password, 10);
+
         const newUser = await Schema.User.create({
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            password: hashedPassword
+            email,
+            firstname,
+            lastname,
+            password: hashedPassword,
+            lastLogin: new Date(), 
+            isTechnician: isTechnician
         });
 
-        newUser.save(); // save new user
         console.log('Registration successful!');
-    } catch(error) {
-        console.error('Error creating user:', error.message);
-    }
+        return newUser;
 
+    } catch (error) {
+        console.error('Error creating user:', error.message);
+        throw error; 
+    }
 }
+
 
 async function getAllUsers() {
     try {
@@ -35,6 +39,21 @@ async function getAllUsers() {
     }
 }
 
+async function isExistingUser(email) {
+    try {
+        const user = await Schema.User.findOne({ email }).exec();
+        if (!user) {
+            console.log('No User with email found!');
+            return false;
+        }
+        return true;
+    } catch (err) {
+        console.error("Error fetching user:", err);
+        return null;
+    }
+}
+
+
 async function getUser(email, password) {
     try {
         const user = await Schema.User.findOne({ email }).exec();
@@ -43,21 +62,14 @@ async function getUser(email, password) {
             return null;
         }
 
-        
         // Compare hashed password
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {
             console.log('Invalid password!');
             return null;
         } 
-        
-/*
-        if (password !== user.password) {
-            console.log('Invalid password!');
-            return null;
-        }
-*/
-        // Update last login time
+       
+        // Update last login time and remember me
         user.lastLogin = Date.now();
         await user.save();
 
@@ -68,19 +80,20 @@ async function getUser(email, password) {
     }
 }
 
-
-
-async function updateAboutInfo() {
+async function updateAboutInfo(email, aboutInfo) {
     try {
-        const newInfo = await Schema.User.findOne({_id: req.body.id}).exec();
-        newInfo.aboutInfo = req.body.aboutInfo;
-        const result = await newInfo.save();
-        return result;
+        const user = await Schema.User.findOne({ email }).exec();
+        if (!user) return null;
+
+        user.aboutInfo = aboutInfo;
+        await user.save();
+        return user;
     } catch (err) {
-        console.error("Error updating info:", error);
-        return [];
+        console.error("Error updating about info:", err);
+        throw err;
     }
 }
+
 
 // Delete user
 async function deleteUser()
@@ -108,6 +121,7 @@ async function getAnnouncements() {
 module.exports = {
     createUser,
     getAllUsers,
+    isExistingUser,
     getUser,
     updateAboutInfo,
     deleteUser,
