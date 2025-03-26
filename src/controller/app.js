@@ -313,6 +313,33 @@ server.post('/updateProfile', async function (req, res) {
     }
 });
 
+// Delete user and redirect to login
+server.post('/delete-user', async (req, res) => {
+    if (!req.session.user?._id) {
+        console.error("No user ID found in session.");
+        return res.status(400).json({ success: false, message: 'User not found in session' });
+    }
+
+    try {
+        const result = await userDataModule.deleteUser(req.session.user._id);
+
+        if (!result.success) {
+            
+            return res.status(404).json(result);
+        }
+
+        console.log("User deleted successfully. Destroying session...");
+        req.session.destroy(() => {
+            res.redirect('/login'); 
+        });
+
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+
 
 
 

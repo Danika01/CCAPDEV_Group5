@@ -96,18 +96,27 @@ async function updateAboutInfo(email, aboutInfo) {
 
 
 // Delete user
-async function deleteUser()
-{
+async function deleteUser(id) {
     try {
-        const user = await Schema.User.findOne({_id: req.body.id}).exec();
-        console.log('User found.');
-        const result = user.deleteOne();
+        console.log(`Deleting user with ID: ${id}`);
+
+        const user = await Schema.User.findByIdAndDelete(id).exec();
+
+        if (!user) {
+            console.log('User not found.');
+            return { success: false, message: 'User not found' };
+        }
+
         console.log('User deleted successfully.');
-    } catch(error) {
-        console.error('Error deleting user:', error.message);
-        throw error;
+        return { success: true, message: 'User deleted successfully' };
+
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        return { success: false, message: error.message };
     }
 }
+
+
 
 async function getAnnouncements() {
     try {
