@@ -1,10 +1,21 @@
 const Schema = require('./Schema');
+const mongoose = require('mongoose');
 
 async function getBuildings() {
     try {
-        return await Schema.Building.find().exec();
+        return await Schema.Building.find().lean().exec();
     } catch (error) {
         console.error('Error.', error.message);
+        throw error;
+    }
+}
+
+async function getBuildingIdByName(buildingName) {
+    try {
+        const building = await Schema.Building.findOne({ name: buildingName }).lean().exec();
+        return building ? building._id : null; 
+    } catch (error) {
+        console.error('Error finding building ID:', error.message);
         throw error;
     }
 }
@@ -42,9 +53,18 @@ async function getSeatsByLab(labId) {
 
 async function getLabs() {
     try {
-        return await Schema.Lab.find().exec();
+        return await Schema.Lab.find().lean().exec();
     } catch (error) {
         console.error('Error.', error.message);
+        throw error;
+    }
+}
+
+async function getLabsByBuildingId(buildingId) {
+    try {
+        return await Schema.Lab.find({ building: new mongoose.Types.ObjectId(buildingId) }).lean().exec();
+    } catch (error) {
+        console.error('Error fetching labs by building ID:', error.message);
         throw error;
     }
 }
@@ -74,5 +94,7 @@ module.exports = {
     getSeatsByLab,
     getSeatsByBuilding,
     getUnavailableLabs,
-    getAnnouncements
+    getAnnouncements,
+    getBuildingIdByName,
+    getLabsByBuildingId
 }

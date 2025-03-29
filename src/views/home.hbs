@@ -67,12 +67,12 @@
                             <div class="form-floating">
                                 <div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
-                                        <span id="selected-building-text">{{selectedBuilding}}</span>
+                                        <span id="selectedBuildingText">{{selectedBuilding}}</span>
                                     </button>
                                     <ul class="dropdown-menu w-100" aria-labelledby="building-dropdown">
                                         {{#each uniqueBuildings}}
                                             <li>
-                                                <a class="dropdown-item" onclick="selectItem(this)">{{this}}</a>
+                                                <a class="dropdown-item" onclick="selectItem(this)">{{this.name}}</a>
                                             </li>
                                         {{/each}}
                                     </ul>

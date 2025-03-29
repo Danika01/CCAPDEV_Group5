@@ -90,10 +90,10 @@ document.addEventListener("DOMContentLoaded", function () {
 // update building selection in home.hbs dynamically
 function selectItem(element) {
     let selectedBuilding = element.textContent.trim();
-    document.getElementById("selected-building-text").textContent = selectedBuilding;
+    document.getElementById("selectedBuildingText").textContent = selectedBuilding;
 
     // Save selected building to session
-    fetch('/set-session', {
+    fetch('/set-session-building', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ building: selectedBuilding })
@@ -135,10 +135,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // Function to handle building selection and update session
 function selectBuilding(building) {
-    document.getElementById("selected-building-text").innerText = building;
+    document.getElementById("selectedBuildingText").innerText = building;
 
     // Save selected building to session and redirect
-    fetch('/set-session', {
+    fetch('/set-session-building', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ building })
@@ -155,12 +155,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (searchButton) {
         searchButton.addEventListener("click", function () {
-            let building = document.getElementById("selected-building-text").textContent.trim();
+
+            let building = document.getElementById("selectedBuildingText").textContent.trim();
             let date = document.getElementById("date").value;
             let timeIn = document.getElementById("startTime").value;
             let timeOut = document.getElementById("endTime").value;
 
-            if (building === "Choose building") {
+            console.log("Building:", building);
+            console.log("Date:", date);
+            console.log("Time In:", timeIn);
+            console.log("Time Out:", timeOut);
+
+            if (!building || building === "Choose building") {
                 alert("Please select a building.");
                 return;
             }
@@ -168,17 +174,31 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch('/set-session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ building, date, timeIn, timeOut })
-            }).then(response => response.json())
-              .then(() => {
-                  window.location.href = `/lab-select-building/${encodeURIComponent(building)}`;
-              })
-              .catch(error => console.error("Error saving session:", error));
+                body: JSON.stringify({ 
+                    selectedBuildingText: building, 
+                    date, 
+                    startTime: timeIn, 
+                    endTime: timeOut 
+                })
+            })
+            .then(response => {
+                console.log("Response status:", response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Server response:", data);
+                console.log("Redirecting to:", `/lab-select-building/${encodeURIComponent(building)}`);
+                window.location.href = `/lab-select-building/${encodeURIComponent(building)}`;
+            })
+            .catch(error => console.error("Error saving session:", error));
+            
         });
     } else {
-        console.log("Search seat button not found");
+        console.log("Search seat button not found!"); 
     }
 });
+
+
 
 
 // Update the room table dynamically

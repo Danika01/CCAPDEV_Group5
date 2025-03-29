@@ -8,7 +8,7 @@
             <div class="form-floating">
                 <div class="dropdown" style="z-index: 1001;">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="building-dropdown" data-bs-toggle="dropdown">
-                        <span id="selected-building-text">{{selectedBuilding}}</span>
+                        <span id="selectedBuildingText">{{selectedBuilding}}</span>
                     </button>
                     <ul class="dropdown-menu w-100" aria-labelledby="building-dropdown">
                         {{#each uniqueBuildings}}
@@ -38,9 +38,9 @@
                             {{#if laboratories}}
                                 <tbody id="room-list">
                                     {{#each laboratories}}
-                                        <tr class="clickable-row" data-href="/room/{{building}}/{{room}}">
-                                            <td>{{this.building}}</td>
-                                            <td>{{this.room}}</td>
+                                        <tr class="clickable-row" data-href="/room/{{../selectedBuilding}}/{{name}}">
+                                            <td>{{../selectedBuilding}}</td>
+                                            <td>{{this.name}}</td>
                                             <td>{{this.capacity}}</td>
                                         </tr>
                                     {{/each}}

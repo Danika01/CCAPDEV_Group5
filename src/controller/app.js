@@ -22,8 +22,11 @@ mongoose.connect(DB_URI)
 const express = require('express');
 const server = express();
 
-const dataModule = require('../model/data.js');
+// const dataModule = require('../model/data.js');
 const userDataModule = require('../model/userController.js');
+const labDataModule = require('../model/labController.js');
+const reservationDataModule = require('../model/reservationController.js');
+
 
 const session = require('express-session');
 const path = require('path');
@@ -56,7 +59,10 @@ server.use(session({
     secret: 'your-secret-key', // Replace with a secure key
     resave: false, // Don't save the session if it wasn't modified
     saveUninitialized: true, // Save new sessions
-    cookie: { secure: false } // Set to true if using HTTPS
+    cookie: { 
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000
+     } 
 }));
 
 // root route
@@ -74,7 +80,7 @@ server.get('/login', async function(req, resp) {
     try {
 
         // fix this in the future
-         const announcements = await dataModule.getAnnouncements(req, resp);
+         const announcements = await labDataModule.getAnnouncements();
          const unavailableRooms = null;
         // await dataModule.getUnavailableRooms(req, resp);
 
@@ -96,22 +102,29 @@ server.get('/login', async function(req, resp) {
 server.post('/login', async function(req, resp) {
     try {
         const { email, password } = req.body;
-        const rememberMe = req.body.rememberMe === "on"; 
+        const rememberMe = req.body.rememberMe === "on";
 
         let user = await userDataModule.getUser(email, password);
 
         if (user) {
-        user.rememberMe = rememberMe;
-        await user.save();
+            user.rememberMe = rememberMe;
+            await user.save();
 
             req.session.email = email;
             req.session.user = user;
 
+            if (rememberMe) {
+                req.session.cookie.maxAge = 21 * 24 * 60 * 60 * 1000; // 3 weeks
+            } else {
+                req.session.cookie.maxAge = 60 * 60 * 1000; // 1 hour (default)
+            }
+
+            console.log("User logged in. Remember Me:", rememberMe, "Session expires in:", req.session.cookie.maxAge);
             return resp.redirect('/home');  
         }
 
         // Fix this in the future
-        const announcements = await dataModule.getAnnouncements(req, resp);
+        const announcements = await labDataModule.getAnnouncements(req, resp);
         const unavailableRooms = null;
 
         return resp.render('login', {
@@ -130,8 +143,6 @@ server.post('/login', async function(req, resp) {
 });
 
 
-
-
 // sign up as new user
 server.post('/signup', async (req, resp) => {
     try {
@@ -139,7 +150,7 @@ server.post('/signup', async (req, resp) => {
         const isTechnician = req.body.isTechnician === "on";
 
         // Fix this in the future
-        const announcements = await dataModule.getAnnouncements(req, resp);
+        const announcements = await labDataModule.getAnnouncements();
         const unavailableRooms = null;
         // const unavailableRooms = await dataModule.getUnavailableRooms(req, resp);
 
@@ -176,20 +187,13 @@ server.post('/signup', async (req, resp) => {
     }
 });
 
-
-
-// used for lab-select-building, room
-const defaultSeats = 20; // Default number of seats for all rooms
-
-
 // render home.hbs
 server.get('/home', async function(req, resp) {
-    try {
-        const email = req.session.email || "john_doe@dlsu.edu.ph"; 
+    try { 
         const userData = req.session.user;
 
-        const reservations = await dataModule.getReservationData(email);
-        const uniqueBuildings = await dataModule.getBuildings();
+        const reservations = await reservationDataModule.getReservations(req.session.user._id);
+        const uniqueBuildings = await labDataModule.getBuildings();
 
         console.log("User Data:", userData);
         console.log("Buildings:", uniqueBuildings); 
@@ -214,8 +218,6 @@ server.get('/home', async function(req, resp) {
     }
 });
 
-
-
 server.get('/get-session-data', (req, res) => {
     res.json({
         building: req.session.building || "Choose building",
@@ -225,13 +227,39 @@ server.get('/get-session-data', (req, res) => {
     });
 });
 
+// update session when searching
+server.post('/set-session', (req, res) => {
+    const { selectedBuildingText, date, startTime, endTime } = req.body;
+
+    req.session.building = selectedBuildingText;
+    req.session.date = date;
+    req.session.timeIn = startTime;
+    req.session.timeOut = endTime;
+
+    console.log("Session updated:", req.session);
+    res.json({ success: true, message: "Session updated successfully" });
+});
+
+// update session when building is changed in lab-select
+server.post('/set-session-building', (req, res) => {
+    const { building } = req.body;
+
+    if (!building) {
+        return res.status(400).json({ error: "Building is required." });
+    }
+
+    req.session.building = building;
+    console.log("Session updated:", req.session); 
+
+    res.json({ message: "Building saved in session", building: req.session.building });
+});
+
 
 // render account.hbs
 server.get('/account', async function(req, resp) {
-    try {
-        let email = req.query.email || req.session.email || "john_doe@dlsu.edu.ph"; 
+    try { 
         const userData = req.session.user; 
-        const reservations = await dataModule.getReservationData(email); 
+        const reservations = await reservationDataModule.getReservations(req.session.user._id);
 
         console.log("User Data:", userData); 
         console.log("Reservations:", reservations); 
@@ -339,52 +367,90 @@ server.post('/delete-user', async (req, res) => {
 });
 
 
-
-
-
 // render lab-select-building.hbs
 server.get('/lab-select-building/:building?', async function(req, res) {
-    const email = req.session.email; 
-    const userData = await dataModule.getUserData("john_doe@dlsu.edu.ph");
-    const uniqueBuildings = await dataModule.getBuildings();  // Get all unique buildings
-    const selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
+    try {
+        const userData = req.session.user;
+        const buildings = await labDataModule.getBuildings();
+        const uniqueBuildings = buildings.map(building => building.name);
 
-    // Get labs in the selected building
-    let filteredRooms = await dataModule.getLabsInBuilding(selectedBuilding); 
-    filteredRooms = filteredRooms.map(room => room.toObject());
-    console.log("THE ROOMS ARE" + filteredRooms);  
+        const selectedBuilding = req.params.building || req.session.building;
 
+        if (!selectedBuilding) {
+            console.log("Error: No building selected.");
+            return res.render('lab-select-building', {
+                layout: 'index',
+                title: 'Select Building and Room',
+                uniqueBuildings: uniqueBuildings || [], 
+                laboratories: [], 
+                currentRoute: 'lab-select-building',
+                pfp: userData?.pfp || '/Images/default.png',
+                selectedBuilding: null,
+                isTechnician: false
+            });
+        }
 
-    res.render('lab-select-building', {
-        layout: 'index',
-        title: 'Select Building and Room',
-        uniqueBuildings,
-        laboratories: filteredRooms,  
-        currentRoute: 'lab-select-building',
-        pfp: userData.pfp || '/Images/default.png',
-        selectedBuilding,
-        isTechnician: false
-    });
+        const buildingId = await labDataModule.getBuildingIdByName(selectedBuilding);
+        console.log("Building ID for", selectedBuilding, ":", buildingId);
+
+        if (!buildingId) {
+            console.log("Error: Building ID not found in the database.");
+            return res.render('lab-select-building', {
+                layout: 'index',
+                title: 'Select Building and Room',
+                uniqueBuildings: uniqueBuildings || [], 
+                laboratories: [],  
+                currentRoute: 'lab-select-building',
+                pfp: userData?.pfp || '/Images/default.png',
+                selectedBuilding: selectedBuilding,
+                isTechnician: false
+            });
+        }
+
+        // Get labs in the selected building
+        const labs = await labDataModule.getLabsByBuildingId(buildingId);
+        console.log("Labs found:", labs.length);
+
+        res.render('lab-select-building', {
+            layout: 'index',
+            title: 'Select Building and Room',
+            uniqueBuildings: uniqueBuildings || [], 
+            laboratories: labs,  
+            currentRoute: 'lab-select-building',
+            pfp: userData?.pfp || '/Images/default.png',
+            selectedBuilding: selectedBuilding,
+            isTechnician: false
+        });
+    } catch (error) {
+        console.error("Error fetching labs by building:", error.message);
+        res.status(500).send("Internal Server Error");
+    }
 });
 
 
 // update table to only show rooms on selected building
 server.get('/get-rooms', async (req, res) => {
-    const selectedBuilding = req.query.building;
+    
+    const buildings = await labDataModule.getBuildings();
+    const uniqueBuildings = buildings.map(building => building.name);
+    const selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
+
+    // Get labs in the selected building
+    const buildingId = await labDataModule.getBuildingIdByName(selectedBuilding);
+    console.log("The building id is " + buildingId);
+    const labs = await labDataModule.getLabsByBuildingId(buildingId) ;
+
     if (!selectedBuilding) {
         return res.status(400).send({ error: 'Building parameter is required.' });
     }
-    const allRooms = await dataModule.getLaboratories(); 
-    const filteredRooms = allRooms.filter(lab => lab.building === selectedBuilding);
-    res.json(filteredRooms);
+    
+    res.json(labs);
 });
-
 
 
 // render reservation.hbs
 server.get('/reservations', async function(req, resp) {
     try {
-        const email = req.session.email || "john_doe@dlsu.edu.ph"; // Use session email
         const reservations = await dataModule.getReservationData(email); 
         const userData = req.session.user; 
 
@@ -404,20 +470,11 @@ server.get('/reservations', async function(req, resp) {
 });
 
 
-
-
+// WAITING FOR SAMPLE DATA
 // render room.hbs
 server.get('/room/:building/:room', async function(req, resp) {
     const { building, room } = req.params;
-    const email = req.session.email;
-
-    let userData;
-    try {
-        userData = await dataModule.getUserData(email || "john_doe@dlsu.edu.ph");
-    } catch (error) {
-        console.error("Error fetching user data:", error);
-        return resp.status(500).send("Error: Unable to fetch user data.");
-    }
+    const userData = req.session.user;
 
     let allSeats;
     try {
