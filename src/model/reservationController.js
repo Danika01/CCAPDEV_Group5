@@ -43,6 +43,17 @@ async function getReservations() {
     }
 }
 
+async function getSeatReservations(seatId) {
+    try{
+        const seat = await Schema.Seat.findById(seatId).populate('reservations').exec();
+        console.log("Seat Found!")
+        return seat;
+    } catch (error) {
+        console.error('Error.', error.message);
+        throw error;
+    }
+}
+
 async function editReservation(reservationId, date, timeIn, timeOut, seat) {
     try {
         const reservation = await Schema.Reservation.findById(reservationId).exec();
