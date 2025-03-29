@@ -79,7 +79,16 @@ const labSchema = new Schema({
         type: Number,
         required: true
     },
-    seats: [seatSchema]
+    seats: [
+        {
+            type: mongoose.ObjectId,
+            ref: 'Seat'
+        }
+    ],
+    available: {
+        type: Boolean,
+        default: true
+    }
 });
 
 const reservationSchema = new Schema ({

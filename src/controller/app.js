@@ -7,7 +7,6 @@
 */
 
 //require('dotenv').config();
-// const mongoose = require('mongoose');
 
 // Connect to MongoDB Atlas
 const mongoose = require('mongoose');

@@ -94,7 +94,6 @@ async function updateAboutInfo(email, aboutInfo) {
     }
 }
 
-
 // Delete user
 async function deleteUser(id) {
     try {
@@ -116,25 +115,13 @@ async function deleteUser(id) {
     }
 }
 
-
-
-async function getAnnouncements() {
-    try {
-        return await Schema.Announcement.find().lean().exec();
-    } catch (error) {
-        console.error("Error fetching announcements:", error);
-        return [];
-    }
-}
-
 module.exports = {
     createUser,
     getAllUsers,
     isExistingUser,
     getUser,
     updateAboutInfo,
-    deleteUser,
-    getAnnouncements
+    deleteUser
 };
 
 
