@@ -1,5 +1,5 @@
 const Schema = require('./Schema');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs');
 
 // Create New User
 async function createUser(firstname, lastname, email, password, isTechnician) {
