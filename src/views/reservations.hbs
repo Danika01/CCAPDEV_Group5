@@ -20,29 +20,28 @@
                         </thead>
                         <tbody>
                             {{#each reservations}}
-                                <tr class="clickable-row table-row-all-res" data-href="/edit-reservation/{{this.reservationId}}" style="font-size: 10px;">
-                                    <td>{{this.reservationId}}</td>
-                                    <td>
-                                        <div class="container stacked-rows">
-                                            <span>{{this.requestDate}}</span>
-                                            <span>{{this.requestTime}}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="container stacked-rows">
-                                            <span>{{this.reservationDate}}</span>
-                                            <span>{{this.startTime}} to {{this.endTime}}</span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="container stacked-rows">
-                                            <span>{{this.building}}</span>
-                                            <span>{{this.room}}</span>
-                                        </div>
-                                    </td>
-                                    <td>{{this.seatNumber}}</td>
-                                </tr>
-                            {{/each}}
+                                    <tr class="clickable-row" data-href="/edit-reservation/{{this._id}}" style="font-size: 10px;">
+                                        <td>{{this._id}}</td>
+                                        <td>
+                                            <div class="container stacked-rows">
+                                                <span>{{this.requestDate}}</span>                              
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="container stacked-rows">
+                                                <span>{{this.reservationDate}}</span>
+                                                <span>{{this.timeIn}} to {{this.timeOut}}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="container stacked-rows">
+                                                <span>{{this.building.name}}</span>
+                                                <span>{{this.seat.roomNum}}</span>
+                                            </div>
+                                        </td>
+                                            <td>{{this.seat.seatNum}}</td>
+                                    </tr>
+                                {{/each}}
                         </tbody>
                     </table>
                 </div>

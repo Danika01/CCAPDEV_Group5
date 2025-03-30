@@ -192,7 +192,7 @@ server.get('/home', async function(req, resp) {
     try { 
         const userData = req.session.user;
 
-        const reservations = await reservationDataModule.getReservations(req.session.user._id);
+        const reservations = await reservationDataModule.getUserReservations(req.session.user._id);
         const uniqueBuildings = await labDataModule.getBuildings();
 
         console.log("User Data:", userData);
@@ -259,7 +259,7 @@ server.post('/set-session-building', (req, res) => {
 server.get('/account', async function(req, resp) {
     try { 
         const userData = req.session.user; 
-        const reservations = await reservationDataModule.getReservations(req.session.user._id);
+        const reservations = await reservationDataModule.getUserReservations(req.session.user._id);
 
         console.log("User Data:", userData); 
         console.log("Reservations:", reservations); 
@@ -451,7 +451,7 @@ server.get('/get-rooms', async (req, res) => {
 // render reservation.hbs
 server.get('/reservations', async function(req, resp) {
     try {
-        const reservations = await dataModule.getReservationData(email); 
+        const reservations = await reservationDataModule.getUserReservations(req.session.user._id); 
         const userData = req.session.user; 
 
         console.log("Reservations:", reservations); // Debugging
@@ -470,7 +470,6 @@ server.get('/reservations', async function(req, resp) {
 });
 
 
-// WAITING FOR SAMPLE DATA
 // render room.hbs
 server.get('/room/:building/:room', async function(req, resp) {
     const { building, room } = req.params;
@@ -603,9 +602,8 @@ server.get('/admin-lab-reserve/:building/:room', async function(req, resp) {
 // render edit-reservation.hbs
 server.get('/edit-reservation/:reservationId', async function(req, resp) {
     const reservationId = req.params.reservationId; // Get reservation ID from URL
-    const email = req.session.email; 
 
-    const reservation = await dataModule.getReservationByReservationId(reservationId); 
+    const reservation = await reservationDataModule.getReservationById(reservationId); 
     const userData = req.session.user;
     
     if (!reservation) {
@@ -637,6 +635,23 @@ server.post('/edit-reservation', (req, res) => {
 
     // Redirect back to the room page after editing
     res.redirect(`/room/${building}/${room}`);
+});
+
+server.post('/reservations/delete', async (req, res) => {
+    try {
+        const { reservationId } = req.body;
+        if (!reservationId) {
+            return res.status(400).json({ success: false, message: "Reservation ID is required." });
+        }
+
+        await reservationDataModule.findByIdAndDelete(reservationId);
+        console.log(`Reservation ${reservationId} deleted.`);
+
+        res.status(200).json({ success: true, redirectUrl: "/reservations" });
+    } catch (error) {
+        console.error("Error deleting reservation:", error.message);
+        res.status(500).json({ success: false, message: "Error deleting reservation." });
+    }
 });
 
 
