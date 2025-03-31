@@ -1,0 +1,84 @@
+<div class="container">
+    {{> navbar pfp=pfp}}
+
+    <!-- BODY -->
+    <div class="container main-area fade-in">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="about-section fade-in">
+                    <h2 class="text-center mb-4">About Animo LabLink</h2>
+                    <p class="text-center mb-5">
+                        Animo LabLink is a computer laboratory slot reservation system developed by a group of students 
+                        from De La Salle University. Our goal is to provide an efficient and user-friendly platform 
+                        for students to reserve computer lab seats, manage their reservations, and view lab availability.
+                    </p>
+
+                    <h3 class="text-center mb-4">Our Team</h3>
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center" style="background-color: #cdcfc0; border: 2px solid #355f2e;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Albrecht Abad</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center" style="background-color: #cdcfc0; border: 2px solid #355f2e;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Danika Dy</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center" style="background-color: #cdcfc0; border: 2px solid #355f2e;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Rai Isidro</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="card text-center" style="background-color: #cdcfc0; border: 2px solid #355f2e;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Angelica Niu</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mx-auto">
+            <div class="card h-100" style="background-color: #cdcfc0; border: 2px solid #355f2e; max-width: 100%;">
+                <div class="card-body">
+                    <h4 class="text-center mb-3" style="color: #355f2e;">Technology Stack</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <h5 class="text-center">Frontend</h5>
+                            <ul class="list-unstyled text-center">
+                                <li>HTML/CSS</li>
+                                <li>Bootstrap 5</li>
+                                <li>JavaScript</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-center">Backend</h5>
+                            <ul class="list-unstyled text-center">
+                                <li>Node.js</li>
+                                <li>Express.js</li>
+                                <li>MongoDB</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h5 class="text-center mt-3">Node.js Packages</h5>
+                    <div class="d-flex flex-wrap">
+                        {{#each nodePackages}}
+                        <span class="badge bg-success me-2 mb-2">{{this}}</span>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
