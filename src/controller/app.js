@@ -723,7 +723,38 @@ server.post('/reservations/delete', async (req, res) => {
     }
 });
 
+// about page
+server.get('/about', async function(req, resp) {
+    try { 
+        if (!req.session.user) {
+            return resp.redirect('/login'); // Redirect if not logged in
+        }
 
+        const userData = req.session.user; 
+        const nodePackages = [
+            "express",
+            "express-handlebars",
+            "body-parser",
+            "express-session",
+            "mongoose",
+            "dotenv",
+            "bcryptjs"
+        ];
+
+        resp.render('about', {
+            layout: 'index',
+            title: 'About Animo LabLink',
+            currentRoute: 'about',
+            pfp: userData?.pfp || '/Images/default.png', 
+            nodePackages: nodePackages
+        });
+
+    } catch (error) {
+        console.error("Error fetching data for /about:", error);
+        resp.status(500).send("Internal Server Error");
+    }
+
+});
 
 
 server.get('/logout', function(req, resp) {
