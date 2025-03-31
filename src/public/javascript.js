@@ -306,6 +306,32 @@ document.getElementById("search-form-room").addEventListener("submit", function(
     .catch(error => console.error("Error updating session:", error));
 });
 
+// get seat data
+document.addEventListener("DOMContentLoaded", () => {
+    const seatNumberElement = document.getElementById("modalSeatNumber");
+    const seatInput = document.getElementById("seatInput");
+    const anonymousCheckbox = document.getElementById("reserveAnonymously");
+    const anonymousInput = document.getElementById("anonymousInput");
+
+    // Get all seat elements
+    document.querySelectorAll(".seat").forEach(seat => {
+        seat.addEventListener("click", () => {
+            const seatNum = seat.getAttribute("data-seat-number");
+
+            if (seatNum) {
+                seatNumberElement.textContent = seatNum;  // Update modal display
+                seatInput.value = seatNum;  // Store seat number in form
+            }
+        });
+    });
+
+    // Update anonymous reservation status
+    anonymousCheckbox.addEventListener("change", () => {
+        anonymousInput.value = anonymousCheckbox.checked ? "true" : "false";
+    });
+});
+
+
 
 // Confirm deletion of reservation
 function deleteReservation() {

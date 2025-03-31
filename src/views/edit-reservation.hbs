@@ -34,7 +34,7 @@
                     </div>
                     <div class="content-box justify-content-between">
                         <span class="value-name"> SEAT NUMBER </span>
-                        <span class="value" style="padding-right: 12%;"> {{reservation.seat.seatNum}} </span>
+                        <span class="value" style="padding-right: 12%;" id = "seatNum"> {{reservation.seat.seatNum}} </span>
                     </div>
                 </div>
 
@@ -52,7 +52,7 @@
                                         Are you sure you want to delete your reservation? This action cannot be undone.
                                     </div>
                                     <form action="/reservations/delete" method="POST">
-                                        <input type="hidden" name="reservationId" value="{{this._id}}">
+                                        <input type="hidden" name="reservationId" value="{{reservation._id}}">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                         <button type="submit" class="btn btn-danger">Delete</button>
                                     </form>

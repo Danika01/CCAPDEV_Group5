@@ -27,28 +27,28 @@ async function getReservationById(reservationId) {
 
 
 // Add reservation
-async function addReservation(reservationDate, timeIn, timeOut, user, seat)
-{
-    try{
+async function addReservation(reservationDate, timeIn, timeOut, user, seat, anonymous) {
+    try {
         const newReservation = await Schema.Reservation.create({
             requestDate: new Date(),
-            reservationDate,
-            timeIn,
-            timeOut,
-            user,
-            seat
+            reservationDate: String(reservationDate),  
+            timeIn: String(timeIn),                    
+            timeOut: String(timeOut),                  
+            user: new mongoose.Types.ObjectId(user),   
+            seat: new mongoose.Types.ObjectId(seat),   
+            anonymous: anonymous === 'true'            
         });
 
         console.log('Reserved successfully!');
+        console.log(newReservation);
         return newReservation;
-    }
-    catch(error){
-        console.error('Error.', error.message);
+    } catch (error) {
+        console.error('Error:', error.message);
         throw error;
     }
-
 }
 
+// Get user reservation
 async function getUserReservations(userId) {
     try {
         const reservations = await Schema.Reservation.find({ user: new ObjectId(userId) })
@@ -66,7 +66,7 @@ async function getUserReservations(userId) {
     }
 }
 
-
+// Get all reservations
 async function getReservations() {
     try {
         return await Schema.Reservation.find().exec();
@@ -76,6 +76,7 @@ async function getReservations() {
     }
 }
 
+// Get seat reservations
 async function getSeatReservations(seatId) {
     try{
         const seat = await Schema.Seat.findById(seatId).populate('reservations').exec();

@@ -41,7 +41,7 @@ const userSchema = new Schema({
 
 const seatSchema = new Schema({
     seatNum: {
-        type: Number,
+        type: String,
         required: true
     },
     roomNum: {

@@ -190,10 +190,24 @@ server.post('/signup', async (req, resp) => {
 // render home.hbs
 server.get('/home', async function(req, resp) {
     try { 
+        if (!req.session.user) {
+            return resp.redirect('/login'); 
+        }
+
         const userData = req.session.user;
 
         const reservations = await reservationDataModule.getUserReservations(req.session.user._id);
         const uniqueBuildings = await labDataModule.getBuildings();
+        const formattedReservations = reservations.map(reservation => {
+            const resObj = reservation.toObject ? reservation.toObject() : reservation;
+        
+            return {
+                ...resObj,
+                requestDate: new Date(resObj.requestDate).toLocaleString("en-US", { timeZone: "Asia/Manila" }),
+            };
+        });
+
+
 
         console.log("User Data:", userData);
         console.log("Buildings:", uniqueBuildings); 
@@ -201,7 +215,7 @@ server.get('/home', async function(req, resp) {
         resp.render('home', {
             layout: 'index',
             title: 'Animo LabLink',
-            reservations: reservations || [],
+            formattedReservations: formattedReservations || [],
             currentRoute: 'home',
             uniqueBuildings: uniqueBuildings || [], 
             selectedBuilding: req.session.building || "Choose a building",
@@ -258,8 +272,20 @@ server.post('/set-session-building', (req, res) => {
 // render account.hbs
 server.get('/account', async function(req, resp) {
     try { 
+        if (!req.session.user) {
+            return resp.redirect('/login'); // Redirect if not logged in
+        }
+
         const userData = req.session.user; 
         const reservations = await reservationDataModule.getUserReservations(req.session.user._id);
+        const formattedReservations = reservations.map(reservation => {
+            const resObj = reservation.toObject ? reservation.toObject() : reservation;
+        
+            return {
+                ...resObj,
+                requestDate: new Date(resObj.requestDate).toLocaleString("en-US", { timeZone: "Asia/Manila" }),
+            };
+        });
 
         console.log("User Data:", userData); 
         console.log("Reservations:", reservations); 
@@ -271,7 +297,7 @@ server.get('/account', async function(req, resp) {
             lastname: userData?.lastname,  
             aboutInfo: userData?.aboutInfo || "No information available.",
             pfp: userData?.pfp || '/Images/default.png', 
-            reservations: reservations || [],
+            reservations: formattedReservations,
             currentRoute: 'account'
         });
 
@@ -312,7 +338,7 @@ server.get('/edit-profile', async function (req, resp) {
 server.post('/updateProfile', async function (req, res) {
     try {
         if (!req.session.user) {
-            return res.status(401).json({ error: "Unauthorized. Please log in." });
+            return resp.redirect('/login'); // Redirect if not logged in
         }
 
         const email = req.session.user.email; 
@@ -370,6 +396,10 @@ server.post('/delete-user', async (req, res) => {
 // render lab-select-building.hbs
 server.get('/lab-select-building/:building?', async function(req, res) {
     try {
+        if (!req.session.user) {
+            return resp.redirect('/login'); // Redirect if not logged in
+        }
+
         const userData = req.session.user;
         const buildings = await labDataModule.getBuildings();
         const uniqueBuildings = buildings.map(building => building.name);
@@ -430,7 +460,10 @@ server.get('/lab-select-building/:building?', async function(req, res) {
 
 // update table to only show rooms on selected building
 server.get('/get-rooms', async (req, res) => {
-    
+    if (!req.session.user) {
+            return resp.redirect('/login'); // Redirect if not logged in
+        }
+
     const buildings = await labDataModule.getBuildings();
     const uniqueBuildings = buildings.map(building => building.name);
     const selectedBuilding = req.params.building || req.session.building || uniqueBuildings[0];
@@ -451,7 +484,19 @@ server.get('/get-rooms', async (req, res) => {
 // render reservation.hbs
 server.get('/reservations', async function(req, resp) {
     try {
-        const reservations = await reservationDataModule.getUserReservations(req.session.user._id); 
+        if (!req.session.user) {
+            return resp.redirect('/login'); // Redirect if not logged in
+        }
+
+        const reservations = await reservationDataModule.getUserReservations(req.session.user._id);
+        const formattedReservations = reservations.map(reservation => {
+            const resObj = reservation.toObject ? reservation.toObject() : reservation;
+        
+            return {
+                ...resObj,
+                requestDate: new Date(resObj.requestDate).toLocaleString("en-US", { timeZone: "Asia/Manila" }),
+            };
+        }); 
         const userData = req.session.user; 
 
         console.log("Reservations:", reservations); // Debugging
@@ -459,7 +504,7 @@ server.get('/reservations', async function(req, resp) {
         resp.render('reservations', {
             layout: 'index',
             title: 'Reservations',
-            reservations: reservations || [], 
+            reservations: formattedReservations || [], 
             currentRoute: 'reservations',
             pfp: userData.pfp || '/Images/default.png'
         });
@@ -472,12 +517,19 @@ server.get('/reservations', async function(req, resp) {
 
 // render room.hbs
 server.get('/room/:building/:room', async function(req, resp) {
+    if (!req.session.user) {
+        return resp.redirect('/login'); // Redirect if not logged in
+    }
+
     const { building, room } = req.params;
     const userData = req.session.user;
 
+    let lab = await labDataModule.getSeatsByLab(room);
+
+    /*
     let allSeats;
     try {
-        allSeats = await dataModule.getSeatData(); // Await the result from the DB
+        allSeats = await labDataModule.getSeatsByLab(labId); // Await the result from the DB
     } catch (error) {
         console.error("Error fetching seat data:", error);
         return resp.status(500).send("Error: Unable to fetch seat data.");
@@ -486,7 +538,7 @@ server.get('/room/:building/:room', async function(req, resp) {
     if (!Array.isArray(allSeats)) {
         console.error("Expected an array but got:", typeof allSeats);
         return resp.status(500).send("Error: Seat data is not an array.");
-    }
+    } */
 
     // Default date & time if not set in session
     if (!req.session.date) req.session.date = new Date().toISOString().split("T")[0];
@@ -497,35 +549,13 @@ server.get('/room/:building/:room', async function(req, resp) {
     const selectedStartTime = req.session.timeIn;
     const selectedEndTime = req.session.timeOut;
 
-    const roomSeats = allSeats
-        .filter(seat => seat.roomNum === room)
-        .map(seat => {
-            console.log(`Checking Seat ${seat.seatNum} in Room ${room}`);
+    console.log(lab.seats);
 
-            if (!Array.isArray(seat.reservations)) {
-                console.log(`Seat ${seat.seatNum} has no reservations array.`);
-                return { ...seat, reserved: false, reservationName: null, profileLink: null };
-            }
-
-            // Find reservation that matches the selected date & overlaps with the selected time
-            const reservation = seat.reservations.find(r => 
-                r.reservationDate === selectedDate &&
-                !(r.endTime <= selectedStartTime || r.startTime >= selectedEndTime)
-            );
-
-            return {
-                ...seat,
-                reserved: !!reservation,
-                reservationName: reservation ? reservation.name : null,
-                isAnonymous: reservation ? reservation.isAnonymous : false,
-                profileLink: reservation ? `/profile/${reservation.email}` : null
-            };
-        });
 
     resp.render('room', {
         layout: 'index',
         title: `Room ${room}`,
-        seats: roomSeats,
+        seats: lab.seats,
         building: building,
         room: room,
         buildings: req.session.building,
@@ -534,7 +564,7 @@ server.get('/room/:building/:room', async function(req, resp) {
         startTime: selectedStartTime,
         endTime: selectedEndTime,
         currentRoute: 'reservations',
-        hasAvailableSeats: roomSeats.some(seat => !seat.reserved)
+        hasAvailableSeats:  true
     });
 });
 
@@ -547,27 +577,7 @@ server.get('/check-seat-availability', async (req, res) => {
         return res.status(400).json({ error: "Missing required parameters" });
     }
 
-    let seats;
-    try {
-        seats = await dataModule.getSeatData(); 
-    } catch (error) {
-        console.error("Error fetching seat data:", error);
-        return res.status(500).json({ error: "Unable to fetch seat data" });
-    }
-
-    // Filter for the selected room
-    const filteredSeats = seats.filter(seat => seat.roomNum === room);
-
-    // Check if ANY seat is occupied during the requested time
-    const isSeatUnavailable = filteredSeats.some(seat => {
-        return seat.reservations.some(reservation => {
-            // Convert reservationDate to YYYY-MM-DD before comparing
-            const formattedReservationDate = new Date(reservation.reservationDate).toISOString().split('T')[0];
-    
-            return formattedReservationDate === date &&
-                   !(timeOut <= reservation.startTime || timeIn >= reservation.endTime);
-        });
-    });
+    let lab = await labDataModule.getSeatsByLab(room);
 
     res.json({ hasAvailableSeats: !isSeatUnavailable });
 });
@@ -601,7 +611,13 @@ server.get('/admin-lab-reserve/:building/:room', async function(req, resp) {
 
 // render edit-reservation.hbs
 server.get('/edit-reservation/:reservationId', async function(req, resp) {
+    if (!req.session.user) {
+        return resp.redirect('/login'); // Redirect if not logged in
+    }
+
+    
     const reservationId = req.params.reservationId; // Get reservation ID from URL
+
 
     const reservation = await reservationDataModule.getReservationById(reservationId); 
     const userData = req.session.user;
@@ -621,6 +637,10 @@ server.get('/edit-reservation/:reservationId', async function(req, resp) {
 });
 
 server.post('/edit-reservation', (req, res) => {
+    if (!req.session.user) {
+        return resp.redirect('/login'); // Redirect if not logged in
+    }
+    
     const { building, room, reservationId, reservationDate, startTime, endTime } = req.body;
 
     req.session.date = reservationDate;
@@ -637,22 +657,73 @@ server.post('/edit-reservation', (req, res) => {
     res.redirect(`/room/${building}/${room}`);
 });
 
+
+// reserve seat
+server.post('/reserve-seat', async (req, res) => {
+    const { room, reservationDate, timeIn, timeOut, seatNum, anonymous } = req.body;
+    const user = req.session.user ? req.session.user._id : null;
+
+    if (!seatNum || !reservationDate || !timeIn || !timeOut) {
+        return res.status(400).send("Missing required fields.");
+    }
+
+    try {
+        // Find the seat ID based on the room and seat number
+        const seat = await labDataModule.findSeat(room, seatNum);
+
+        if (!seat) {
+            return res.status(404).send("Seat not found.");
+        }
+
+        console.log('Reservation Data:', {
+            reservationDate: String(reservationDate),
+            timeIn: String(timeIn),
+            timeOut: String(timeOut),
+            user: user ? new mongoose.Types.ObjectId(user) : null, 
+            seat: seat._id,
+            anonymous: anonymous === 'true' 
+        });
+
+        // Create new reservation
+        const newReservation = await reservationDataModule.addReservation(reservationDate, timeIn, timeOut, user, seat, anonymous)
+        await labDataModule.addReservationToSeat(seat._id, newReservation._id);
+
+        res.redirect('/reservations');
+    } catch (error) {
+        console.error("Error saving reservation:", error);
+        res.status(500).send("Server error.");
+    }
+});
+
+
+// delete reservation
 server.post('/reservations/delete', async (req, res) => {
     try {
         const { reservationId } = req.body;
         if (!reservationId) {
-            return res.status(400).json({ success: false, message: "Reservation ID is required." });
+            return res.status(400).send("Reservation ID is required.");
         }
 
-        await reservationDataModule.findByIdAndDelete(reservationId);
-        console.log(`Reservation ${reservationId} deleted.`);
+        const reservation = await reservationDataModule.getReservationById(reservationId);
+        if (!reservation) {
+            return res.status(404).send("Reservation not found.");
+        }
 
-        res.status(200).json({ success: true, redirectUrl: "/reservations" });
+        if (reservation.seat) {
+            await labDataModule.removeReservationFromSeat(reservation.seat._id, reservationId);
+        }
+
+        await reservationDataModule.deleteReservation(reservationId);
+
+        console.log(`Reservation ${reservationId} deleted.`);
+        res.redirect('/reservations');
     } catch (error) {
         console.error("Error deleting reservation:", error.message);
-        res.status(500).json({ success: false, message: "Error deleting reservation." });
+        res.status(500).send("Error deleting reservation.");
     }
 });
+
+
 
 
 server.get('/logout', function(req, resp) {
