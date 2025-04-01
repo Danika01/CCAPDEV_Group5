@@ -6,11 +6,8 @@
     npm install dotenv
 */
 
-//require('dotenv').config();
-
 // Connect to MongoDB Atlas
 const mongoose = require('mongoose');
-
 const DB_URI = "mongodb+srv://raiisidro:FJqTP3XObvW6TeF6@g5cluster.9w6ce.mongodb.net/LabLink?retryWrites=true&w=majority&appName=G5Cluster";
 
 
@@ -18,15 +15,13 @@ mongoose.connect(DB_URI)
   .then(() => console.log("Connected to MongoDB Atlas!"))
   .catch(err => console.error("MongoDB Atlas connection error:", err));
 
-
 const express = require('express');
 const server = express();
 
-// const dataModule = require('../model/data.js');
+// dataModule 
 const userDataModule = require('../model/userController.js');
 const labDataModule = require('../model/labController.js');
 const reservationDataModule = require('../model/reservationController.js');
-
 
 const session = require('express-session');
 const path = require('path');
@@ -206,8 +201,6 @@ server.get('/home', async function(req, resp) {
                 requestDate: new Date(resObj.requestDate).toLocaleString("en-US", { timeZone: "Asia/Manila" }),
             };
         });
-
-
 
         console.log("User Data:", userData);
         console.log("Buildings:", uniqueBuildings); 
@@ -571,7 +564,7 @@ server.get('/room/:building/:room', async function(req, resp) {
 });
 
 
-
+// set room session on search
 server.post('/set-session-room', function(req, resp) {
     const { date, startTime, endTime, room, building } = req.body;
 
@@ -593,34 +586,6 @@ server.post('/set-session-room', function(req, resp) {
         building: building
     });
 });
-
-
-
-// render admin-lab-reserve.hbs
-server.get('/admin-lab-reserve/:building/:room', async function(req, resp) {
-    try {
-        const seatData = await dataModule.getSeatData();
-        const building = req.params.building;
-        const room = req.params.room;
-        const email = req.session.email;
-
-        const userData = await dataModule.getUserData(email || "john_doe@dlsu.edu.ph");
-
-        resp.render('admin-lab-reserve', {
-            layout: 'index',
-            title: 'Admin Lab Reservation',
-            seats: seatData, 
-            building: building,
-            room: room,
-            buildings: buildings,
-            pfp: userData?.pfp || '/Images/default.png'
-        });
-    } catch (error) {
-        console.error("Error fetching data for /admin-lab-reserve:", error);
-        resp.status(500).send("Error: Unable to fetch required data.");
-    }
-});
-
 
 // render edit-reservation.hbs
 server.get('/edit-reservation/:reservationId', async function(req, resp) {
@@ -767,6 +732,7 @@ server.post('/reservations/delete', async (req, res) => {
     }
 });
 
+// view account of user
 server.get('/view-account/:userId', async function(req, resp) {
     try { 
         if (!req.session.user) {
@@ -834,7 +800,7 @@ server.get('/about', async function(req, resp) {
 
 });
 
-
+// logout
 server.get('/logout', function(req, resp) {
     req.session.destroy(); 
     resp.redirect('/login');
