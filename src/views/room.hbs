@@ -72,7 +72,7 @@
                                 </div>
                             </div>
                         </div>
-            
+    
                         {{#each seats}}
                             <div class="seat {{#if this.unavailable}}unavailable{{else}}available{{/if}}" 
                                 {{#unless this.unavailable}} 
@@ -83,12 +83,12 @@
 
                                 <div class="username">
                                     {{#if this.unavailable}}
-                                        {{#each this.reservations}} 
+                                        {{#each this.relevantReservations}} 
                                             {{#if this.anonymous}}
                                                 Anonymous
                                             {{else}}
                                                 {{#if this.user}}
-                                                     <a class="username" href="/view-account/{{this.user._id}}">
+                                                    <a class="username" href="/view-account/{{this.user._id}}">
                                                         {{this.user.firstname}} {{this.user.lastname}}
                                                     </a>
                                                 {{/if}}
@@ -102,6 +102,9 @@
                                 <div>{{this.roomNum}}</div> <!-- Room Number -->
                             </div>
                         {{/each}}
+
+
+
 
 
 

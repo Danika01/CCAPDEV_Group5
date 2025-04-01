@@ -526,22 +526,24 @@ server.get('/room/:building/:room', async function(req, resp) {
 
     let labSeats = await labDataModule.getSeatsByLab(room);
 
-    // Mark unavailable seats
+    // Mark unavailable seats and filter relevant reservations
     labSeats.seats.forEach(seat => {
-        seat.unavailable = false; // Default to available
-        
+        seat.unavailable = false; 
+        seat.relevantReservations = []; 
         
         seat.reservations.forEach(reservation => {
             const resDate = reservation.reservationDate;
             const resStartTime = reservation.timeIn;
             const resEndTime = reservation.timeOut;
     
+            // Check if the reservation overlaps with the selected date and time
             if (resDate === selectedDate && (
                 (selectedStartTime >= resStartTime && selectedStartTime < resEndTime) ||
                 (selectedEndTime > resStartTime && selectedEndTime <= resEndTime) ||
-                (selectedStartTime <= resStartTime && selectedEndTime >= resEndTime) 
+                (selectedStartTime <= resStartTime && selectedEndTime >= resEndTime)
             )) {
-                seat.unavailable = true; // Mark as unavailable
+                seat.unavailable = true; 
+                seat.relevantReservations.push(reservation); 
             }
         });
     });
@@ -560,9 +562,7 @@ server.get('/room/:building/:room', async function(req, resp) {
         currentRoute: 'reservations',
         hasAvailableSeats: labSeats.seats.some(seat => !seat.unavailable)
     });
-    
 });
-
 
 // set room session on search
 server.post('/set-session-room', function(req, resp) {
