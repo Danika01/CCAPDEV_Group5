@@ -149,7 +149,8 @@ function selectBuilding(building) {
       .catch(error => console.error("Error updating session:", error));
 }
 
-// Room and home "Search" button
+
+// home "Search" button
 document.addEventListener('DOMContentLoaded', function () {
     const searchButton = document.getElementById("search-seat");
 
@@ -176,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     selectedBuildingText: building, 
-                    date, 
+                    date: date, 
                     startTime: timeIn, 
                     endTime: timeOut 
                 })
@@ -198,7 +199,68 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// room "Search" button
+document.addEventListener('DOMContentLoaded', function () {
+    const searchButton = document.getElementById("room-search-seat");
 
+    if (searchButton) {
+        searchButton.addEventListener("click", function (event) {
+            event.preventDefault(); 
+
+            let date = document.getElementById("date").value;
+            let timeIn = document.getElementById("startTime").value;
+            let timeOut = document.getElementById("endTime").value;
+            let room = document.getElementById("room").textContent.trim();
+            let building = document.getElementById("building").textContent.trim(); 
+
+
+            console.log("Building:", building);
+            console.log("Date:", date);
+            console.log("Time In:", timeIn);
+            console.log("Time Out:", timeOut);
+            console.log("Room:", room);
+
+            // Validate inputs
+            if (!date || !timeIn || !timeOut || !room || !building) {
+                alert("Please select date, start time, end time, room, and building.");
+                return;
+            }
+
+            
+            fetch('/set-session-room', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    date: date, 
+                    startTime: timeIn, 
+                    endTime: timeOut,
+                    room: room,
+                    building: building  
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to set session');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Session set:", data);
+                if (data && data.room && data.building) {
+                    console.log("Redirecting to room:", data.room);
+                    window.location.href = `/room/${encodeURIComponent(data.building)}/${encodeURIComponent(data.room)}`;
+                } else {
+                    console.error("Room or building data is missing in the response.");
+                }
+            })
+            .catch(error => {
+                console.error("Error setting session:", error);
+            });
+        });
+    } else {
+        console.log("Search seat button not found!"); 
+    }
+});
 
 
 // Update the room table dynamically

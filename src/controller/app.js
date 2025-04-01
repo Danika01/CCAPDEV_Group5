@@ -521,41 +521,47 @@ server.get('/room/:building/:room', async function(req, resp) {
         return resp.redirect('/login'); // Redirect if not logged in
     }
 
-    const { building, room } = req.params;
+    const { building, room } = req.params; // Get building and room from route parameters
     const userData = req.session.user;
 
-    let lab = await labDataModule.getSeatsByLab(room);
+    // Use session values if they exist, otherwise fall back to default values
+    const selectedDate = req.session.date || new Date().toISOString().split("T")[0];  // Default to today's date if not set
+    const selectedStartTime = req.session.timeIn || "08:00";  // Default to "08:00" if not set
+    const selectedEndTime = req.session.timeOut || "08:30";  // Default to "08:30" if not set
 
-    /*
-    let allSeats;
-    try {
-        allSeats = await labDataModule.getSeatsByLab(labId); // Await the result from the DB
-    } catch (error) {
-        console.error("Error fetching seat data:", error);
-        return resp.status(500).send("Error: Unable to fetch seat data.");
-    }
+    console.log(`Selected Date: ${selectedDate}, Time: ${selectedStartTime} to ${selectedEndTime}`);
+    console.log(`Building: ${building}, Room: ${room}`);
 
-    if (!Array.isArray(allSeats)) {
-        console.error("Expected an array but got:", typeof allSeats);
-        return resp.status(500).send("Error: Seat data is not an array.");
-    } */
+    let labSeats = await labDataModule.getSeatsByLab(room);
 
-    // Default date & time if not set in session
-    if (!req.session.date) req.session.date = new Date().toISOString().split("T")[0];
-    if (!req.session.timeIn) req.session.timeIn = "08:00";
-    if (!req.session.timeOut) req.session.timeOut = "08:30";
+    // Mark unavailable seats
+    labSeats.seats.forEach(seat => {
+        seat.unavailable = false; // Default to available
+        
+        // Check if the seat has any reservations
+        seat.reservations.forEach(reservation => {
+            const resDate = reservation.reservationDate;
+            const resStartTime = reservation.timeIn;
+            const resEndTime = reservation.timeOut;
+    
+            // Compare reservation times with selected times
+            if (resDate === selectedDate && (
+                (selectedStartTime >= resStartTime && selectedStartTime < resEndTime) ||
+                (selectedEndTime > resStartTime && selectedEndTime <= resEndTime) ||
+                (selectedStartTime <= resStartTime && selectedEndTime >= resEndTime) // Full overlap
+            )) {
+                seat.unavailable = true; // Mark as unavailable
+            }
+        });
+    });
+    
 
-    const selectedDate = req.session.date;
-    const selectedStartTime = req.session.timeIn;
-    const selectedEndTime = req.session.timeOut;
-
-    console.log(lab.seats);
-
+    const hasAvailableSeats = labSeats.seats.some(seat => !seat.unavailable);
 
     resp.render('room', {
         layout: 'index',
         title: `Room ${room}`,
-        seats: lab.seats,
+        seats: labSeats.seats, 
         building: building,
         room: room,
         buildings: req.session.building,
@@ -564,23 +570,35 @@ server.get('/room/:building/:room', async function(req, resp) {
         startTime: selectedStartTime,
         endTime: selectedEndTime,
         currentRoute: 'reservations',
-        hasAvailableSeats:  true
+        hasAvailableSeats: labSeats.seats.some(seat => !seat.unavailable)
+    });
+    
+});
+
+
+
+server.post('/set-session-room', function(req, resp) {
+    const { date, startTime, endTime, room, building } = req.body;
+
+    // for debugging
+    console.log("Before session update:", req.session);
+
+    // Set the session data
+    req.session.date = date;
+    req.session.timeIn = startTime;
+    req.session.timeOut = endTime;
+    req.session.room = room;  
+    req.session.building = building; 
+
+    // Log the session after setting it
+    console.log("After session update:", req.session);
+
+    resp.json({
+        room: room,
+        building: building
     });
 });
 
-
-// check if seats are available
-server.get('/check-seat-availability', async (req, res) => {
-    const { room, date, timeIn, timeOut } = req.query;
-
-    if (!room || !date || !timeIn || !timeOut) {
-        return res.status(400).json({ error: "Missing required parameters" });
-    }
-
-    let lab = await labDataModule.getSeatsByLab(room);
-
-    res.json({ hasAvailableSeats: !isSeatUnavailable });
-});
 
 
 // render admin-lab-reserve.hbs
@@ -615,9 +633,7 @@ server.get('/edit-reservation/:reservationId', async function(req, resp) {
         return resp.redirect('/login'); // Redirect if not logged in
     }
 
-    
     const reservationId = req.params.reservationId; // Get reservation ID from URL
-
 
     const reservation = await reservationDataModule.getReservationById(reservationId); 
     const userData = req.session.user;
@@ -636,27 +652,60 @@ server.get('/edit-reservation/:reservationId', async function(req, resp) {
     });
 });
 
-server.post('/edit-reservation', (req, res) => {
+// edit reservation
+server.post('/edit-reservation', async (req, res) => {
     if (!req.session.user) {
-        return resp.redirect('/login'); // Redirect if not logged in
+        return res.redirect('/login'); // Redirect if not logged in
     }
     
-    const { building, room, reservationId, reservationDate, startTime, endTime } = req.body;
+    const { reservationId } = req.body;
+    
+    try {
+        // Find the reservation by ID
+        const reservation = await reservationDataModule.getReservationById(reservationId);
+        if (!reservation) {
+            return res.status(404).json({ error: "Reservation not found" });
+        }
 
-    req.session.date = reservationDate;
-    req.session.timeIn = startTime;
-    req.session.timeOut = endTime;
+        // Set session data
+        req.session.date = reservation.reservationDate;
+        req.session.timeIn = reservation.timeIn;
+        req.session.timeOut = reservation.timeOut;
+        
+        const room = reservation.seat ? reservation.seat.roomNum : null;
+        if (!room) {
+            return res.status(400).json({ error: 'Room number is missing from the reservation' });
+        }
 
-    console.log(`Editing reservation for Room: ${room} in ${building}`);
-    console.log(`Reservation ID: ${reservationId}`);
-    console.log(`Date: ${reservationDate}`);
-    console.log(`Start Time: ${startTime}`);
-    console.log(`End Time: ${endTime}`);
+        const lab = await labDataModule.getLabId(room);
+        if (!lab) {
+            return res.status(404).json({ error: 'Lab not found for the given room' });
+        }
 
-    // Redirect back to the room page after editing
-    res.redirect(`/room/${building}/${room}`);
+        const buildingId = lab.building;
+        if (!buildingId) {
+            return res.status(404).json({ error: 'Building ID not found for the lab' });
+        }
+
+        const building = await labDataModule.getBuildingById(buildingId);
+        if (!building) {
+            return res.status(404).json({ error: 'Building not found' });
+        }
+
+        // Log for debugging
+        console.log(`Editing reservation for Room: ${room} in ${building.name}`);
+        console.log(`Reservation ID: ${reservationId}`);
+        console.log(`Date: ${reservation.reservationDate}`);
+        console.log(`Start Time: ${reservation.timeIn}`);
+        console.log(`End Time: ${reservation.timeOut}`);
+        
+        // Redirect to the room page with building and room info
+        return res.redirect(`/room/${encodeURIComponent(building.name)}/${encodeURIComponent(room)}`);
+    } catch (error) {
+        console.error('Error editing reservation:', error);
+        return res.status(500).json({ error: 'An error occurred while editing the reservation' });
+    }
 });
-
 
 // reserve seat
 server.post('/reserve-seat', async (req, res) => {
@@ -720,6 +769,32 @@ server.post('/reservations/delete', async (req, res) => {
     } catch (error) {
         console.error("Error deleting reservation:", error.message);
         res.status(500).send("Error deleting reservation.");
+    }
+});
+
+server.get('/view-account/:firstName/:lastName', async function(req, resp) {
+    try { 
+        if (!req.session.user) {
+            return resp.redirect('/login'); // Redirect if not logged in
+        }
+
+        const userData = req.session.user; 
+        
+        console.log("User Data:", userData); 
+
+        resp.render('view-account', {
+            layout: 'index',
+            title: firstName + lastName,
+            firstname: userData?.firstname || "Guest",
+            lastname: userData?.lastname,  
+            aboutInfo: userData?.aboutInfo || "No information available.",
+            pfp: userData?.pfp || '/Images/default.png', 
+            currentRoute: 'account'
+        });
+
+    } catch (error) {
+        console.error("Error fetching data for /account:", error);
+        resp.status(500).send("Internal Server Error");
     }
 });
 

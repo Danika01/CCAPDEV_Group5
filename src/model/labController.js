@@ -20,6 +20,25 @@ async function getBuildingIdByName(buildingName) {
     }
 }
 
+// get building using object id 
+async function getBuildingById(buildingId) {
+    try {
+        const building = await Schema.Building.findById(buildingId).lean().exec();
+        
+        if (building) {
+            return building;
+        } else {
+            console.warn(`Building with ID "${buildingId}" not found.`);
+            return null; 
+        }
+    } catch (error) {
+        console.error('Error finding building by ID:', error.message);
+        throw error; 
+    }
+}
+
+
+
 async function getSeats() {
     try {
         return await Schema.Seat.find().exec();
@@ -101,9 +120,12 @@ async function getSeatsByLab(roomNum) {
             })
             .lean().exec();
 
-        console.log('Seats found!');
-        // console.log(JSON.stringify(lab, null, 2));
-        
+        labSeats.seats.forEach(seat => {
+            seat.hasNonAnonymousReservation = seat.reservations.some(reservation => !reservation.anonymous);
+        });
+
+        console.log('Seats found!', labSeats);
+
         return labSeats;
     } catch (error) {
         console.error('Error:', error.message);
@@ -112,14 +134,17 @@ async function getSeatsByLab(roomNum) {
 }
 
 
+
+// get lab id
 async function getLabId(roomNum) {
     try {
-        return await Schema.Lab.find({ name: roomNum }).lean().exec();
+        return await Schema.Lab.findOne({ name: roomNum }).lean().exec();
     } catch (error) {
-        console.error('Error fetching lab by lab ID:', error.message);
+        console.error('Error fetching lab by room number:', error.message);
         throw error;
     }
 }
+
 
 async function getLabs() {
     try {
@@ -159,6 +184,7 @@ async function getAnnouncements() {
 
 module.exports = {
     getBuildings,
+    getBuildingById,
     getSeats,
     getLabs,
     getSeatsByLab,

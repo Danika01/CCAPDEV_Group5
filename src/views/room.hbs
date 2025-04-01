@@ -74,28 +74,40 @@
                         </div>
             
                         {{#each seats}}
-                            <div class="seat {{#if this.reserved}}reserved{{/if}}" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#reserveSeat" 
-                                data-seat-number="{{this.seatNum}}">
+    <div class="seat {{#if this.unavailable}}unavailable{{else}}available{{/if}}"
+        {{#unless this.unavailable}} 
+            data-bs-toggle="modal" data-bs-target="#reserveSeat" data-seat-number="{{this.seatNum}}" 
+        {{/unless}}>
 
-                                <div>{{seatNum}}</div>
-                                <div class="username">
-                                    {{#if this.reserved}}
-                                        {{#if this.isAnonymous}}
-                                            Anonymous
-                                        {{else}}
-                                            <a class="username" href="/account?email={{this.reservationEmail}}">
-                                                {{this.reservationName}}
-                                            </a>
-                                        {{/if}}
-                                    {{else}}
-                                        Available
-                                    {{/if}}
-                                </div>
-                                <div>{{this.roomNum}}</div>
-                            </div>
-                        {{/each}}
+        <div>{{this.seatNum}}</div> <!-- Seat Number -->
+
+        <div class="username">
+            {{#if this.unavailable}}
+                <!-- If unavailable, show "Reserved" -->
+                Reserved
+                <!-- Display all reservations for this seat -->
+                {{#each this.reservations}}  <!-- Iterate over the reservations -->
+                    {{#unless this.anonymous}} <!-- Only show if not anonymous -->
+                        <a class="username" href="/account?email={{this.email}}">
+                            {{this.name}} <!-- Show the name of the user who reserved the seat -->
+                        </a>
+                    {{/unless}}
+                {{/each}}
+            {{else}}
+                Available
+            {{/if}}
+        </div>
+
+        <div>{{this.roomNum}}</div> <!-- Room Number -->
+    </div>
+{{/each}}
+
+
+
+
+
+
+
 
                     </div>
 
@@ -118,8 +130,8 @@
                 <div class="container search-lab-seat" >
                     <div> 
                         <h2 style="color: black; text-align: center; margin-top: 1em;">
-                            {{building}}
-                            <div style="font-size: 0.8em;">{{room}}</div>
+                            <div id="building">{{building}}</div>  
+                            <div style="font-size: 0.8em;" id ="room">{{room}}</div>
                         </h2>
                         <form id="search-form-room">
                             <div class="container mt-3">
@@ -133,7 +145,7 @@
                                 <div class="form-floating">
                                     <select class="form-select" id="startTime" name="startTime" required>
                                         <option value="{{startTime}}" selected>{{startTime}}</option>
-                                        <!-- Add more options dynamically if needed -->
+                                        
                                     </select>
                                     <label for="startTime">Select Start Time</label>
                                 </div>
@@ -143,13 +155,12 @@
                                 <div class="form-floating">
                                     <select class="form-select" id="endTime" name="endTime" required>
                                         <option value="{{endTime}}" selected>{{endTime}}</option>
-                                        <!-- Add more options dynamically if needed -->
                                     </select>
                                     <label for="endTime">Select End Time</label>
                                 </div>
                             </div>
 
-                            <div class="container mt-4 md-4" id="search-seat-form">
+                            <div class="container mt-4 md-4" id="room-search-seat">
                                 <input type="submit" class="btn btn-success w-100" value="Search">
                             </div>
                         </form>

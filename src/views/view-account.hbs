@@ -1,0 +1,22 @@
+<div class="container">
+    {{> navbar pfp=pfp}}
+
+    <!-- BODY -->
+    <div class="container main-area fade-in">
+        <div class="row">
+            <div class="col-5 profile-area"> 
+                <img src={{pfp}} class="rounded-circle" width="200" height="200" alt="Profile Photo">
+                
+            </div>
+
+            <div class="col-7 about-area">
+                <h2>{{firstname}} {{lastname}}</h2> <!-- Dynamically display user's name -->
+                <div class="container about">
+                    <div id="about-info">
+                        {{aboutInfo}} <!-- Dynamically display user's bio -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

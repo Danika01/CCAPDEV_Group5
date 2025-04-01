@@ -16,7 +16,7 @@
                 <div class="container edit-placeholder">
                     <div class="content-box justify-content-between">
                         <span class="value-name"> RESERVATION ID </span>
-                        <span class="value" style="padding-right: 2%;"> {{reservation._id}} </span>
+                        <span class="value" style="padding-right: 2%;" id="reservation-id"> {{reservation._id}} </span>
                     </div>
                     <div class="content-box justify-content-between">
                         <span class="value-name"> REQUEST DATE </span>
@@ -63,9 +63,9 @@
                     </div>
                     <div>
                         <form action="/edit-reservation" method="POST">
-                            <input type="hidden" name="building" value="{{reservation.building}}">
+                        
                             <input type="hidden" name="room" value="{{reservation.room}}">
-                            <input type="hidden" name="reservationId" value="{{reservation.reservationId}}">
+                            <input type="hidden" name="reservationId" value="{{reservation._id}}">
                             <input type="hidden" name="reservationDate" value="{{reservation.reservationDate}}">
                             <input type="hidden" name="startTime" value="{{reservation.startTime}}">
                             <input type="hidden" name="endTime" value="{{reservation.endTime}}">

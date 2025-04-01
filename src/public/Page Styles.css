@@ -382,11 +382,14 @@ thead th {
 .seat.reserved {
     background-color: #423f32; /* dark color for reserved seats */
 }
+.seat.unavailable {
+    background-color: #423f32; 
+    color: white;
+}
 
-.seat.reserved:hover {
+.seat.unavailable:hover {
     background-color: #635e4d; /* lighter brown for reserved seats hover */
  }
-
 
 .seat:active {
     background-color: #2a4a2a; /* slightly darker when clicked */
@@ -413,7 +416,6 @@ a[href].username:hover {
     position: relative;
     z-index: 1000;
 }
-
 
 /* LAB-RESERVATION */
 .lab-seats{
