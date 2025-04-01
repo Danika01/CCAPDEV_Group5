@@ -96,6 +96,7 @@ async function addReservationToSeat(seatId, reservationId) {
 // remove reservation from seat 
 async function removeReservationFromSeat(seatId, reservationId) {
     try {
+        console.log("Removing reservation:", reservationId, "from seat:", seatId);
         const updatedSeat = await Schema.Seat.findByIdAndUpdate(
             seatId,
             { $pull: { reservations: reservationId } }, 
@@ -131,10 +132,6 @@ async function getSeatsByLab(roomNum) {
         throw error;
     }
 }
-
-
-
-
 
 // get lab id
 async function getLabId(roomNum) {

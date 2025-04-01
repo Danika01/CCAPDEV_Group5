@@ -19,7 +19,7 @@
                                     <div class="modal-header" style="background-color: #a7ca87;">
                                         <h5 class="modal-title text-center w-100 fw-bold" id="confirmReservationLabel">Confirm Reservation</h5>
                                     </div>
-                                    <form id="reservationForm" action="/reserve-seat" method="POST">
+                                    <form id="reservationForm" action=" {{#if editReservation}} /update-reservation/{{reservationId}} {{else}} /reserve-seat {{/if}}  " method="POST">
                                         <input type="hidden" name="building" value="{{building}}">
                                         <input type="hidden" name="room" value="{{room}}">
                                         <input type="hidden" name="reservationDate" value="{{date}}">
@@ -102,21 +102,6 @@
                                 <div>{{this.roomNum}}</div> <!-- Room Number -->
                             </div>
                         {{/each}}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     </div>
 
                     <div class="whiteboard" style="margin: 0%; margin-top: 2%">

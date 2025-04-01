@@ -597,6 +597,12 @@ server.get('/edit-reservation/:reservationId', async function(req, resp) {
 
     const reservation = await reservationDataModule.getReservationById(reservationId); 
     const userData = req.session.user;
+    const resObj = reservation.toObject ? reservation.toObject() : reservation;
+
+    const formattedReservation = {
+        ...resObj,
+        requestDate: new Date(resObj.requestDate).toLocaleString("en-US", { timeZone: "Asia/Manila" }),
+    };
     
     if (!reservation) {
         resp.status(404).send('Reservation not found');
@@ -606,7 +612,7 @@ server.get('/edit-reservation/:reservationId', async function(req, resp) {
     resp.render('edit-reservation', {
         layout: 'index',
         title: 'Edit Reservation',
-        reservation: reservation,
+        reservation: formattedReservation,
         pfp: userData.pfp || '/Images/default.png', // use session for this in the future
         currentRoute: 'reservations'
     });
@@ -660,7 +666,7 @@ server.post('/edit-reservation', async (req, res) => {
         console.log(`End Time: ${reservation.timeOut}`);
         
         // Redirect to the room page with building and room info
-        return res.redirect(`/room/${encodeURIComponent(building.name)}/${encodeURIComponent(room)}`);
+        return res.redirect(`/room/${encodeURIComponent(building.name)}/${encodeURIComponent(room)}/edit-reservation/${encodeURIComponent(reservationId)}`);
     } catch (error) {
         console.error('Error editing reservation:', error);
         return res.status(500).json({ error: 'An error occurred while editing the reservation' });
@@ -703,6 +709,128 @@ server.post('/reserve-seat', async (req, res) => {
         res.status(500).send("Server error.");
     }
 });
+
+// NEW route when editing reservation
+server.get('/room/:building/:room/edit-reservation/:_id', async function(req, resp) {
+    if (!req.session.user) {
+        return resp.redirect('/login'); 
+    }
+
+    const { building, room, _id } = req.params; 
+    const userData = req.session.user;
+
+    const selectedDate = req.session.date || new Date().toISOString().split("T")[0];  
+    const selectedStartTime = req.session.timeIn || "08:00";  
+    const selectedEndTime = req.session.timeOut || "08:30"; 
+
+    console.log(`Selected Date: ${selectedDate}, Time: ${selectedStartTime} to ${selectedEndTime}`);
+    console.log(`Building: ${building}, Room: ${room}`);
+
+    let labSeats = await labDataModule.getSeatsByLab(room);
+
+    // Mark unavailable seats and filter relevant reservations
+    labSeats.seats.forEach(seat => {
+        seat.unavailable = false; 
+        seat.relevantReservations = []; 
+        
+        seat.reservations.forEach(reservation => {
+            const resDate = reservation.reservationDate;
+            const resStartTime = reservation.timeIn;
+            const resEndTime = reservation.timeOut;
+    
+            if (resDate === selectedDate && (
+                (selectedStartTime >= resStartTime && selectedStartTime < resEndTime) ||
+                (selectedEndTime > resStartTime && selectedEndTime <= resEndTime) ||
+                (selectedStartTime <= resStartTime && selectedEndTime >= resEndTime)
+            )) {
+                seat.unavailable = true; 
+                seat.relevantReservations.push(reservation); 
+            }
+        });
+    });
+
+    resp.render('room', {
+        layout: 'index',
+        title: `Room ${room}`,
+        seats: labSeats.seats, 
+        building: building,
+        room: room,
+        buildings: req.session.building,
+        pfp: userData?.pfp || '/Images/test.jpg',
+        date: selectedDate,
+        startTime: selectedStartTime,
+        endTime: selectedEndTime,
+        currentRoute: 'reservations',
+        reservationId: _id,
+        hasAvailableSeats: labSeats.seats.some(seat => !seat.unavailable),
+        editReservation: true
+    });
+});
+
+// NEW update reservation
+server.post('/update-reservation/:_id', async (req, res) => {
+    const { room, reservationDate, timeIn, timeOut, seatNum, anonymous } = req.body;
+    const { _id } = req.params; 
+
+    const user = req.session.user ? req.session.user._id : null;
+
+    // Validate required fields
+    if (!seatNum || !reservationDate || !timeIn || !timeOut || !room) {
+        return res.status(400).send("Missing required fields.");
+    }
+
+    try {
+        // Find the current reservation
+        const existingReservation = await reservationDataModule.getReservationById(_id);
+        if (!existingReservation) {
+            return res.status(404).send("Reservation not found.");
+        }
+
+        // Find the new seat
+        const newSeat = await labDataModule.findSeat(room, seatNum);
+        if (!newSeat) {
+            return res.status(404).send("New seat not found.");
+        }
+
+        console.log('++++ Updating Reservation:', {
+            reservationId: _id,
+            reservationDate,
+            timeIn: String(timeIn),
+            timeOut: String(timeOut),
+            user: user, 
+            oldSeat: existingReservation.seat._id, 
+            newSeat: newSeat._id,
+            anonymous: anonymous === 'true'
+        });
+
+        if (existingReservation.seat._id.toString() !== newSeat._id.toString()) {
+            await labDataModule.removeReservationFromSeat(existingReservation.seat._id, _id);
+        }
+
+        // Update reservation details
+        const updatedReservation = await reservationDataModule.editReservation(
+            _id, 
+            reservationDate, 
+            timeIn, 
+            timeOut, 
+            newSeat._id
+        );
+
+        if (!updatedReservation) {
+            return res.status(404).send("Reservation not found or could not be updated.");
+        }
+
+        await labDataModule.addReservationToSeat(newSeat._id, _id);
+
+        console.log("Reservation Updated Successfully:", updatedReservation);
+        res.redirect('/reservations');
+
+    } catch (error) {
+        console.error("Error updating reservation:", error);
+        res.status(500).send("Server error.");
+    }
+});
+
 
 
 // delete reservation
