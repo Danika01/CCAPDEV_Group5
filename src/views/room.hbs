@@ -74,33 +74,38 @@
                         </div>
             
                         {{#each seats}}
-    <div class="seat {{#if this.unavailable}}unavailable{{else}}available{{/if}}"
-        {{#unless this.unavailable}} 
-            data-bs-toggle="modal" data-bs-target="#reserveSeat" data-seat-number="{{this.seatNum}}" 
-        {{/unless}}>
+                            <div class="seat {{#if this.unavailable}}unavailable{{else}}available{{/if}}" 
+                                {{#unless this.unavailable}} 
+                                    data-bs-toggle="modal" data-bs-target="#reserveSeat" data-seat-number="{{this.seatNum}}" 
+                                {{/unless}}>
 
-        <div>{{this.seatNum}}</div> <!-- Seat Number -->
+                                <div>{{this.seatNum}}</div> <!-- Seat Number -->
 
-        <div class="username">
-            {{#if this.unavailable}}
-                <!-- If unavailable, show "Reserved" -->
-                Reserved
-                <!-- Display all reservations for this seat -->
-                {{#each this.reservations}}  <!-- Iterate over the reservations -->
-                    {{#unless this.anonymous}} <!-- Only show if not anonymous -->
-                        <a class="username" href="/account?email={{this.email}}">
-                            {{this.name}} <!-- Show the name of the user who reserved the seat -->
-                        </a>
-                    {{/unless}}
-                {{/each}}
-            {{else}}
-                Available
-            {{/if}}
-        </div>
+                                <div class="username">
+                                    {{#if this.unavailable}}
+                                        {{#each this.reservations}} 
+                                            {{#if this.anonymous}}
+                                                Anonymous
+                                            {{else}}
+                                                {{#if this.user}}
+                                                     <a class="username" href="/view-account/{{this.user._id}}">
+                                                        {{this.user.firstname}} {{this.user.lastname}}
+                                                    </a>
+                                                {{/if}}
+                                            {{/if}}
+                                        {{/each}}
+                                    {{else}}
+                                        Available
+                                    {{/if}}
+                                </div>
 
-        <div>{{this.roomNum}}</div> <!-- Room Number -->
-    </div>
-{{/each}}
+                                <div>{{this.roomNum}}</div> <!-- Room Number -->
+                            </div>
+                        {{/each}}
+
+
+
+
 
 
 

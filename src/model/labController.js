@@ -116,22 +116,23 @@ async function getSeatsByLab(roomNum) {
         const labSeats = await Schema.Lab.findOne({ name: roomNum })
             .populate({
                 path: 'seats',
-                populate: { path: 'reservations' }
+                populate: {
+                    path: 'reservations',
+                    populate: { path: 'user', select: 'firstname lastname' }
+                }
             })
-            .lean().exec();
+            .lean()
+            .exec();
 
-        labSeats.seats.forEach(seat => {
-            seat.hasNonAnonymousReservation = seat.reservations.some(reservation => !reservation.anonymous);
-        });
-
-        console.log('Seats found!', labSeats);
-
+        console.log('Seats found!', JSON.stringify(labSeats, null, 2)); 
         return labSeats;
     } catch (error) {
         console.error('Error:', error.message);
         throw error;
     }
 }
+
+
 
 
 

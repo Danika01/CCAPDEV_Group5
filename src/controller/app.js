@@ -518,16 +518,15 @@ server.get('/reservations', async function(req, resp) {
 // render room.hbs
 server.get('/room/:building/:room', async function(req, resp) {
     if (!req.session.user) {
-        return resp.redirect('/login'); // Redirect if not logged in
+        return resp.redirect('/login'); 
     }
 
-    const { building, room } = req.params; // Get building and room from route parameters
+    const { building, room } = req.params; 
     const userData = req.session.user;
 
-    // Use session values if they exist, otherwise fall back to default values
-    const selectedDate = req.session.date || new Date().toISOString().split("T")[0];  // Default to today's date if not set
-    const selectedStartTime = req.session.timeIn || "08:00";  // Default to "08:00" if not set
-    const selectedEndTime = req.session.timeOut || "08:30";  // Default to "08:30" if not set
+    const selectedDate = req.session.date || new Date().toISOString().split("T")[0];  
+    const selectedStartTime = req.session.timeIn || "08:00";  
+    const selectedEndTime = req.session.timeOut || "08:30"; 
 
     console.log(`Selected Date: ${selectedDate}, Time: ${selectedStartTime} to ${selectedEndTime}`);
     console.log(`Building: ${building}, Room: ${room}`);
@@ -538,25 +537,21 @@ server.get('/room/:building/:room', async function(req, resp) {
     labSeats.seats.forEach(seat => {
         seat.unavailable = false; // Default to available
         
-        // Check if the seat has any reservations
+        
         seat.reservations.forEach(reservation => {
             const resDate = reservation.reservationDate;
             const resStartTime = reservation.timeIn;
             const resEndTime = reservation.timeOut;
     
-            // Compare reservation times with selected times
             if (resDate === selectedDate && (
                 (selectedStartTime >= resStartTime && selectedStartTime < resEndTime) ||
                 (selectedEndTime > resStartTime && selectedEndTime <= resEndTime) ||
-                (selectedStartTime <= resStartTime && selectedEndTime >= resEndTime) // Full overlap
+                (selectedStartTime <= resStartTime && selectedEndTime >= resEndTime) 
             )) {
                 seat.unavailable = true; // Mark as unavailable
             }
         });
     });
-    
-
-    const hasAvailableSeats = labSeats.seats.some(seat => !seat.unavailable);
 
     resp.render('room', {
         layout: 'index',
@@ -772,31 +767,39 @@ server.post('/reservations/delete', async (req, res) => {
     }
 });
 
-server.get('/view-account/:firstName/:lastName', async function(req, resp) {
+server.get('/view-account/:userId', async function(req, resp) {
     try { 
         if (!req.session.user) {
             return resp.redirect('/login'); // Redirect if not logged in
         }
 
-        const userData = req.session.user; 
-        
+        const userId = req.params.userId;
+
+        // Fetch user data from MongoDB based on ID
+        const userData = await userDataModule.findById(userId);
+
+        if (!userData) {
+            return resp.status(404).send("User not found");
+        }
+
         console.log("User Data:", userData); 
 
         resp.render('view-account', {
             layout: 'index',
-            title: firstName + lastName,
-            firstname: userData?.firstname || "Guest",
-            lastname: userData?.lastname,  
-            aboutInfo: userData?.aboutInfo || "No information available.",
-            pfp: userData?.pfp || '/Images/default.png', 
+            title: userData.firstname + " " + userData.lastname,
+            firstname: userData.firstname || "Guest",
+            lastname: userData.lastname,  
+            aboutInfo: userData.aboutInfo || "No information available.",
+            pfp: userData.pfp || '/Images/default.png', 
             currentRoute: 'account'
         });
 
     } catch (error) {
-        console.error("Error fetching data for /account:", error);
+        console.error("Error fetching data for /view-account:", error);
         resp.status(500).send("Internal Server Error");
     }
 });
+
 
 // about page
 server.get('/about', async function(req, resp) {

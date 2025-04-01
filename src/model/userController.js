@@ -80,6 +80,23 @@ async function getUser(email, password) {
     }
 }
 
+async function findById(userId) {
+    try {
+        const user = await Schema.User.findOne({ _id: userId }).exec();
+        
+        if (!user) {
+            console.log('No User found!');
+            return null;
+        }
+
+        return user;
+    } catch (err) {
+        console.error("Error fetching user:", err);
+        return null;
+    }
+}
+
+
 async function updateAboutInfo(email, aboutInfo) {
     try {
         const user = await Schema.User.findOne({ email }).exec();
@@ -121,6 +138,7 @@ module.exports = {
     isExistingUser,
     getUser,
     updateAboutInfo,
+    findById,
     deleteUser
 };
 
