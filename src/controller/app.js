@@ -4,6 +4,7 @@
     npm install express-session
     npm install mongoose
     npm install dotenv
+    npm install bcryptjs
 */
 
 // Connect to MongoDB Atlas
